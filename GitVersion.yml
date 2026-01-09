@@ -1,0 +1,24 @@
+next-version: 1.0.0
+workflow: GitHubFlow/v1
+assembly-versioning-format: '{Major}.{Minor}.{Patch}.{CommitsSinceVersionSource ?? 0}'
+assembly-file-versioning-format: '{Major}.{Minor}.{Patch}.{CommitsSinceVersionSource ?? 0}'
+branches:
+  main:
+    mode: ContinuousDeployment
+    is-release-branch: true
+  release:
+    mode: ContinuousDelivery
+    regex: ^release(s)?[/-](?<BranchName>.+)
+  hotfix:
+    mode: ContinuousDeployment
+    label: '{BranchName}'
+    increment: Patch
+    prevent-increment:
+      when-current-commit-tagged: false
+    regex: ^hotfix(es)?[/-](?<BranchName>.+)
+    source-branches:
+    - main
+    is-source-branch-for: []
+    is-release-branch: true
+    is-main-branch: false
+    pre-release-weight: 30000

@@ -1,0 +1,48 @@
+default:
+  image: mcr.microsoft.com/dotnet/sdk:latest
+
+stages:
+  - deploy
+  - release
+
+variables:
+  NUPKG_LOCATION: /tmp/packages
+  ARTIFACTS_LOCATION: $CI_PROJECT_DIR/out
+
+deploy:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never 
+    - when: always
+  variables:
+    GIT_DEPTH: 0
+    GIT_CLEAN_FLAGS: none
+  artifacts:
+    reports:
+      dotenv: gitversion.properties
+  before_script:
+    - rm -rf $ARTIFACTS_LOCATION
+  script:
+    - dotnet tool install GitVersion.Tool -g
+    - "export PATH=\"$PATH:/root/.dotnet/tools\""
+    - dotnet-gitversion /output buildserver
+    - dotnet restore --locked-mode --packages $NUPKG_LOCATION
+    - dotnet pack --packages $NUPKG_LOCATION -o $ARTIFACTS_LOCATION -c Release
+    - dotnet nuget push "$ARTIFACTS_LOCATION/*.nupkg" --api-key $NUGET_ORG_API_KEY --source https://api.nuget.org/v3/index.json
+  environment: production
+
+release_job:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  needs:
+    - job: deploy
+      optional: true
+  script:
+    - echo "Running the release job."
+  release:
+    tag_name: $GitVersion_MajorMinorPatch
+    tag_message: 'Release $GitVersion_MajorMinorPatch'
+    description: 'Release $GitVersion_MajorMinorPatch created using the release-cli.'

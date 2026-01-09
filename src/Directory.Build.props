@@ -1,0 +1,28 @@
+<Project>
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>14</LangVersion>
+        <NoWarn>NU1507,NU1902,NU1903</NoWarn>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
+        <DefaultItemExcludesInProjectFolder>$(DefaultItemExcludesInProjectFolder);packages.lock.json</DefaultItemExcludesInProjectFolder>
+        <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.Extensions.Configuration.Binder.SourceGeneration</InterceptorsNamespaces>
+        
+        <!-- Common NuGet Properties -->
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/ddprince17/davidhome-optimizely-virtualtext</RepositoryUrl>
+        <PackageProjectUrl>https://www.davidhome.net/</PackageProjectUrl>
+        <Copyright>Copyright (c) davidhome.net 2026</Copyright>
+        <Authors>ddprince</Authors>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
+        <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\"/>
+        <None Include="..\..\assets\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+</Project>
