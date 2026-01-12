@@ -1,4 +1,4 @@
-namespace DavidHome.Optimizely.VirtualText.Exceptions;
+namespace DavidHome.Optimizely.VirtualText.Content.AzureBlob.Exceptions;
 
 public class VirtualFilePathInvalidException : Exception
 {

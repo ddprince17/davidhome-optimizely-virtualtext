@@ -19,15 +19,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Azure.Data.Tables" />
-      <PackageReference Include="Azure.Storage.Blobs" />
       <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" />
-      <PackageReference Include="EPiServer.CMS.Core" />
       <PackageReference Include="GitVersion.MsBuild">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Microsoft.Extensions.Azure" />
       <PackageReference Include="System.Linq.AsyncEnumerable" />
     </ItemGroup>
 

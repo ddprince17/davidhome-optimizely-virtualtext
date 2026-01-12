@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Title>DavidHome Optimizely VirtualText Azure Blob Content</Title>
+        <Description>Azure Blob extensions for the retrieval of file content.</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Contracts\DavidHome.Optimizely.VirtualText.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Azure.Storage.Blobs" />
+      <PackageReference Include="Microsoft.Extensions.Azure" />
+    </ItemGroup>
+
+</Project>

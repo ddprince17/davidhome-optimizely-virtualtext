@@ -50,7 +50,7 @@ public class VirtualTextPartialRouter<TContent> : IPartialRouter<TContent, Virtu
 
     public PartialRouteData? GetPartialVirtualPath(VirtualTextRoutedData content, UrlGeneratorContext urlGeneratorContext)
     {
-        if (!Guid.TryParse((string?)content.SiteId, out var siteId) || Equals(siteId, Guid.Empty) || string.IsNullOrEmpty(content.FileLocation?.VirtualPath))
+        if (!Guid.TryParse(content.SiteId, out var siteId) || Equals(siteId, Guid.Empty) || string.IsNullOrEmpty(content.FileLocation?.VirtualPath))
         {
             return null;
         }

@@ -1,17 +1,17 @@
 using Azure.Storage.Blobs;
+using DavidHome.Optimizely.VirtualText.Content.AzureBlob.Exceptions;
 using DavidHome.Optimizely.VirtualText.Contracts;
-using DavidHome.Optimizely.VirtualText.Exceptions;
+using DavidHome.Optimizely.VirtualText.Models;
 using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace DavidHome.Optimizely.VirtualText.Services;
+namespace DavidHome.Optimizely.VirtualText.Content.AzureBlob;
 
 public class VirtualFileContentService : IVirtualFileContentService
 {
     internal const string BlobContainerName = "dhvirtualtext";
     private readonly IAzureClientFactory<BlobServiceClient> _blobServiceFactory;
 
-    private BlobServiceClient BlobService => _blobServiceFactory.CreateClient(VirtualTextServiceCollectionExtensions.ClientName);
+    private BlobServiceClient BlobService => _blobServiceFactory.CreateClient(VirtualTextConstants.ClientName);
     private BlobContainerClient ContainerClient => BlobService.GetBlobContainerClient(BlobContainerName);
 
     public VirtualFileContentService(IAzureClientFactory<BlobServiceClient> blobServiceFactory)

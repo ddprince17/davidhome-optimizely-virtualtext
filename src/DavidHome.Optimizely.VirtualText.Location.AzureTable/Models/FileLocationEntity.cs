@@ -1,7 +1,7 @@
 using Azure;
 using Azure.Data.Tables;
 
-namespace DavidHome.Optimizely.VirtualText.Models;
+namespace DavidHome.Optimizely.VirtualText.Location.AzureTable.Models;
 
 internal class FileLocationEntity : ITableEntity
 {

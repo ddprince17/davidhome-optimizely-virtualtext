@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Title>DavidHome Optimizely VirtualText Azure Table Location</Title>
+        <Description>Azure Table extensions for the retrieval of virtual file locations.</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Contracts\DavidHome.Optimizely.VirtualText.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Azure.Data.Tables" />
+      <PackageReference Include="Microsoft.Extensions.Azure" />
+      <PackageReference Include="System.Linq.AsyncEnumerable" />
+    </ItemGroup>
+
+</Project>

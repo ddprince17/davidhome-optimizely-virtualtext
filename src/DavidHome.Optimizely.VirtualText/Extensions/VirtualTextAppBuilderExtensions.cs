@@ -1,17 +1,13 @@
-using Azure.Data.Tables;
-using Azure.Storage.Blobs;
 using DavidHome.Optimizely.VirtualText;
 using DavidHome.Optimizely.VirtualText.Contracts;
 using DavidHome.Optimizely.VirtualText.Models;
 using DavidHome.Optimizely.VirtualText.Routing;
-using DavidHome.Optimizely.VirtualText.Services;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Core.Routing;
 using EPiServer.Core.Routing.Pipeline;
 using EPiServer.Core.Routing.Pipeline.Internal;
 using EPiServer.Web;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -93,33 +89,6 @@ public static class VirtualTextAppBuilderExtensions
             {
                 SiteDefinitionChangedInternal(ServiceProvider, e);
             }
-        }
-    }
-
-    extension(IVirtualTextAppBuilder? app)
-    {
-        public IVirtualTextAppBuilder? UseAzureTableFileLocation()
-        {
-            var clientFactory = app?.Builder?.ApplicationServices.GetRequiredService<IAzureClientFactory<TableServiceClient>>();
-            var tableClient = clientFactory?.CreateClient(VirtualTextServiceCollectionExtensions.ClientName);
-
-            // Is making sure the table is created while starting the app.
-            tableClient?.CreateTableIfNotExists(VirtualFileLocationService.TableName);
-
-            return app;
-        }
-
-        public IVirtualTextAppBuilder? UseAzureBlobFileStorage()
-        {
-            var clientFactory = app?.Builder?.ApplicationServices.GetRequiredService<IAzureClientFactory<BlobServiceClient>>();
-            var blobClient = clientFactory?.CreateClient(VirtualTextServiceCollectionExtensions.ClientName);
-
-            // Is making sure the container is created while starting the app.
-            blobClient?
-                .GetBlobContainerClient(VirtualFileContentService.BlobContainerName)
-                .CreateIfNotExists();
-
-            return app;
         }
     }
 

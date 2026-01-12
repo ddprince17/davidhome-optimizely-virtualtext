@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <Title>DavidHome Optimizely VirtualText Contracts</Title>
+        <Description>Virtual text editor contracts.</Description>
     </PropertyGroup>
 
     <ItemGroup>

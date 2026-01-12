@@ -34,7 +34,7 @@ deploy:
 
 release_job:
   stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  image: registry.gitlab.com/gitlab-org/cli:latest
   rules:
    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   needs:
@@ -42,7 +42,5 @@ release_job:
       optional: true
   script:
     - echo "Running the release job."
-  release:
-    tag_name: $GitVersion_MajorMinorPatch
-    tag_message: 'Release $GitVersion_MajorMinorPatch'
-    description: 'Release $GitVersion_MajorMinorPatch created using the release-cli.'
+    - glab auth login --hostname $CI_SERVER_HOST --job-token $CI_JOB_TOKEN
+    - glab release create "$GitVersion_MajorMinorPatch" --name "Release $GitVersion_MajorMinorPatch" -F CHANGELOG -r $CI_COMMIT_SHA

@@ -2,12 +2,12 @@ using System.Runtime.CompilerServices;
 using Azure;
 using Azure.Data.Tables;
 using DavidHome.Optimizely.VirtualText.Contracts;
+using DavidHome.Optimizely.VirtualText.Location.AzureTable.Models;
 using DavidHome.Optimizely.VirtualText.Models;
 using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace DavidHome.Optimizely.VirtualText.Services;
+namespace DavidHome.Optimizely.VirtualText.Location.AzureTable;
 
 public class VirtualFileLocationService : IVirtualFileLocationService
 {
@@ -16,7 +16,7 @@ public class VirtualFileLocationService : IVirtualFileLocationService
     private readonly IAzureClientFactory<TableServiceClient> _tableClientFactory;
     private readonly IOptionsMonitor<VirtualTextOptions> _virtualTextOptions;
 
-    private TableServiceClient FileLocationServiceClient => _tableClientFactory.CreateClient(VirtualTextServiceCollectionExtensions.ClientName);
+    private TableServiceClient FileLocationServiceClient => _tableClientFactory.CreateClient(VirtualTextConstants.ClientName);
     private TableClient FileLocationTableClient => FileLocationServiceClient.GetTableClient(TableName);
 
     public VirtualFileLocationService(IAzureClientFactory<TableServiceClient> tableClientFactory, IOptionsMonitor<VirtualTextOptions> virtualTextOptions)

@@ -1,0 +1,6 @@
+- Initial solution structure with core library, contracts, and models projects.
+- Optimizely CMS integration via URL resolver pipeline steps, partial routers, and a controller for virtual text rendering.
+- Azure Table storage integration for virtual file locations and Azure Blob storage integration for virtual file content.
+- Service collection and application builder extensions to register and wire up the VirtualText services.
+- Models and options for virtual file locations, routed data, and configuration defaults.
+- Build, packaging, and repository scaffolding (GitVersion, Directory.Packages.props, NuGet config, CI, license, and contributing docs).
