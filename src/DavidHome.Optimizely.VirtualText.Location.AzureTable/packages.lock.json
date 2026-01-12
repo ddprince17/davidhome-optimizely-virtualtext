@@ -11,6 +11,12 @@
           "Azure.Core": "1.15.0"
         }
       },
+      "GitVersion.MsBuild": {
+        "type": "Direct",
+        "requested": "[6.5.1, )",
+        "resolved": "6.5.1",
+        "contentHash": "92zAmfGWVtjHM8eR7O+1WWxqP+gulXvVqu3Sb1+KzuImdmxBt/bln/dMRvsIyV69KEiSrtbUoet4HBjG+bOLyw=="
+      },
       "Microsoft.Extensions.Azure": {
         "type": "Direct",
         "requested": "[1.0.0, 2.0.0)",
@@ -164,6 +170,12 @@
         "dependencies": {
           "Azure.Core": "1.15.0"
         }
+      },
+      "GitVersion.MsBuild": {
+        "type": "Direct",
+        "requested": "[6.5.1, )",
+        "resolved": "6.5.1",
+        "contentHash": "92zAmfGWVtjHM8eR7O+1WWxqP+gulXvVqu3Sb1+KzuImdmxBt/bln/dMRvsIyV69KEiSrtbUoet4HBjG+bOLyw=="
       },
       "Microsoft.Extensions.Azure": {
         "type": "Direct",
