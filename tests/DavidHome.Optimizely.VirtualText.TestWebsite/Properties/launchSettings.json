@@ -3,7 +3,7 @@
     "DavidHome.Optimizely.VirtualText.TestWebsite": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5000/",
+      "applicationUrl": "https://localhost:57204/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

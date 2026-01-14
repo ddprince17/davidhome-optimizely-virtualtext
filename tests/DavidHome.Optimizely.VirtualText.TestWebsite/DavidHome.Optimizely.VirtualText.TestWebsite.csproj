@@ -15,6 +15,7 @@
 
     <ItemGroup>
         <PackageReference Include="EPiServer.CMS"/>
+        <PackageReference Include="Microsoft.Extensions.Azure" />
         <PackageReference Include="Wangkanai.Detection"/>
     </ItemGroup>
 

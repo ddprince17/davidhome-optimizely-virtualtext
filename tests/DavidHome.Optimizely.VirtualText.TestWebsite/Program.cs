@@ -7,5 +7,6 @@ public class Program
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
             .ConfigureCmsDefaults()
+            .ConfigureAppConfiguration(config => config.AddUserSecrets<Program>())
             .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
 }
