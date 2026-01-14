@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace DavidHome.Optimizely.VirtualText.Controllers;
 
 [AuthorizePermission(PluginPermissions.GroupName, PluginPermissions.ViewPermissionsName)]
-[Area("DhOpVirtualText")]
 [ModuleRoute]
 public class DefaultController : Controller
 {

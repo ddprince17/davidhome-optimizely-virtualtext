@@ -17,7 +17,7 @@ public class PluginMenuProvider : IMenuProvider
 
     public IEnumerable<MenuItem> GetMenuItems()
     {
-        yield return new UrlMenuItem(_localizationService.GetString("/davidhome/dhopvirtualtext/gadget/title", "Virtual Text Settings"), "/global/cms/dhopvirtualtext",
+        yield return new UrlMenuItem(_localizationService.GetString("/davidhome/dhopvirtualtext/gadget/title", "Virtual Text Editor"), "/global/cms/dhopvirtualtext",
             Paths.ToResource(GetType(), $"Default/{nameof(DefaultController.Index)}"))
         {
             SortIndex = 0,

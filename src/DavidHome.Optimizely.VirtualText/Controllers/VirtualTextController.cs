@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 // ReSharper disable DuplicatedSequentialIfBodies
 
-namespace DavidHome.Optimizely.VirtualText.Routing;
+namespace DavidHome.Optimizely.VirtualText.Controllers;
 
 public class VirtualTextController : Controller, IRenderTemplate<VirtualTextRoutedData>
 {

@@ -2,7 +2,7 @@ using EPiServer.Web;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace DavidHome.Optimizely.VirtualText.TestWebsite.Helpers;
+namespace DavidHome.Optimizely.VirtualText.TestWebsite.Extensions;
 
 /// <summary>
 /// Extension methods on request Context such as et/Set Node, Lang, Controller

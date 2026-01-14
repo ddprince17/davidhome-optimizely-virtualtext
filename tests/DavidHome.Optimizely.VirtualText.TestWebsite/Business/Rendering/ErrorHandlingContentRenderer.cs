@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using DavidHome.Optimizely.VirtualText.TestWebsite.Helpers;
+using DavidHome.Optimizely.VirtualText.TestWebsite.Extensions;
 using DavidHome.Optimizely.VirtualText.TestWebsite.Models.ViewModels;
 using EPiServer.Web.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
