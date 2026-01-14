@@ -661,3 +661,5 @@ FodyWeavers.xsd
 /src/*/modules/**
 /src/OMVP.Blogs/wwwroot/**/dist/**
 /docker/omvp-blogs/*.secret
+/src/**/*.zip
+/tests/**/App_Data/*.episerverdata

@@ -5,8 +5,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Azure.Data.Tables" Version="[12.0.0,13.0.0)" />
-    <PackageVersion Include="Azure.Storage.Blobs" Version="[12.11.0,13.0.0)" />
-    <PackageVersion Include="EPiServer.CMS.AspNetCore.Templating" Version="[12.17.0,13.0.0)" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="[12.13.0,13.0.0)" />
+    <PackageVersion Include="EPiServer.CMS.UI.Core" Version="[12.17.0,13.0.0)" />
+    <PackageVersion Include="EPiServer.CMS.AspNetCore.Mvc" Version="[12.12.1,13.0.0)" />
     <PackageVersion Include="GitVersion.MsBuild" Version="6.5.1" />
     <PackageVersion Include="Microsoft.Extensions.Azure" Version="[1.0.0,2.0.0)" />
     <PackageVersion Include="System.Linq.AsyncEnumerable" Version="[10.0.0,)" />
@@ -16,5 +17,7 @@
     <PackageVersion Include="Microsoft.Identity.Client" Version="[4.59.1,)" />
     <PackageVersion Include="System.IO.Packaging" Version="[6.0.1,)" />
     <PackageVersion Include="MimeKit" Version="[4.7.1,)" />
+    <PackageVersion Include="System.Linq.Async" Version="[7.0.0,)" />
+    <PackageVersion Include="SixLabors.ImageSharp" Version="[2.1.10,)" />
   </ItemGroup>
 </Project>

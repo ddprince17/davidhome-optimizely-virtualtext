@@ -16,6 +16,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidHome.Optimizely.Virtua
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidHome.Optimizely.VirtualText.Content.AzureBlob", "src\DavidHome.Optimizely.VirtualText.Content.AzureBlob\DavidHome.Optimizely.VirtualText.Content.AzureBlob.csproj", "{64AED842-B9A0-4105-97A2-6EDEE32B984F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{82A4B821-2BD9-4022-BF51-3A33E7862C6E}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Directory.Build.props = tests\Directory.Build.props
+		tests\Directory.Packages.props = tests\Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidHome.Optimizely.VirtualText.TestWebsite", "tests\DavidHome.Optimizely.VirtualText.TestWebsite\DavidHome.Optimizely.VirtualText.TestWebsite.csproj", "{EC1147CF-7A43-44BD-9776-43395A5E77E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{26B4C6B3-8582-47DD-9BC8-95EFA2DC32FB}"
+	ProjectSection(SolutionItems) = preProject
+		.gitlab-ci.yml = .gitlab-ci.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +40,7 @@ Global
 		{D3C0D6B3-363A-4041-B2D9-9D8CEA8BD2A7} = {03F70132-3C94-433B-9E8E-5F52C422405C}
 		{3ADDAA61-0181-474E-B84F-558361EBD40E} = {03F70132-3C94-433B-9E8E-5F52C422405C}
 		{64AED842-B9A0-4105-97A2-6EDEE32B984F} = {03F70132-3C94-433B-9E8E-5F52C422405C}
+		{EC1147CF-7A43-44BD-9776-43395A5E77E2} = {82A4B821-2BD9-4022-BF51-3A33E7862C6E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{92D811F1-C244-4BEC-AD41-97AAEA996058}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -49,5 +63,9 @@ Global
 		{64AED842-B9A0-4105-97A2-6EDEE32B984F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64AED842-B9A0-4105-97A2-6EDEE32B984F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64AED842-B9A0-4105-97A2-6EDEE32B984F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC1147CF-7A43-44BD-9776-43395A5E77E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC1147CF-7A43-44BD-9776-43395A5E77E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC1147CF-7A43-44BD-9776-43395A5E77E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC1147CF-7A43-44BD-9776-43395A5E77E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

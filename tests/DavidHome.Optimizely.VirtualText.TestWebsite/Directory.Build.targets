@@ -1,0 +1,20 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildProjectDirectory)/../Directory.Build.targets" Condition="Exists('$(MSBuildProjectDirectory)/../Directory.Build.targets')"/>
+
+    <!-- Ensure the folder exists -->
+    <Target Name="EnsureModulesFolder" BeforeTargets="CopyOptiPluginZip">
+        <MakeDir Directories="$(TargetCopyDir)"/>
+    </Target>
+
+    <!-- Copy the zip -->
+    <Target Name="CopyOptiPluginZip"
+            BeforeTargets="Build"
+            DependsOnTargets="EnsureModulesFolder"
+            Inputs="$(OptiPluginZip)"
+            Outputs="$(TargetCopyDir)DavidHome.Optimizely.VirtualText.zip"
+            Condition="Exists('$(OptiPluginZip)')">
+        <Message Importance="High" Text="Copying $(OptiPluginZip) to $(TargetCopyDir)"/>
+        <Copy SourceFiles="$(OptiPluginZip)"
+              DestinationFiles="$(TargetCopyDir)DavidHome.Optimizely.VirtualText.zip"/>
+    </Target>
+</Project>

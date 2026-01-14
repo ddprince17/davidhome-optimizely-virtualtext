@@ -19,12 +19,25 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" />
+      <PackageReference Include="EPiServer.CMS.UI.Core" />
+      <PackageReference Include="EPiServer.CMS.AspNetCore.Mvc" />
       <PackageReference Include="GitVersion.MsBuild">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="System.Linq.AsyncEnumerable" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="module.config" />
+      <None Include="module.config">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </None>
+      <Content Remove="packages.lock.json" />
+      <None Include="packages.lock.json">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </None>
+      <Content Remove="DavidHome.Optimizely.VirtualText.zip" />
     </ItemGroup>
 
 </Project>

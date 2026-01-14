@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>d4efb87b-5e6d-4f71-8540-8735c24716b2</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="EPiServer"/>
+        <Using Include="EPiServer.Core"/>
+        <Using Include="EPiServer.DataAbstraction"/>
+        <Using Include="EPiServer.DataAnnotations"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="EPiServer.CMS"/>
+        <PackageReference Include="Wangkanai.Detection"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\Translations\**\*"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\DavidHome.Optimizely.VirtualText.Content.AzureBlob\DavidHome.Optimizely.VirtualText.Content.AzureBlob.csproj" />
+      <ProjectReference Include="..\..\src\DavidHome.Optimizely.VirtualText.Location.AzureTable\DavidHome.Optimizely.VirtualText.Location.AzureTable.csproj" />
+      <ProjectReference Include="..\..\src\DavidHome.Optimizely.VirtualText\DavidHome.Optimizely.VirtualText.csproj" />
+    </ItemGroup>
+</Project>

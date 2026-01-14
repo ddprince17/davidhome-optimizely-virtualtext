@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildProjectDirectory)/../Directory.Build.props" />
+    <PropertyGroup>
+        <OptiPluginZip>$(SolutionDir)src\DavidHome.Optimizely.VirtualText\DavidHome.Optimizely.VirtualText.zip</OptiPluginZip>
+        <TargetCopyDir>$(ProjectDir)modules\_protected\DavidHome.Optimizely.VirtualText\</TargetCopyDir>
+    </PropertyGroup>
+</Project>

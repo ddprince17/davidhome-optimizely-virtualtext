@@ -1,0 +1,10 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include="EPiServer.CMS" Version="12.29.0"/>
+        <PackageVersion Include="Wangkanai.Detection" Version="8.7.0"/>
+    </ItemGroup>
+</Project>
