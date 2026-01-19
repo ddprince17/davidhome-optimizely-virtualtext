@@ -6,10 +6,6 @@
     <PropertyGroup>
         <TmpOutDir>$([System.IO.Path]::Combine($(ProjectDir), 'tmp'))</TmpOutDir>
         <ZipOutputFile>$(ProjectDir)$(MSBuildProjectName).zip</ZipOutputFile>
-
-        <!-- Ensure our target is in the pack & build pipelines -->
-        <PackDependsOn>CreateCmsAddOnZip;$(PackDependsOn)</PackDependsOn>
-        <BuildDependsOn>CreateCmsAddOnZip;$(BuildDependsOn)</BuildDependsOn>
     </PropertyGroup>
     <ItemGroup>
         <Content Include="$(MSBuildProjectName).zip">

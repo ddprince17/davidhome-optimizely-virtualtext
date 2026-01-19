@@ -665,3 +665,4 @@ FodyWeavers.xsd
 /tests/**/App_Data/*.episerverdata
 /tests/**/App_Data/blobs/**/**
 /tests/**/modules/_protected/**/*.zip
+/src/**/ClientResources/**

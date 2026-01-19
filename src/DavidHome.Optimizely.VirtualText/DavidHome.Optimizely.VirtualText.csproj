@@ -40,4 +40,8 @@
       <Content Remove="DavidHome.Optimizely.VirtualText.zip" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <DefaultItemExcludes>$(DefaultItemExcludes);ClientResources/**;Frontend/**</DefaultItemExcludes>
+    </PropertyGroup>
+
 </Project>

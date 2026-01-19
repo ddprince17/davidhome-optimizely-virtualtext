@@ -1,1 +1,19 @@
-﻿<div>This is a test</div>
+﻿@using DavidHome.Optimizely.VirtualText
+@using EPiServer.Shell
+
+@{
+    var thisType = typeof(IVirtualTextPartialRouterWrapper);
+}
+
+<link rel="stylesheet" href="@Paths.ToClientResource(thisType, "monaco-editor.css")"/>
+
+<div id="virtualtext-editor" style="height: 500px; border: 1px solid #ddd;"></div>
+
+<script src="@Paths.ToClientResource(thisType, "monaco-editor.js")"></script>
+<script src=" @Paths.ToClientResource(thisType, "virtualtext-app.js")"></script>
+
+<script>
+    window.VirtualTextMonaco.createEditor('virtualtext-editor', 'Hello from Monaco', {
+        language: 'plaintext'
+    });
+</script>

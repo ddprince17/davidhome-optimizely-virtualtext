@@ -1,0 +1,28 @@
+{
+  "name": "davidhome-optimizely-virtualtext",
+  "version": "1.0.0",
+  "description": "Optimizely Virtual Text editor allows the creation and edition of txt files accessible from the root of your website(s).",
+  "license": "MIT",
+  "author": "ddprince",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.0",
+    "mini-css-extract-plugin": "^2.9.2",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.104.1",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "monaco-editor": "^0.55.1",
+    "monaco-editor-webpack-plugin": "^7.1.1"
+  }
+}

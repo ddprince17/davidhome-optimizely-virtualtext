@@ -1,4 +1,10 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Ensure our target is in the pack & build pipelines -->
+    <BuildDependsOn>$(BuildDependsOn);CreateCmsAddOnZip</BuildDependsOn>
+    <PackDependsOn>$(PackDependsOn);CreateCmsAddOnZip</PackDependsOn>
+  </PropertyGroup>
+
   <!-- Multitargeting hook (runs once) -->
   <Target Name="RunWhenMultiTargeting"
           BeforeTargets="DispatchToInnerBuilds"
@@ -17,7 +23,7 @@
     <Copy SourceFiles="$(ProjectDir)module.config"
           DestinationFolder="$(TmpOutDir)\content"/>
     <Copy SourceFiles="@(ClientResources)"
-          DestinationFiles="@(ClientResources -> '$(TmpOutDir)\content\$(PackageVersion)\ClientResources\%(RecursiveDir)%(Filename)%(Extension)')"/>
+          DestinationFiles="@(ClientResources -> '$(TmpOutDir)\content\$(PackageVersion)\%(RecursiveDir)%(Filename)%(Extension)')"/>
 
     <!-- Patch -->
     <XmlPoke XmlInputPath="$(TmpOutDir)\content\module.config"

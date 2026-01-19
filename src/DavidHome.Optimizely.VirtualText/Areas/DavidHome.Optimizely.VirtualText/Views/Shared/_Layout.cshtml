@@ -1,133 +1,44 @@
 ﻿@using EPiServer.Shell.Navigation
 
+@{
+    var title = ViewBag.Title ?? "Virtual Text Editor";
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>@ViewBag.Title</title>
-
-    @Html.Raw(Html.CreatePlatformNavigationMenu())
-
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-
-    <!-- CSS only -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"/>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
-    <style>
-        /* Set padding to keep content from hitting the edges */
-        .body-content {
-            padding-left: 15px;
-            padding-right: 15px;
-        }
-
-        /* Set width on the form input elements since they're 100% wide by default */
-        select,
-        textarea {
-            max-width: 380px;
-            min-width: 180px;
-        }
-
-        .has-search .form-control-feedback {
-            right: initial;
-            color: #ccc;
-            position: absolute;
-            padding-left: 8px;
-        }
-
-        .has-search .form-control {
-            padding-right: 12px;
-            padding-left: 34px;
-        }
-
-        .form-select {
-            padding: 0px;
-            max-width: 280px;
-            min-width: 180px;
-        }
-
-        .btn-info {
-            margin: 10px;
-            background-color: #040A47;
-            border-color: #1456F1;
-        }
-
-            .btn-info:hover {
-                background-color: #181D55;
-            }
-
-        .admin-form-search {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        /*
-                CSS Tables
-                Found there: https://stackoverflow.com/a/50389231
-                */
-        .css-grid-table,
-        .css-grid-table-header,
-        .css-grid-table-body {
-            display: grid;
-        }
-
-        .css-grid-table {
-            width: 80%;
-        }
-
-        .css-grid-table-header,
-        .css-grid-table-body {
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            width: 100%;
-        }
-
-        .user-roles.css-grid-table-header,
-        .user-roles.css-grid-table-body {
-            grid-template-columns: 1fr 4fr .5fr .5fr;
-        }
-
-            .user-roles.css-grid-table-body div ul {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-            }
-
-        .role-mng.css-grid-table-header,
-        .role-mng.css-grid-table-body {
-            grid-template-columns: 2fr 2fr 2fr .5fr .5fr;
-        }
-
-            .role-mng.css-grid-table-body div .text-box {
-                width: 100%;
-            }
-
-        .css-grid-table-header {
-            grid-column-gap: 2px;
-            grid-template-rows: auto;
-        }
-
-        .css-grid-table-body {
-            grid-template-rows: auto auto auto;
-        }
-
-        .css-grid-table-header div {
-            text-align: center;
-            font-weight: bold;
-            background-color: rgb(191, 191, 191);
-        }
-
-        .css-grid-table-body div {
-            padding-left: 6px;
-        }
-    </style>
+    <title>@title</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/Util/images/favicon.ico" type="image/x-icon">
+    @Html.CreatePlatformNavigationMenu()
 </head>
 <body>
 
 <div @Html.ApplyPlatformNavigation()>
-    <div class="container">
-        @RenderBody()
+    <div class="content-area-container">
+        <div class="Toastify"></div>
+        <div class="axiom-layout-grid-container">
+            <div class="axiom-layout-grid">
+                <div
+                    class="axiom-layout-grid__cell axiom-layout-grid__cell--span-4-small axiom-layout-grid__cell--span-8-medium axiom-layout-grid__cell--span-12-large axiom-layout-grid__cell--span-12-xlarge">
+                    <div class="axiom-grid-container">
+                        <div>
+                            <div class="axiom-grid__cell axiom-grid__cell--span-4-small axiom-grid__cell--span-8-medium axiom-grid__cell--span-12-large">
+                                <div class="epi-main-header">
+                                    <h1 class="axiom-typography--header1">@title</h1>
+                                </div>
+                            </div>
+                            <div class="plugin-view-container">
+                                @RenderBody()
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 </body>
 </html>
