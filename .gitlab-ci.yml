@@ -31,6 +31,8 @@ build_backend:
     GIT_DEPTH: 0
     GIT_CLEAN_FLAGS: none
   artifacts:
+    paths:
+      - $ARTIFACTS_LOCATION/**/*.nupkg
     reports:
       dotenv: gitversion.properties
   before_script:
