@@ -1,19 +1,104 @@
 ﻿@using DavidHome.Optimizely.VirtualText
+@using DavidHome.Optimizely.VirtualText.Models
 @using EPiServer.Shell
+@model VirtualTextIndexViewModel
 
 @{
     var thisType = typeof(IVirtualTextPartialRouterWrapper);
 }
 
 <link rel="stylesheet" href="@Paths.ToClientResource(thisType, "monaco-editor.css")"/>
+<link rel="stylesheet" href="@Paths.ToClientResource(thisType, "virtualtext-app.css")"/>
 
-<div id="virtualtext-editor" style="height: 500px; border: 1px solid #ddd;"></div>
+<div class="vt-wrapper"
+     data-file-content-url="@Url.Action("FileContent", "Default")"
+     data-save-file-url="@Url.Action("SaveFile", "Default")"
+     data-copy-file-url="@Url.Action("CopyFile", "Default")">
+    <div class="vt-header">
+        <div class="vt-create">
+            <label>
+                Path
+                <input type="text" id="vt-new-path" placeholder="/example.txt" />
+            </label>
+            <label>
+                Site
+                <select id="vt-new-site">
+                    @foreach (var site in Model.Sites)
+                    {
+                        <option value="@site.SiteId">@site.Name</option>
+                    }
+                </select>
+            </label>
+            <label class="vt-checkbox">
+                <input type="checkbox" id="vt-copy-default" />
+                Copy default content (if available)
+            </label>
+            <button type="button" id="vt-create-file">Create</button>
+        </div>
+    </div>
+
+    <table class="vt-table">
+        <thead>
+        <tr>
+            <th>Path</th>
+            <th>Site</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="vt-file-list">
+        @foreach (var file in Model.Files)
+        {
+            <tr data-virtual-path="@file.VirtualPath" data-site-id="@file.SiteId">
+                <td>@file.VirtualPath</td>
+                <td>@file.SiteName</td>
+                <td>
+                    <button type="button" class="vt-action" data-action="view">View</button>
+                    <button type="button" class="vt-action" data-action="edit">Edit</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<div class="vt-modal" id="vt-editor-modal" aria-hidden="true">
+    <div class="vt-modal-backdrop"></div>
+    <div class="vt-modal-content">
+        <div class="vt-modal-header">
+            <div class="vt-modal-header-row">
+                <div>
+                    <div id="vt-editor-title" class="vt-title">Editor</div>
+                    <div id="vt-editor-subtitle" class="vt-subtitle"></div>
+                </div>
+                <div class="vt-modal-actions">
+                    <button type="button" id="vt-save" class="vt-primary">Save</button>
+                    <button type="button" id="vt-close">Close</button>
+                </div>
+            </div>
+            <div class="vt-compare">
+                <label>
+                    Copy from site
+                    <select id="vt-compare-site">
+                        @foreach (var site in Model.Sites)
+                        {
+                            <option value="@site.SiteId">@site.Name</option>
+                        }
+                    </select>
+                </label>
+                <button type="button" id="vt-compare-start" class="vt-primary">Compare</button>
+                <div class="vt-compare-actions">
+                    <button type="button" id="vt-compare-accept" class="vt-primary" hidden>Accept &amp; Save</button>
+                    <button type="button" id="vt-compare-cancel" hidden>Cancel</button>
+                </div>
+            </div>
+            <div id="vt-permission-warning" class="vt-alert" hidden>
+                <span>You do not have permission to save files.</span>
+                <button type="button" class="vt-alert-close" aria-label="Dismiss">×</button>
+            </div>
+        </div>
+        <div id="vt-editor" class="vt-editor"></div>
+    </div>
+</div>
 
 <script src="@Paths.ToClientResource(thisType, "monaco-editor.js")"></script>
-<script src=" @Paths.ToClientResource(thisType, "virtualtext-app.js")"></script>
-
-<script>
-    window.VirtualTextMonaco.createEditor('virtualtext-editor', 'Hello from Monaco', {
-        language: 'plaintext'
-    });
-</script>
+<script src="@Paths.ToClientResource(thisType, "virtualtext-app.js")"></script>

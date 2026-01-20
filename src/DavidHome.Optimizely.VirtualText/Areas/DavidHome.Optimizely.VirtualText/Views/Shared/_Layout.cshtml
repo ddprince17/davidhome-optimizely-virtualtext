@@ -12,10 +12,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/Util/images/favicon.ico" type="image/x-icon">
-    @Html.CreatePlatformNavigationMenu()
 </head>
 <body>
-
+@Html.AntiForgeryToken()
+@Html.CreatePlatformNavigationMenu()
 <div @Html.ApplyPlatformNavigation()>
     <div class="content-area-container">
         <div class="Toastify"></div>

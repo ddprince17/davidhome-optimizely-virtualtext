@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Text;
 using Azure;
 using Azure.Data.Tables;
 using DavidHome.Optimizely.VirtualText.Contracts;
@@ -65,6 +66,34 @@ public class VirtualFileLocationService : IVirtualFileLocationService
                 VirtualPath = fileLocationEntity.VirtualPath
             };
         }
+    }
+
+    public async Task UpsertFileLocationAsync(VirtualFileLocation location, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(location.VirtualPath))
+        {
+            throw new ArgumentException("VirtualPath is required.", nameof(location));
+        }
+
+        var partitionKey = string.IsNullOrWhiteSpace(location.SiteId) ? "default" : location.SiteId;
+        var rowKey = EncodeRowKey(location.VirtualPath);
+        var entity = new FileLocationEntity
+        {
+            PartitionKey = partitionKey,
+            RowKey = rowKey,
+            SiteId = location.SiteId,
+            VirtualPath = location.VirtualPath
+        };
+
+        await FileLocationTableClient.UpsertEntityAsync(entity, TableUpdateMode.Replace, cancellationToken);
+    }
+
+    private static string EncodeRowKey(string virtualPath)
+    {
+        var bytes = Encoding.UTF8.GetBytes(virtualPath);
+        return Convert.ToBase64String(bytes)
+            .Replace('/', '_')
+            .Replace('+', '-');
     }
 }
 

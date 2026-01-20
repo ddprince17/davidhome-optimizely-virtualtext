@@ -41,7 +41,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-        <DefaultItemExcludes>$(DefaultItemExcludes);ClientResources/**;Frontend/**</DefaultItemExcludes>
+        <DefaultItemExcludes>$(DefaultItemExcludes);Frontend/**</DefaultItemExcludes>
     </PropertyGroup>
 
 </Project>
