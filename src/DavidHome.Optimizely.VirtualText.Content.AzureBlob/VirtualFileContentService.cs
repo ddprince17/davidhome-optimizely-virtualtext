@@ -53,6 +53,20 @@ public class VirtualFileContentService : IVirtualFileContentService
         await blob.UploadAsync(content, overwrite: true, cancellationToken: cancellationToken);
     }
 
+    public async Task DeleteVirtualFileContentAsync(string? virtualPath, string? siteId, CancellationToken cancellationToken = default)
+    {
+        var blobName = GetBlobName(virtualPath, siteId);
+
+        if (string.IsNullOrEmpty(blobName))
+        {
+            throw new VirtualFilePathInvalidException("The virtual file path is invalid.");
+        }
+
+        var blob = ContainerClient.GetBlobClient(blobName);
+
+        await blob.DeleteIfExistsAsync(cancellationToken: cancellationToken);
+    }
+
     private static string GetBlobName(string? virtualPath, string? siteId)
     {
         var blobPaths = new[] { siteId, virtualPath?.TrimStart('/').TrimEnd('/') }.Where(s => !string.IsNullOrEmpty(s));

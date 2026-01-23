@@ -4,6 +4,7 @@ public class VirtualTextIndexViewModel
 {
     public IReadOnlyList<VirtualTextFileListItem> Files { get; init; } = [];
     public IReadOnlyList<VirtualTextSiteOption> Sites { get; init; } = [];
+    public bool CanEdit { get; init; }
 }
 
 public class VirtualTextFileListItem
@@ -18,4 +19,10 @@ public class VirtualTextSiteOption
 {
     public string? SiteId { get; init; }
     public string Name { get; init; } = string.Empty;
+}
+
+public class VirtualTextFileListResponse
+{
+    public IReadOnlyList<VirtualTextFileListItem> Files { get; init; } = [];
+    public bool HasMore { get; init; }
 }

@@ -17,25 +17,13 @@
 @Html.AntiForgeryToken()
 @Html.CreatePlatformNavigationMenu()
 <div @Html.ApplyPlatformNavigation()>
-    <div class="content-area-container">
-        <div class="Toastify"></div>
-        <div class="axiom-layout-grid-container">
-            <div class="axiom-layout-grid">
-                <div
-                    class="axiom-layout-grid__cell axiom-layout-grid__cell--span-4-small axiom-layout-grid__cell--span-8-medium axiom-layout-grid__cell--span-12-large axiom-layout-grid__cell--span-12-xlarge">
-                    <div class="axiom-grid-container">
-                        <div>
-                            <div class="axiom-grid__cell axiom-grid__cell--span-4-small axiom-grid__cell--span-8-medium axiom-grid__cell--span-12-large">
-                                <div class="epi-main-header">
-                                    <h1 class="axiom-typography--header1">@title</h1>
-                                </div>
-                            </div>
-                            <div class="plugin-view-container">
-                                @RenderBody()
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="min-h-screen bg-slate-100 text-slate-900">
+        <div class="mx-auto w-full max-w-6xl px-6 py-6">
+            <div class="mb-6 rounded-xl bg-white px-6 py-4 shadow-sm">
+                <h1 class="text-2xl font-semibold text-slate-900">@title</h1>
+            </div>
+            <div class="rounded-xl bg-white px-6 py-6 shadow-sm">
+                @RenderBody()
             </div>
         </div>
     </div>

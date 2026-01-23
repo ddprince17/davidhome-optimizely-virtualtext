@@ -26,46 +26,31 @@ public class VirtualFileLocationService : IVirtualFileLocationService
         _virtualTextOptions = virtualTextOptions;
     }
 
-    public async IAsyncEnumerable<VirtualFileLocation> QueryFileLocations(string filePath, int pageNumber = 1,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<VirtualFileLocation> QueryFileLocations(VirtualFileLocationQuery query, CancellationToken cancellationToken = default)
     {
-        var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileLocationsPerPage;
-        var tables = FileLocationTableClient
-            .QueryAsync<FileLocationEntity>(entity => entity.VirtualPath == filePath, maxPerPage: maxPageSize, cancellationToken: cancellationToken);
-        var tablePage = tables
-            .AsPages(pageSizeHint: maxPageSize)
-            .SelectPageNumber(pageNumber);
-        
-        var fileLocationEntities = await tablePage.FirstOrDefaultAsync(cancellationToken: cancellationToken);
-
-        foreach (var fileLocationEntity in fileLocationEntities?.Values ?? [])
+        if (string.IsNullOrWhiteSpace(query.VirtualPath))
         {
-            yield return new VirtualFileLocation
-            {
-                SiteId = fileLocationEntity.SiteId,
-                VirtualPath = fileLocationEntity.VirtualPath
-            };
+            return GetAllFileLocations(query.PageNumber, cancellationToken);
         }
+
+        var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileLocationsPerPage;
+        var tableQuery = FileLocationTableClient.QueryAsync<FileLocationEntity>(
+            entity => entity.VirtualPath == query.VirtualPath &&
+                      (string.IsNullOrWhiteSpace(query.SiteId) || entity.SiteId == query.SiteId),
+            maxPerPage: maxPageSize,
+            cancellationToken: cancellationToken);
+
+        return ReadFileLocationsPage(tableQuery, query.PageNumber, cancellationToken);
     }
 
-    public async IAsyncEnumerable<VirtualFileLocation> GetAllFileLocations(int pageNumber = 1, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<VirtualFileLocation> GetAllFileLocations(int pageNumber = 1, CancellationToken cancellationToken = default)
     {
         var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileLocationsPerPage;
-        var tables = FileLocationTableClient.QueryAsync<FileLocationEntity>(maxPerPage: maxPageSize, cancellationToken: cancellationToken);
-        var tablePage = tables
-            .AsPages(pageSizeHint: maxPageSize)
-            .SelectPageNumber(pageNumber);
+        var query = FileLocationTableClient.QueryAsync<FileLocationEntity>(
+            maxPerPage: maxPageSize,
+            cancellationToken: cancellationToken);
 
-        var fileLocationEntities = await tablePage.FirstOrDefaultAsync(cancellationToken: cancellationToken);
-
-        foreach (var fileLocationEntity in fileLocationEntities?.Values ?? [])
-        {
-            yield return new VirtualFileLocation
-            {
-                SiteId = fileLocationEntity.SiteId,
-                VirtualPath = fileLocationEntity.VirtualPath
-            };
-        }
+        return ReadFileLocationsPage(query, pageNumber, cancellationToken);
     }
 
     public async Task UpsertFileLocationAsync(VirtualFileLocation location, CancellationToken cancellationToken = default)
@@ -86,6 +71,46 @@ public class VirtualFileLocationService : IVirtualFileLocationService
         };
 
         await FileLocationTableClient.UpsertEntityAsync(entity, TableUpdateMode.Replace, cancellationToken);
+    }
+
+    public async Task DeleteFileLocationAsync(string virtualPath, string? siteId = null, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(virtualPath))
+        {
+            throw new ArgumentException("VirtualPath is required.", nameof(virtualPath));
+        }
+
+        var partitionKey = string.IsNullOrWhiteSpace(siteId) ? "default" : siteId;
+        var rowKey = EncodeRowKey(virtualPath);
+
+        try
+        {
+            await FileLocationTableClient.DeleteEntityAsync(partitionKey, rowKey, cancellationToken: cancellationToken);
+        }
+        catch (RequestFailedException e) when (e.Status == 404)
+        {
+            // Ignore missing entries.
+        }
+    }
+
+    private async IAsyncEnumerable<VirtualFileLocation> ReadFileLocationsPage(AsyncPageable<FileLocationEntity> query, int pageNumber,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileLocationsPerPage;
+        var page = query
+            .AsPages(pageSizeHint: maxPageSize)
+            .SelectPageNumber(pageNumber);
+        var entities = await page
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+
+        foreach (var entity in entities?.Values ?? [])
+        {
+            yield return new VirtualFileLocation
+            {
+                SiteId = entity.SiteId,
+                VirtualPath = entity.VirtualPath
+            };
+        }
     }
 
     private static string EncodeRowKey(string virtualPath)

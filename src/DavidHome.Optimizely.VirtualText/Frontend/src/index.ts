@@ -5,6 +5,17 @@ type MonacoEditor = import('monaco-editor').editor.IStandaloneCodeEditor;
 type MonacoDiffEditor = import('monaco-editor').editor.IStandaloneDiffEditor;
 type MonacoModel = import('monaco-editor').editor.ITextModel;
 type MonacoEditorOptions = import('monaco-editor').editor.IStandaloneEditorConstructionOptions;
+type VirtualTextFileListItem = {
+  virtualPath: string;
+  siteId: string | null;
+  siteName: string;
+  isDefault: boolean;
+};
+
+type VirtualTextFileListResponse = {
+  files: VirtualTextFileListItem[];
+  hasMore: boolean;
+};
 
 declare global {
   interface Window {
@@ -122,8 +133,11 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
   const endpoints = {
     FileContentUrl: getRequiredAttribute(wrapper, 'data-file-content-url'),
     SaveFileUrl: getRequiredAttribute(wrapper, 'data-save-file-url'),
-    CopyFileUrl: getRequiredAttribute(wrapper, 'data-copy-file-url')
+    CopyFileUrl: getRequiredAttribute(wrapper, 'data-copy-file-url'),
+    DeleteFileUrl: getRequiredAttribute(wrapper, 'data-delete-file-url'),
+    FileListUrl: getRequiredAttribute(wrapper, 'data-file-list-url')
   };
+  const canEdit = getRequiredAttribute(wrapper, 'data-can-edit').toLowerCase() === 'true';
 
   const tokenInput = document.querySelector<HTMLInputElement>('input[name="__RequestVerificationToken"]');
   const antiForgeryToken = tokenInput ? tokenInput.value : '';
@@ -133,8 +147,18 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
   const editorSubtitle = getRequiredElement<HTMLDivElement>('vt-editor-subtitle');
   const editorContainer = getRequiredElement<HTMLDivElement>('vt-editor');
   const editorLoading = document.getElementById('vt-editor-loading');
+  const saveIndicator = document.getElementById('vt-save-indicator');
   const permissionWarning = document.getElementById('vt-permission-warning');
   const permissionClose = permissionWarning ? permissionWarning.querySelector('.vt-alert-close') : null;
+  const notificationContainer = document.getElementById('vt-notification-container');
+  const confirmModal = document.getElementById('vt-confirm-modal');
+  const confirmMessage = document.getElementById('vt-confirm-message');
+  const confirmAccept = document.getElementById('vt-confirm-accept') as HTMLButtonElement | null;
+  const confirmCancel = document.getElementById('vt-confirm-cancel') as HTMLButtonElement | null;
+  const fileListBody = getRequiredElement<HTMLTableSectionElement>('vt-file-list');
+  const filterPathInput = document.getElementById('vt-filter-path') as HTMLInputElement | null;
+  const filterSiteSelect = document.getElementById('vt-filter-site') as HTMLSelectElement | null;
+  const loadMoreButton = document.getElementById('vt-load-more') as HTMLButtonElement | null;
   const compareSite = document.getElementById('vt-compare-site') as HTMLSelectElement | null;
   const compareStart = document.getElementById('vt-compare-start') as HTMLButtonElement | null;
   const compareAccept = document.getElementById('vt-compare-accept') as HTMLButtonElement | null;
@@ -147,7 +171,15 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
   let diffModified: MonacoModel | null = null;
   let editorContentBeforeDiff: string | null = null;
   let dirtyBeforeDiff = false;
+  let compareTargetSiteId: string | null = null;
+  let compareTargetSiteIdSet = false;
   let permissionTimer: number | null = null;
+  let listPageNumber = 1;
+  let listLoading = false;
+  let listHasMore = true;
+  let listRefreshTimer: number | null = null;
+  let saveIndicatorTimer: number | null = null;
+  let confirmResolver: ((value: boolean) => void) | null = null;
 
   function setDirty(dirty: boolean) {
     isDirty = dirty;
@@ -158,16 +190,22 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
 
   function openModal() {
     editorModal.setAttribute('aria-hidden', 'false');
+    editorModal.classList.remove('hidden');
+    editorModal.hidden = false;
   }
 
   function closeModal() {
     editorModal.setAttribute('aria-hidden', 'true');
+    editorModal.classList.add('hidden');
+    editorModal.hidden = true;
     disposeEditors();
     isDirty = false;
     isReadOnly = false;
     currentFile = null;
     editorContainer.innerHTML = '';
     setEditorLoading(false);
+    compareTargetSiteId = null;
+    compareTargetSiteIdSet = false;
     getRequiredElement<HTMLButtonElement>('vt-save').disabled = false;
     if (compareStart) {
       compareStart.disabled = false;
@@ -184,14 +222,15 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
 
   function confirmDiscard() {
     if (!isDirty) {
-      return true;
+      return Promise.resolve(true);
     }
 
-    return window.confirm('You have unsaved changes. Close without saving?');
+    return openConfirmModal('You have unsaved changes. Close without saving?', 'Discard changes', 'Keep editing');
   }
 
-  function attemptClose() {
-    if (confirmDiscard()) {
+  async function attemptClose() {
+    const shouldClose = await confirmDiscard();
+    if (shouldClose) {
       closeModal();
     }
   }
@@ -208,6 +247,67 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
     editorLoading.hidden = !loading;
   }
 
+  function showSaveIndicator() {
+    if (!saveIndicator) {
+      return;
+    }
+    saveIndicator.hidden = false;
+    if (saveIndicatorTimer) {
+      window.clearTimeout(saveIndicatorTimer);
+    }
+    saveIndicatorTimer = window.setTimeout(function () {
+      saveIndicator.hidden = true;
+      saveIndicatorTimer = null;
+    }, 2500);
+  }
+
+  function showNotification(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    if (!notificationContainer) {
+      return;
+    }
+    const notificationDiv = document.createElement('div');
+    const typeClass = type === 'success'
+      ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+      : type === 'error'
+        ? 'border-rose-200 bg-rose-50 text-rose-900'
+        : 'border-slate-200 bg-slate-50 text-slate-900';
+    notificationDiv.className = 'flex items-start gap-3 rounded-lg border px-4 py-3 text-sm shadow ' + typeClass;
+    notificationDiv.innerHTML = '<div class="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-current opacity-60"></div>' +
+      '<div class="flex-1">' + message + '</div>';
+    notificationContainer.appendChild(notificationDiv);
+    window.setTimeout(function () {
+      notificationDiv.remove();
+    }, 4000);
+  }
+
+  function openConfirmModal(message: string, confirmText: string, cancelText: string) {
+    if (!confirmModal || !confirmMessage || !confirmAccept || !confirmCancel) {
+      return Promise.resolve(false);
+    }
+    confirmMessage.textContent = message;
+    confirmAccept.textContent = confirmText;
+    confirmCancel.textContent = cancelText;
+    confirmModal.classList.remove('hidden');
+    confirmModal.hidden = false;
+    confirmModal.setAttribute('aria-hidden', 'false');
+    return new Promise<boolean>(function (resolve) {
+      confirmResolver = resolve;
+    });
+  }
+
+  function closeConfirmModal(result: boolean) {
+    if (!confirmModal) {
+      return;
+    }
+    confirmModal.classList.add('hidden');
+    confirmModal.hidden = true;
+    confirmModal.setAttribute('aria-hidden', 'true');
+    if (confirmResolver) {
+      confirmResolver(result);
+      confirmResolver = null;
+    }
+  }
+
   monacoLoadingStart = function () {
     setEditorLoading(true);
   };
@@ -216,17 +316,136 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
     setEditorLoading(false);
   };
 
+  function getSiteNameById(siteId: string | null) {
+    if (!compareSite) {
+      return siteId ? siteId : 'Default (All Sites)';
+    }
+    for (let i = 0; i < compareSite.options.length; i += 1) {
+      const option = compareSite.options[i];
+      if ((option.value || null) === siteId) {
+        return option.text;
+      }
+    }
+    return siteId ? siteId : 'Default (All Sites)';
+  }
+
+  function getFileListQuery() {
+    return {
+      path: filterPathInput ? filterPathInput.value.trim() : '',
+      siteId: filterSiteSelect ? filterSiteSelect.value || null : null
+    };
+  }
+
+  function buildFileListUrl(pageNumber: number) {
+    const url = new URL(endpoints.FileListUrl, window.location.href);
+    const query = getFileListQuery();
+    url.searchParams.set('pageNumber', String(pageNumber));
+    if (query.path) {
+      url.searchParams.set('virtualPath', query.path);
+    }
+    if (query.siteId) {
+      url.searchParams.set('siteId', query.siteId);
+    }
+    return url.toString();
+  }
+
+  function setLoadMoreState() {
+    if (!loadMoreButton) {
+      return;
+    }
+    loadMoreButton.disabled = listLoading || !listHasMore;
+    loadMoreButton.hidden = !listHasMore;
+  }
+
+  function createFileRow(file: VirtualTextFileListItem) {
+    const row = document.createElement('tr');
+    row.setAttribute('data-virtual-path', file.virtualPath);
+    row.setAttribute('data-site-id', file.siteId || '');
+    row.innerHTML = '<td class="px-3 py-2">' + file.virtualPath + '</td>' +
+      '<td class="px-3 py-2">' + file.siteName + '</td>' +
+      '<td class="px-3 py-2">' +
+      '<div class="flex items-center gap-2">' +
+      '<button type="button" class="vt-action rounded-md border border-slate-300 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50" data-action="view">View</button>' +
+      (canEdit
+        ? '<button type="button" class="vt-action rounded-md border border-slate-300 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50" data-action="edit">Edit</button>' +
+          '<button type="button" class="vt-action rounded-md border border-rose-200 px-2 py-1 text-xs font-medium text-rose-700 hover:bg-rose-50" data-action="delete">Delete</button>'
+        : '') +
+      '</div>' +
+      '</td>';
+    return row;
+  }
+
+  function clearFileList() {
+    fileListBody.innerHTML = '';
+  }
+
+  async function loadFileListPage(pageNumber: number, append: boolean) {
+    if (listLoading) {
+      return;
+    }
+    listLoading = true;
+    setLoadMoreState();
+    try {
+      const response = await fetch(buildFileListUrl(pageNumber));
+      if (!response.ok) {
+        throw new Error('Failed to load file list.');
+      }
+      const data = await response.json() as VirtualTextFileListResponse;
+      if (!append) {
+        clearFileList();
+      }
+      data.files.forEach(function (file) {
+        fileListBody.appendChild(createFileRow(file));
+      });
+      listHasMore = data.hasMore && data.files.length > 0;
+      if (data.files.length > 0) {
+        listPageNumber = pageNumber;
+      }
+    } catch (error: any) {
+      showNotification(error && error.message ? error.message : 'Failed to load file list.', 'error');
+    } finally {
+      listLoading = false;
+      setLoadMoreState();
+    }
+  }
+
+  function refreshFileList(reset: boolean) {
+    if (reset) {
+      listPageNumber = 1;
+      listHasMore = true;
+      clearFileList();
+    }
+    return loadFileListPage(reset ? 1 : listPageNumber + 1, !reset);
+  }
+
+  function finishCopySuccess() {
+    if (!currentFile) {
+      closeModal();
+      compareTargetSiteId = null;
+      compareTargetSiteIdSet = false;
+      return;
+    }
+    refreshFileList(true);
+    closeModal();
+    compareTargetSiteId = null;
+    compareTargetSiteIdSet = false;
+  }
+
   async function loadContent(file: { virtualPath: string; siteId: string | null; siteName: string }, readOnly: boolean) {
-    let url = endpoints.FileContentUrl + '?virtualPath=' + encodeURIComponent(file.virtualPath);
-    if (file.siteId) {
-      url += '&siteId=' + encodeURIComponent(file.siteId);
+    try {
+      let url = endpoints.FileContentUrl + '?virtualPath=' + encodeURIComponent(file.virtualPath);
+      if (file.siteId) {
+        url += '&siteId=' + encodeURIComponent(file.siteId);
+      }
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Failed to load file.');
+      }
+      const content = await response.text();
+      return await openEditor(file, content, readOnly);
+    } catch (error: any) {
+      showNotification(error && error.message ? error.message : 'Failed to load file.', 'error');
     }
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Failed to load file.');
-    }
-    const content = await response.text();
-    return await openEditor(file, content, readOnly);
   }
 
   async function openEditor(file: { virtualPath: string; siteId: string | null; siteName: string }, content: string, readOnly: boolean) {
@@ -260,7 +479,7 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
       }
       openModal();
     } catch (error: any) {
-      window.alert(error && error.message ? error.message : 'Failed to load editor.');
+      showNotification(error && error.message ? error.message : 'Failed to load editor.', 'error');
     }
   }
 
@@ -289,6 +508,8 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
         throw new Error('Failed to save.');
       }
       setDirty(false);
+      showSaveIndicator();
+      showNotification('Saved', 'success');
     });
   }
 
@@ -328,10 +549,11 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
     editorContentBeforeDiff = editor.getValue();
     dirtyBeforeDiff = isDirty;
     disposeEditors();
-    diffOriginal = monaco.editor.createModel(editorContentBeforeDiff || '', 'plaintext');
-    diffModified = monaco.editor.createModel(sourceContent || '', 'plaintext');
+    diffOriginal = monaco.editor.createModel(sourceContent || '', 'plaintext');
+    diffModified = monaco.editor.createModel(editorContentBeforeDiff || '', 'plaintext');
     diffEditor = monaco.editor.createDiffEditor(editorContainer, {
-      readOnly: true,
+      readOnly: false,
+      originalEditable: false,
       automaticLayout: true
     });
     diffEditor.setModel({
@@ -359,9 +581,11 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
       }
       editorContentBeforeDiff = null;
       dirtyBeforeDiff = false;
+      compareTargetSiteId = null;
+      compareTargetSiteIdSet = false;
       setCompareMode(false);
     } catch (error: any) {
-      window.alert(error && error.message ? error.message : 'Failed to load editor.');
+      showNotification(error && error.message ? error.message : 'Failed to load editor.', 'error');
     }
   }
 
@@ -397,16 +621,21 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
     const row = document.createElement('tr');
     row.setAttribute('data-virtual-path', file.virtualPath);
     row.setAttribute('data-site-id', file.siteId || '');
-    row.innerHTML = '<td>' + file.virtualPath + '</td>' +
-      '<td>' + (file.siteName || 'Default (All Sites)') + '</td>' +
-      '<td>' +
-      '<button type="button" class="vt-action" data-action="view">View</button>' +
-      '<button type="button" class="vt-action" data-action="edit">Edit</button>' +
+    row.innerHTML = '<td class="px-3 py-2">' + file.virtualPath + '</td>' +
+      '<td class="px-3 py-2">' + (file.siteName || 'Default (All Sites)') + '</td>' +
+      '<td class="px-3 py-2">' +
+      '<div class="flex items-center gap-2">' +
+      '<button type="button" class="vt-action rounded-md border border-slate-300 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50" data-action="view">View</button>' +
+      (canEdit
+        ? '<button type="button" class="vt-action rounded-md border border-slate-300 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50" data-action="edit">Edit</button>' +
+          '<button type="button" class="vt-action rounded-md border border-rose-200 px-2 py-1 text-xs font-medium text-rose-700 hover:bg-rose-50" data-action="delete">Delete</button>'
+        : '') +
+      '</div>' +
       '</td>';
-    getRequiredElement<HTMLTableElement>('vt-file-list').appendChild(row);
+    fileListBody.appendChild(row);
   }
 
-  getRequiredElement<HTMLTableElement>('vt-file-list').addEventListener('click', async function (event) {
+  fileListBody.addEventListener('click', async function (event) {
     if (!(event.target instanceof HTMLElement)) {
       return;
     }
@@ -428,16 +657,41 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
       await loadContent(file, true);
     } else if (action === 'edit') {
       await loadContent(file, false);
+    } else if (action === 'delete') {
+      const confirmDelete = await openConfirmModal(
+        'Delete this file? This cannot be undone.',
+        'Delete',
+        'Cancel'
+      );
+      if (!confirmDelete) {
+        return;
+      }
+      try {
+        await deleteFile(file);
+        row.remove();
+        if (currentFile &&
+          currentFile.virtualPath === file.virtualPath &&
+          (currentFile.siteId || '') === (file.siteId || '')) {
+          closeModal();
+        }
+        showNotification('Deleted', 'success');
+      } catch (error: any) {
+        if (error && error.message === 'Permission denied.') {
+          return;
+        }
+        showNotification(error && error.message ? error.message : 'Failed to delete file.', 'error');
+      }
     }
   });
 
-  getRequiredElement<HTMLButtonElement>('vt-create-file').addEventListener('click', function () {
-    const pathInput = getRequiredElement<HTMLInputElement>('vt-new-path');
-    const siteSelect = getRequiredElement<HTMLSelectElement>('vt-new-site');
-    const copyDefault = getRequiredElement<HTMLInputElement>('vt-copy-default').checked;
-    const virtualPath = pathInput.value.trim();
-    if (!virtualPath) {
-      window.alert('Please enter a virtual path.');
+  const createButton = document.getElementById('vt-create-file') as HTMLButtonElement | null;
+  if (createButton) {
+    createButton.addEventListener('click', async function () {
+      const pathInput = getRequiredElement<HTMLInputElement>('vt-new-path');
+      const siteSelect = getRequiredElement<HTMLSelectElement>('vt-new-site');
+      const virtualPath = pathInput.value.trim();
+      if (!virtualPath) {
+      showNotification('Please enter a virtual path.', 'error');
       return;
     }
     const siteId = siteSelect.value || null;
@@ -448,19 +702,49 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
       siteName: siteName
     };
 
-    const createPromise = copyDefault && siteId
-      ? copyFromDefault(newFile)
-      : saveCurrentNew(newFile);
-
-    createPromise.then(async function () {
+    try {
+      const exists = await checkFileExists(newFile);
+      if (exists) {
+        const confirmReplace = await openConfirmModal(
+          'A file already exists at this path for the selected site. Replace it with a new one?',
+          'Replace',
+          'Cancel'
+        );
+        if (!confirmReplace) {
+          return;
+        }
+      }
+      await saveCurrentNew(newFile);
       ensureRow(newFile);
       await loadContent(newFile, false);
       pathInput.value = '';
-      getRequiredElement<HTMLInputElement>('vt-copy-default').checked = false;
-    }).catch(function (error) {
-      window.alert(error.message || 'Failed to create file.');
+    } catch (error: any) {
+      if (error && error.message === 'Permission denied.') {
+        return;
+      }
+      showNotification(error && error.message ? error.message : 'Failed to create file.', 'error');
+    }
     });
-  });
+  }
+
+  async function checkFileExists(file: { virtualPath: string; siteId: string | null }) {
+    let url = endpoints.FileContentUrl + '?virtualPath=' + encodeURIComponent(file.virtualPath);
+    if (file.siteId) {
+      url += '&siteId=' + encodeURIComponent(file.siteId);
+    }
+    const response = await fetch(url);
+    if (isPermissionDenied(response)) {
+      showPermissionWarning('You do not have permission to check existing files.');
+      throw new Error('Permission denied.');
+    }
+    if (response.status === 404) {
+      return false;
+    }
+    if (!response.ok) {
+      throw new Error('Failed to check existing file.');
+    }
+    return true;
+  }
 
   async function saveCurrentNew(file: { virtualPath: string; siteId: string | null; siteName: string }) {
     const payload = {
@@ -485,6 +769,59 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
     }
   }
 
+  async function deleteFile(file: { virtualPath: string; siteId: string | null }) {
+    const payload = {
+      virtualPath: file.virtualPath,
+      siteId: file.siteId
+    };
+    const response = await fetch(endpoints.DeleteFileUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'RequestVerificationToken': antiForgeryToken
+      },
+      body: JSON.stringify(payload)
+    });
+    if (isPermissionDenied(response)) {
+      showPermissionWarning('You do not have permission to delete files.');
+      throw new Error('Permission denied.');
+    }
+    if (response.status === 404) {
+      return;
+    }
+    if (!response.ok) {
+      throw new Error('Failed to delete.');
+    }
+  }
+
+  async function saveToSite(targetSiteId: string | null, content: string) {
+    if (!currentFile) {
+      return;
+    }
+    const payload = {
+      virtualPath: currentFile.virtualPath,
+      siteId: targetSiteId,
+      content: content
+    };
+    const response = await fetch(endpoints.SaveFileUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'RequestVerificationToken': antiForgeryToken
+      },
+      body: JSON.stringify(payload)
+    });
+    if (isPermissionDenied(response)) {
+      showPermissionWarning('You do not have permission to save to the target site.');
+      throw new Error('Permission denied.');
+    }
+    if (!response.ok) {
+      throw new Error('Failed to save.');
+    }
+    showSaveIndicator();
+    showNotification('Saved', 'success');
+  }
+
   getRequiredElement<HTMLButtonElement>('vt-save').addEventListener('click', function () {
     saveCurrent();
   });
@@ -500,6 +837,11 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
   });
 
   window.addEventListener('keydown', function (event) {
+    if (confirmModal && confirmModal.getAttribute('aria-hidden') === 'false' && event.key === 'Escape') {
+      event.preventDefault();
+      closeConfirmModal(false);
+      return;
+    }
     if (!editor || editorModal.getAttribute('aria-hidden') === 'true') {
       return;
     }
@@ -518,66 +860,74 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
   }
 
   function showPermissionWarning(message: string) {
-    if (!permissionWarning) {
-      return;
+    showNotification(message, 'error');
+    if (permissionWarning) {
+      permissionWarning.hidden = true;
     }
-    const messageNode = permissionWarning.querySelector('span');
-    if (messageNode) {
-      messageNode.textContent = message;
-    }
-    permissionWarning.hidden = false;
     if (permissionTimer) {
       window.clearTimeout(permissionTimer);
-    }
-    permissionTimer = window.setTimeout(function () {
-      permissionWarning.hidden = true;
       permissionTimer = null;
-    }, 10000);
+    }
   }
 
-  function handleCompareStart() {
+  async function handleCompareStart() {
     if (!currentFile || !editor || !compareSite) {
       return;
     }
     if (isReadOnly) {
       return;
     }
-    const sourceSiteId = compareSite.value || null;
-    if (sourceSiteId === (currentFile.siteId || '')) {
-      window.alert('Select a different site to compare.');
+    const targetSiteId = compareSite.value || null;
+    if (targetSiteId === (currentFile.siteId || '')) {
+      showNotification('Select a different site to copy to.', 'error');
       return;
     }
+    compareTargetSiteId = targetSiteId;
+    compareTargetSiteIdSet = true;
     let url = endpoints.FileContentUrl + '?virtualPath=' + encodeURIComponent(currentFile.virtualPath);
-    if (sourceSiteId) {
-      url += '&siteId=' + encodeURIComponent(sourceSiteId);
+    if (targetSiteId) {
+      url += '&siteId=' + encodeURIComponent(targetSiteId);
     }
-    fetch(url).then(function (response) {
+    try {
+      const response = await fetch(url);
       if (isPermissionDenied(response)) {
-        showPermissionWarning('You do not have permission to read the source file.');
+        showPermissionWarning('You do not have permission to read the target file.');
         throw new Error('Permission denied.');
       }
-      if (!response.ok) {
-        throw new Error('Failed to load source file.');
+      if (response.status === 404) {
+        const confirmCopy = await openConfirmModal('The target site does not have this file yet. Copy it now?', 'Copy now', 'Cancel');
+        if (!confirmCopy) {
+          compareTargetSiteId = null;
+          compareTargetSiteIdSet = false;
+          return;
+        }
+        await saveToSite(compareTargetSiteId, editor.getValue());
+        finishCopySuccess();
+        return;
       }
-      return response.text();
-    }).then(function (content) {
+      if (!response.ok) {
+        throw new Error('Failed to load target file.');
+      }
+      const content = await response.text();
       enterDiffMode(content);
-    }).catch(function (error) {
-      window.alert(error.message || 'Failed to load source file.');
-    });
+    } catch (error: any) {
+      compareTargetSiteId = null;
+      compareTargetSiteIdSet = false;
+      showNotification(error && error.message ? error.message : 'Failed to load target file.', 'error');
+    }
   }
 
   function handleCompareAccept() {
-    if (!diffEditor || !diffModified) {
+    if (!diffEditor || !diffModified || !compareTargetSiteIdSet) {
       return;
     }
-    exitDiffMode(true).then(function () {
-      const savePromise = saveCurrent();
-      if (savePromise && savePromise.catch) {
-        savePromise.catch(function (error) {
-          window.alert(error.message || 'Failed to save.');
-        });
-      }
+    const contentToCopy = diffModified.getValue();
+    saveToSite(compareTargetSiteId, contentToCopy).then(function () {
+      return exitDiffMode(false).then(function () {
+        finishCopySuccess();
+      });
+    }).catch(function (error) {
+      showNotification(error.message || 'Failed to save.', 'error');
     });
   }
 
@@ -600,6 +950,51 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
     });
   }
 
+  if (confirmAccept) {
+    confirmAccept.addEventListener('click', function () {
+      closeConfirmModal(true);
+    });
+  }
+  if (confirmCancel) {
+    confirmCancel.addEventListener('click', function () {
+      closeConfirmModal(false);
+    });
+  }
+  if (confirmModal) {
+    confirmModal.addEventListener('click', function (event) {
+      if (event.target instanceof HTMLElement && event.target.classList.contains('vt-confirm-backdrop')) {
+        closeConfirmModal(false);
+      }
+    });
+  }
+
+  if (filterPathInput) {
+    filterPathInput.addEventListener('input', function () {
+      if (listRefreshTimer) {
+        window.clearTimeout(listRefreshTimer);
+      }
+      listRefreshTimer = window.setTimeout(function () {
+        refreshFileList(true);
+        listRefreshTimer = null;
+      }, 300);
+    });
+  }
+
+  if (filterSiteSelect) {
+    filterSiteSelect.addEventListener('change', function () {
+      refreshFileList(true);
+    });
+  }
+
+  if (loadMoreButton) {
+    loadMoreButton.addEventListener('click', function () {
+      if (listLoading || !listHasMore) {
+        return;
+      }
+      refreshFileList(false);
+    });
+  }
+
   if (compareStart) {
     compareStart.addEventListener('click', handleCompareStart);
   }
@@ -609,4 +1004,6 @@ window.VirtualTextMonaco = getVirtualTextMonaco();
   if (compareCancel) {
     compareCancel.addEventListener('click', handleCompareCancel);
   }
+
+  refreshFileList(true);
 })();

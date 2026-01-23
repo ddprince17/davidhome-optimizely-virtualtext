@@ -27,7 +27,10 @@ public class VirtualTextPartialRouter<TContent> : IPartialRouter<TContent, Virtu
         var remainingSegments = segmentContext.RemainingSegments.Span.ToString(); // Using Span doesn't create a new string, it re-uses the same memory location.
         var siteId = contentSiteDefinition.Id.ToString("N");
         var fileLocations = _fileLocationService
-            .QueryFileLocations(remainingSegments)
+            .QueryFileLocations(new VirtualFileLocationQuery
+            {
+                VirtualPath = remainingSegments
+            })
             .Where(location => location.SiteId == siteId || string.IsNullOrEmpty(location.SiteId))
             .ToArrayAsync();
         var inMemoryLocations = AsyncHelper.RunSync(fileLocations.AsTask);
