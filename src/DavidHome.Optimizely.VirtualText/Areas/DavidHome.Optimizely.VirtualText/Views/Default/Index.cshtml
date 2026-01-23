@@ -7,7 +7,6 @@
     var thisType = typeof(IVirtualTextPartialRouterWrapper);
 }
 
-<link rel="stylesheet" href="@Paths.ToClientResource(thisType, "monaco-editor.css")"/>
 <link rel="stylesheet" href="@Paths.ToClientResource(thisType, "virtualtext-app.css")"/>
 
 <div class="vt-wrapper"
@@ -96,9 +95,13 @@
                 <button type="button" class="vt-alert-close" aria-label="Dismiss">×</button>
             </div>
         </div>
-        <div id="vt-editor" class="vt-editor"></div>
+        <div id="vt-editor" class="vt-editor">
+            <div id="vt-editor-loading" class="vt-editor-loading" hidden>
+                <div class="vt-spinner" aria-hidden="true"></div>
+                <div class="vt-loading-text" role="status" aria-live="polite">Loading editor...</div>
+            </div>
+        </div>
     </div>
 </div>
 
-<script src="@Paths.ToClientResource(thisType, "monaco-editor.js")"></script>
 <script src="@Paths.ToClientResource(thisType, "virtualtext-app.js")"></script>

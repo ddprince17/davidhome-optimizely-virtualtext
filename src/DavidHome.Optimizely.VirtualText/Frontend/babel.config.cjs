@@ -5,7 +5,8 @@ module.exports = {
       {
         targets: 'defaults'
       }
-    ]
+    ],
+    '@babel/preset-typescript'
   ],
   sourceType: 'unambiguous'
 };

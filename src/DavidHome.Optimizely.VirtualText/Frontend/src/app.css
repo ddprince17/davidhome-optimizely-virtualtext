@@ -186,4 +186,38 @@
 .vt-editor {
   flex: 1;
   min-height: 400px;
+  position: relative;
+}
+
+.vt-editor-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 2;
+  text-align: center;
+}
+
+.vt-spinner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid #c9d6e4;
+  border-top-color: #1b6ec2;
+  animation: vt-spin 0.9s linear infinite;
+}
+
+.vt-loading-text {
+  font-size: 13px;
+  color: #334155;
+}
+
+@keyframes vt-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

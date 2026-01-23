@@ -6,11 +6,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 module.exports = {
   mode: 'production',
   entry: {
-    'monaco-editor': path.resolve(__dirname, 'src/monaco.bundle.js'),
-    'virtualtext-app': {
-      import: path.resolve(__dirname, 'src/index.js'),
-      dependOn: 'monaco-editor'
-    }
+    'virtualtext-app': path.resolve(__dirname, 'src/index.ts')
   },
   output: {
     path: path.resolve(__dirname, '..', 'ClientResources'),
@@ -19,20 +15,18 @@ module.exports = {
     clean: true,
     globalObject: 'self'
   },
+  resolve: {
+    extensions: ['.ts', '.js']
+  },
   target: 'web',
   optimization: {
     minimize: true,
     minimizer: ['...', new CssMinimizerPlugin()]
   },
   module: {
-    parser: {
-      javascript: {
-        dynamicImportMode: 'eager'
-      }
-    },
     rules: [
       {
-        test: /\.js$/,
+        test: /\.[jt]s$/,
         include: [
           path.resolve(__dirname, 'src'),
           path.resolve(__dirname, 'node_modules/monaco-editor')
