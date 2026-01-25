@@ -4,7 +4,7 @@ using EPiServer.Core.Routing.Internal;
 using EPiServer.Core.Routing.Pipeline;
 using EPiServer.Core.Routing.Pipeline.Internal;
 
-namespace DavidHome.Optimizely.VirtualText.Routing;
+namespace DavidHome.Optimizely.VirtualText.Core.Routing;
 
 public class VirtualTextCheckPipelineStep : IUrlResolverPipelineStep
 {

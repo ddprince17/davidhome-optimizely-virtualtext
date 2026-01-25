@@ -1985,11 +1985,8 @@
       "davidhome.optimizely.virtualtext": {
         "type": "Project",
         "dependencies": {
-          "DavidHome.Optimizely.VirtualText.Contracts": "[1.0.0, )",
-          "DavidHome.Optimizely.VirtualText.Models": "[1.0.0, )",
-          "EPiServer.CMS.AspNetCore.Mvc": "[12.12.1, 13.0.0)",
-          "EPiServer.CMS.UI.Core": "[12.17.0, 13.0.0)",
-          "System.Linq.AsyncEnumerable": "[10.0.0, )"
+          "DavidHome.Optimizely.VirtualText.Core": "[1.0.0, )",
+          "EPiServer.CMS.UI.Core": "[12.17.0, 13.0.0)"
         }
       },
       "davidhome.optimizely.virtualtext.content.azureblob": {
@@ -2004,6 +2001,15 @@
         "type": "Project",
         "dependencies": {
           "DavidHome.Optimizely.VirtualText.Models": "[1.0.0, )"
+        }
+      },
+      "davidhome.optimizely.virtualtext.core": {
+        "type": "Project",
+        "dependencies": {
+          "DavidHome.Optimizely.VirtualText.Contracts": "[1.0.0, )",
+          "DavidHome.Optimizely.VirtualText.Models": "[1.0.0, )",
+          "EPiServer.CMS.AspNetCore.Mvc": "[12.12.1, 13.0.0)",
+          "System.Linq.AsyncEnumerable": "[10.0.0, )"
         }
       },
       "davidhome.optimizely.virtualtext.location.azuretable": {

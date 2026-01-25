@@ -14,18 +14,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Contracts\DavidHome.Optimizely.VirtualText.Contracts.csproj" />
-      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Models\DavidHome.Optimizely.VirtualText.Models.csproj" />
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Core\DavidHome.Optimizely.VirtualText.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="EPiServer.CMS.UI.Core" />
-      <PackageReference Include="EPiServer.CMS.AspNetCore.Mvc" />
       <PackageReference Include="GitVersion.MsBuild">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="System.Linq.AsyncEnumerable" />
     </ItemGroup>
 
     <ItemGroup>

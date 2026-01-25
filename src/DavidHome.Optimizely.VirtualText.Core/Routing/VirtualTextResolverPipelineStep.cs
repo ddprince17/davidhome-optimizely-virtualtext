@@ -4,7 +4,7 @@ using EPiServer.Core.Routing.Pipeline;
 using EPiServer.Core.Routing.Pipeline.Internal;
 using EPiServer.Web;
 
-namespace DavidHome.Optimizely.VirtualText.Routing;
+namespace DavidHome.Optimizely.VirtualText.Core.Routing;
 
 public class VirtualTextResolverPipelineStep : IUrlResolverPipelineStep
 {

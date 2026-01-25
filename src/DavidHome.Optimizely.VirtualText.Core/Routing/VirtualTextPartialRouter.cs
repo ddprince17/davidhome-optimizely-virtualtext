@@ -5,7 +5,7 @@ using EPiServer.Core.Routing;
 using EPiServer.Core.Routing.Pipeline;
 using EPiServer.Web;
 
-namespace DavidHome.Optimizely.VirtualText.Routing;
+namespace DavidHome.Optimizely.VirtualText.Core.Routing;
 
 public class VirtualTextPartialRouter<TContent> : IPartialRouter<TContent, VirtualTextRoutedData> where TContent : class, IContent
 {

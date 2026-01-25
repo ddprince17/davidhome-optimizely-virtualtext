@@ -1,4 +1,4 @@
-namespace DavidHome.Optimizely.VirtualText;
+namespace DavidHome.Optimizely.VirtualText.Core;
 
 internal static class AsyncHelper
 {

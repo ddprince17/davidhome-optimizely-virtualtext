@@ -1,10 +1,9 @@
-﻿@using DavidHome.Optimizely.VirtualText
-@using DavidHome.Optimizely.VirtualText.Models
+﻿@using DavidHome.Optimizely.VirtualText.Models
 @using EPiServer.Shell
 @model VirtualTextIndexViewModel
 
 @{
-    var thisType = typeof(IVirtualTextPartialRouterWrapper);
+    var thisType = typeof(VirtualTextIndexViewModel);
 }
 
 <link rel="stylesheet" href="@Paths.ToClientResource(thisType, "virtualtext-app.css")"/>

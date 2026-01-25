@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using EPiServer.Shell;
+﻿using EPiServer.Shell;
 using Microsoft.AspNetCore.Mvc.Routing;
 
 // ReSharper disable ReplaceWithFieldKeyword

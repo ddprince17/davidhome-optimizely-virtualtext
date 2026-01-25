@@ -2,7 +2,7 @@ using DavidHome.Optimizely.VirtualText.Models;
 using EPiServer.Core;
 using EPiServer.Core.Routing;
 
-namespace DavidHome.Optimizely.VirtualText.Routing;
+namespace DavidHome.Optimizely.VirtualText.Core.Routing;
 
 internal class VirtualTextPartialRouterWrapper<TContent> : IVirtualTextPartialRouterWrapper<TContent> where TContent : class, IContent
 {
