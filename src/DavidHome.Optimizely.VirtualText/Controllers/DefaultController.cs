@@ -47,6 +47,12 @@ public class DefaultController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> Import(CancellationToken cancellationToken)
+    {
+        return View();
+    }
+
+    [HttpGet]
     public async Task<IActionResult> FileList(string? virtualPath, string? siteId, int pageNumber = 1, CancellationToken cancellationToken = default)
     {
         if (pageNumber < 1)

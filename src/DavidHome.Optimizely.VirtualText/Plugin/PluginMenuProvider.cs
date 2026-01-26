@@ -17,8 +17,10 @@ public class PluginMenuProvider : IMenuProvider
 
     public IEnumerable<MenuItem> GetMenuItems()
     {
+        var moduleType = GetType();
+        
         yield return new UrlMenuItem(_localizationService.GetString("/davidhome/dhopvirtualtext/gadget/title", "Virtual Text Editor"), "/global/cms/dhopvirtualtext",
-            Paths.ToResource(GetType(), $"Default/{nameof(DefaultController.Index)}"))
+            Paths.ToResource(moduleType, $"Default/{nameof(DefaultController.Index)}"))
         {
             SortIndex = 0,
             Alignment = 0,
@@ -26,9 +28,17 @@ public class PluginMenuProvider : IMenuProvider
         };
 
         yield return new UrlMenuItem(_localizationService.GetString("/davidhome/dhopvirtualtext/index/menu", "Home"), "/global/cms/dhopvirtualtext/index",
-            Paths.ToResource(GetType(), $"Default/{nameof(DefaultController.Index)}"))
+            Paths.ToResource(moduleType, $"Default/{nameof(DefaultController.Index)}"))
         {
             SortIndex = 10,
+            Alignment = 0,
+            IsAvailable = _ => true
+        };
+
+        yield return new UrlMenuItem(_localizationService.GetString("/davidhome/dhopvirtualtext/import/menu", "Import"), "/global/cms/dhopvirtualtext/import",
+            Paths.ToResource(moduleType, $"Default/{nameof(DefaultController.Import)}"))
+        {
+            SortIndex = 20,
             Alignment = 0,
             IsAvailable = _ => true
         };

@@ -1,151 +1,35 @@
 ﻿@using DavidHome.Optimizely.VirtualText.Models
+@using System.Text.Json
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @using EPiServer.Shell
 @model VirtualTextIndexViewModel
 
 @{
     var thisType = typeof(VirtualTextIndexViewModel);
+    var bootstrap = new
+    {
+        endpoints = new
+        {
+            FileContentUrl = Url.Action("FileContent", "Default"),
+            SaveFileUrl = Url.Action("SaveFile", "Default"),
+            CopyFileUrl = Url.Action("CopyFile", "Default"),
+            DeleteFileUrl = Url.Action("DeleteFile", "Default"),
+            FileListUrl = Url.Action("FileList", "Default")
+        },
+        sites = Model.Sites,
+        files = Model.Files,
+        canEdit = Model.CanEdit,
+        antiForgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken
+    };
+    var bootstrapJson = JsonSerializer.Serialize(bootstrap, new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    });
 }
 
 <link rel="stylesheet" href="@Paths.ToClientResource(thisType, "virtualtext-app.css")"/>
 
-<div class="vt-wrapper flex flex-col gap-4 font-sans text-slate-900"
-     data-file-content-url="@Url.Action("FileContent", "Default")"
-     data-save-file-url="@Url.Action("SaveFile", "Default")"
-     data-copy-file-url="@Url.Action("CopyFile", "Default")"
-     data-delete-file-url="@Url.Action("DeleteFile", "Default")"
-     data-file-list-url="@Url.Action("FileList", "Default")"
-     data-can-edit="@Model.CanEdit">
-    <div class="vt-header flex flex-col gap-3">
-        @if (Model.CanEdit)
-        {
-            <div class="vt-create flex flex-wrap items-end gap-3">
-                <label class="flex flex-col gap-1 text-sm">
-                    Path
-                    <input type="text" id="vt-new-path" placeholder="example.txt" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200" />
-                </label>
-                <label class="flex flex-col gap-1 text-sm">
-                    Site
-                    <select id="vt-new-site" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200">
-                        @foreach (var site in Model.Sites)
-                        {
-                            <option value="@site.SiteId">@site.Name</option>
-                        }
-                    </select>
-                </label>
-                <button type="button" id="vt-create-file" class="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-slate-800">Create</button>
-            </div>
-        }
-        <div class="vt-filter flex flex-wrap items-end gap-3">
-            <label class="flex basis-1/2 flex-col gap-1 text-sm">
-                Search path
-                <input type="text" id="vt-filter-path" placeholder="example.txt" class="w-full min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200" />
-            </label>
-            <label class="flex flex-col gap-1 text-sm">
-                Filter site
-                <select id="vt-filter-site" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200">
-                    @foreach (var site in Model.Sites)
-                    {
-                        <option value="@site.SiteId">@site.Name</option>
-                    }
-                </select>
-            </label>
-        </div>
-    </div>
-
-    <table class="vt-table w-full table-auto border-collapse text-sm">
-        <thead>
-        <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-            <th class="px-3 py-2">Path</th>
-            <th class="px-3 py-2">Site</th>
-            <th class="px-3 py-2">Actions</th>
-        </tr>
-        </thead>
-        <tbody id="vt-file-list" class="divide-y divide-slate-100">
-        @foreach (var file in Model.Files)
-        {
-            <tr data-virtual-path="@file.VirtualPath" data-site-id="@file.SiteId">
-                <td class="px-3 py-2">@file.VirtualPath</td>
-                <td class="px-3 py-2">@file.SiteName</td>
-                <td class="px-3 py-2">
-                    <div class="flex items-center gap-2">
-                        <button type="button" class="vt-action rounded-md border border-slate-300 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50" data-action="view">View</button>
-                        @if (Model.CanEdit)
-                        {
-                            <button type="button" class="vt-action rounded-md border border-slate-300 px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50" data-action="edit">Edit</button>
-                            <button type="button" class="vt-action rounded-md border border-rose-200 px-2 py-1 text-xs font-medium text-rose-700 hover:bg-rose-50" data-action="delete">Delete</button>
-                        }
-                    </div>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-    <div class="vt-load-more flex justify-center pt-3">
-        <button type="button" id="vt-load-more" class="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Load more</button>
-    </div>
-</div>
-
-<div class="vt-modal fixed inset-0 z-[2000] hidden flex items-center justify-center" id="vt-editor-modal" aria-hidden="true" hidden>
-    <div class="vt-modal-backdrop absolute inset-0 bg-slate-900/60"></div>
-    <div class="vt-modal-content relative z-10 flex h-[88vh] w-[92vw] max-w-5xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl">
-        <div class="vt-modal-header flex flex-col gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3">
-            <div class="vt-modal-header-row flex flex-wrap items-center justify-between gap-3">
-                <div>
-                    <div id="vt-editor-title" class="vt-title text-base font-semibold text-slate-900">Editor</div>
-                    <div id="vt-editor-subtitle" class="vt-subtitle text-xs text-slate-500"></div>
-                </div>
-                <div class="vt-modal-actions flex items-center gap-2">
-                    <button type="button" id="vt-save" class="vt-primary rounded-md bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white shadow hover:bg-slate-800">Save</button>
-                    <span id="vt-save-indicator" class="vt-save-indicator text-xs font-semibold text-emerald-600" hidden>Saved</span>
-                    <button type="button" id="vt-close" class="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100">Close</button>
-                </div>
-            </div>
-            <div class="vt-compare flex flex-wrap items-end gap-3">
-                <label class="flex flex-col gap-1 text-sm">
-                    Copy to site
-                    <select id="vt-compare-site" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200">
-                        @foreach (var site in Model.Sites)
-                        {
-                            <option value="@site.SiteId">@site.Name</option>
-                        }
-                    </select>
-                </label>
-                <button type="button" id="vt-compare-start" class="vt-primary rounded-md bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white shadow hover:bg-slate-800">Preview Copy</button>
-                <div class="vt-compare-actions flex items-center gap-2">
-                    <button type="button" id="vt-compare-accept" class="vt-primary rounded-md bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white shadow hover:bg-slate-800" hidden>Copy &amp; Save</button>
-                    <button type="button" id="vt-compare-cancel" class="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100" hidden>Cancel</button>
-                </div>
-            </div>
-            <div id="vt-permission-warning" class="vt-alert hidden rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
-                <span>You do not have permission to save files.</span>
-                <button type="button" class="vt-alert-close ml-2 text-base font-semibold leading-none text-rose-700" aria-label="Dismiss">×</button>
-            </div>
-        </div>
-        <div id="vt-editor" class="vt-editor relative min-h-[400px] flex-1">
-            <div id="vt-editor-loading" class="vt-editor-loading absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white/80 text-center" hidden>
-                <div class="vt-spinner h-9 w-9 animate-spin rounded-full border-2 border-slate-200 border-t-slate-900" aria-hidden="true"></div>
-                <div class="vt-loading-text text-xs text-slate-600" role="status" aria-live="polite">Loading editor...</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="vt-notification-container" class="fixed right-4 top-20 z-[3000] flex w-full max-w-sm flex-col gap-3"></div>
-
-<div id="vt-confirm-modal" class="fixed inset-0 z-[2200] hidden" aria-hidden="true" hidden>
-    <div class="vt-confirm-backdrop fixed inset-0 bg-slate-900/60"></div>
-    <div class="fixed inset-0 flex items-center justify-center p-4">
-        <div class="w-full max-w-md rounded-xl bg-white shadow-xl">
-            <div class="p-6">
-                <h2 class="text-lg font-semibold text-slate-900">Please confirm</h2>
-                <p id="vt-confirm-message" class="mt-2 text-sm text-slate-600"></p>
-            </div>
-            <div class="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
-                <button type="button" id="vt-confirm-cancel" class="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
-                <button type="button" id="vt-confirm-accept" class="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800">Confirm</button>
-            </div>
-        </div>
-    </div>
-</div>
+<script type="application/json" id="vt-bootstrap">@Html.Raw(bootstrapJson)</script>
+<vt-app data-bootstrap-id="vt-bootstrap"></vt-app>
 
 <script src="@Paths.ToClientResource(thisType, "virtualtext-app.js")"></script>

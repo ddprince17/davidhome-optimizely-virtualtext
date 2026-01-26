@@ -38,7 +38,8 @@ public class VirtualFileLocationService : IVirtualFileLocationService
         return ReadFileLocationsPage(tableQuery, query.PageNumber, cancellationToken);
     }
 
-    public async IAsyncEnumerable<VirtualFileLocation> QueryFileLocationsFuzzy(VirtualFileLocationQuery query, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<VirtualFileLocation> QueryFileLocationsFuzzy(VirtualFileLocationQuery query,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileLocationsPerPage;
         var entities = FileLocationTableClient.QueryAsync<FileLocationEntity>(
