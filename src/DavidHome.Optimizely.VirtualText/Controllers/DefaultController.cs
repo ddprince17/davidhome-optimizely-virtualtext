@@ -90,14 +90,14 @@ public class DefaultController : Controller
         int pageNumber = 1,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var locations = _fileLocationService.QueryFileLocations(new VirtualFileLocationQuery
+        var locations = _fileLocationService.QueryFileLocationsFuzzy(new VirtualFileLocationQuery
         {
             VirtualPath = virtualPath,
             SiteId = siteId,
             PageNumber = pageNumber
         }, cancellationToken);
 
-        await foreach (var location in locations.WithCancellation(cancellationToken))
+        await foreach (var location in locations)
         {
             var siteName = string.IsNullOrWhiteSpace(location.SiteId)
                 ? "Default (All Sites)"

@@ -43,7 +43,6 @@
             <label class="flex flex-col gap-1 text-sm">
                 Filter site
                 <select id="vt-filter-site" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200">
-                    <option value="">All sites</option>
                     @foreach (var site in Model.Sites)
                     {
                         <option value="@site.SiteId">@site.Name</option>

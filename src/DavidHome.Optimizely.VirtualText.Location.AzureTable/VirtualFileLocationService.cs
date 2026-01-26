@@ -28,11 +28,6 @@ public class VirtualFileLocationService : IVirtualFileLocationService
 
     public IAsyncEnumerable<VirtualFileLocation> QueryFileLocations(VirtualFileLocationQuery query, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(query.VirtualPath))
-        {
-            return GetAllFileLocations(query.PageNumber, cancellationToken);
-        }
-
         var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileLocationsPerPage;
         var tableQuery = FileLocationTableClient.QueryAsync<FileLocationEntity>(
             entity => entity.VirtualPath == query.VirtualPath &&
@@ -43,14 +38,26 @@ public class VirtualFileLocationService : IVirtualFileLocationService
         return ReadFileLocationsPage(tableQuery, query.PageNumber, cancellationToken);
     }
 
-    public IAsyncEnumerable<VirtualFileLocation> GetAllFileLocations(int pageNumber = 1, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<VirtualFileLocation> QueryFileLocationsFuzzy(VirtualFileLocationQuery query, CancellationToken cancellationToken = default)
     {
         var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileLocationsPerPage;
-        var query = FileLocationTableClient.QueryAsync<FileLocationEntity>(
-            maxPerPage: maxPageSize,
-            cancellationToken: cancellationToken);
+        var entities = FileLocationTableClient.QueryAsync<FileLocationEntity>(
+                entity => string.IsNullOrEmpty(query.SiteId) || entity.SiteId == query.SiteId,
+                maxPerPage: maxPageSize,
+                cancellationToken: cancellationToken)
+            .Where(entity => string.IsNullOrEmpty(entity.VirtualPath) || string.IsNullOrEmpty(query.VirtualPath) ||
+                             entity.VirtualPath.Contains(query.VirtualPath, StringComparison.OrdinalIgnoreCase))
+            .Skip(query.PageNumber * maxPageSize - maxPageSize)
+            .Take(maxPageSize);
 
-        return ReadFileLocationsPage(query, pageNumber, cancellationToken);
+        await foreach (var entity in entities)
+        {
+            yield return new VirtualFileLocation()
+            {
+                VirtualPath = entity.VirtualPath,
+                SiteId = entity.SiteId,
+            };
+        }
     }
 
     public async Task UpsertFileLocationAsync(VirtualFileLocation location, CancellationToken cancellationToken = default)
