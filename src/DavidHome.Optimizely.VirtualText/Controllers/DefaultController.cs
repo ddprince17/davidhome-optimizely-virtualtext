@@ -20,7 +20,10 @@ public class DefaultController : Controller
     private readonly ISiteDefinitionRepository _siteDefinitionRepository;
     private readonly PermissionService _permissionService;
 
-    public DefaultController(IVirtualFileLocationService fileLocationService, IVirtualFileContentService fileContentService, ISiteDefinitionRepository siteDefinitionRepository, PermissionService permissionService)
+    [ViewData] public string? Title { get; set; }
+
+    public DefaultController(IVirtualFileLocationService fileLocationService, IVirtualFileContentService fileContentService, ISiteDefinitionRepository siteDefinitionRepository,
+        PermissionService permissionService)
     {
         _fileLocationService = fileLocationService;
         _fileContentService = fileContentService;
@@ -31,6 +34,8 @@ public class DefaultController : Controller
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
+        Title = "Virtual Text Editor";
+
         var sites = GetVirtualTextSiteOptions().ToArray();
         var fileLocations = GetVirtualTextFileListItems(sites, cancellationToken: cancellationToken);
         var model = new VirtualTextIndexViewModel
@@ -47,9 +52,150 @@ public class DefaultController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Import(CancellationToken cancellationToken)
+    public IActionResult Import(CancellationToken cancellationToken)
     {
-        return View();
+        Title = "Import Existing Text Files";
+
+        var sites = GetVirtualTextSiteOptions().ToArray();
+        var model = new VirtualTextImportViewModel
+        {
+            Items = [],
+            Sites = sites,
+            CanEdit = _permissionService.IsPermitted(User, PluginPermissions.EditSettings)
+        };
+
+        return View(model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ImportList(int pageNumber = 1, CancellationToken cancellationToken = default)
+    {
+        if (pageNumber < 1)
+        {
+            return BadRequest("Page number must be at least 1.");
+        }
+
+        var entries = await _fileContentService
+            .ListFilePaths(pageNumber, cancellationToken)
+            .Select(BuildImportItem)
+            .OrderBy(item => item.VirtualPath, StringComparer.Ordinal)
+            .ThenBy(item => item.SourceSiteName, StringComparer.Ordinal)
+            .ToArrayAsync(cancellationToken);
+
+        var existingKeys = await GetExistingLocationKeys(entries, cancellationToken);
+        var items = entries
+            .Where(item => !existingKeys.Contains(GetLocationKey(item.VirtualPath, item.SourceSiteId)))
+            .ToArray();
+
+        var hasMore = await _fileContentService
+            .ListFilePaths(pageNumber + 1, cancellationToken)
+            .AnyAsync(cancellationToken);
+
+        return Json(new VirtualTextImportListResponse
+        {
+            Items = items,
+            HasMore = hasMore
+        });
+    }
+
+    private VirtualTextImportItem BuildImportItem(ContentServiceFile entry)
+    {
+        var virtualPath = entry.VirtualPath;
+        var normalizedSiteId = entry.SourceSiteId;
+        if (string.IsNullOrEmpty(normalizedSiteId) || !Guid.TryParse(normalizedSiteId, out var siteGuid))
+        {
+            return new VirtualTextImportItem
+            {
+                VirtualPath = virtualPath,
+                SourceSiteId = null,
+                SourceSiteName = "Default (All Sites)",
+                IsUnknownSite = false,
+                SelectedSiteId = null
+            };
+        }
+
+        var siteName = _siteDefinitionRepository.Get(siteGuid)?.Name;
+        var isUnknown = string.IsNullOrEmpty(siteName);
+        return new VirtualTextImportItem
+        {
+            VirtualPath = virtualPath,
+            SourceSiteId = normalizedSiteId,
+            SourceSiteName = siteName ?? "Unknown",
+            IsUnknownSite = isUnknown,
+            SelectedSiteId = normalizedSiteId
+        };
+    }
+
+    private async Task<HashSet<string>> GetExistingLocationKeys(IReadOnlyCollection<VirtualTextImportItem> items, CancellationToken cancellationToken)
+    {
+        var keys = new HashSet<string>(StringComparer.Ordinal);
+        if (items.Count == 0)
+        {
+            return keys;
+        }
+
+        foreach (var group in items.GroupBy(item => item.SourceSiteId ?? string.Empty))
+        {
+            var paths = group
+                .Select(item => item.VirtualPath)
+                .Where(path => !string.IsNullOrEmpty(path))
+                .Distinct(StringComparer.Ordinal)
+                .ToArray();
+
+            if (paths.Length == 0)
+            {
+                continue;
+            }
+
+            var results = await _fileLocationService.QueryFileLocations(new VirtualFileLocationQuery
+                {
+                    VirtualPaths = paths,
+                    SiteId = string.IsNullOrEmpty(group.Key) ? null : group.Key
+                }, cancellationToken)
+                .ToArrayAsync(cancellationToken: cancellationToken);
+
+            foreach (var item in results)
+            {
+                keys.Add(GetLocationKey(item.VirtualPath ?? string.Empty, item.SiteId));
+            }
+        }
+
+        return keys;
+    }
+
+    private static string GetLocationKey(string virtualPath, string? siteId)
+    {
+        return $"{siteId ?? string.Empty}::{virtualPath}";
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [AnyAuthorizePermission(PluginPermissions.GroupName, PluginPermissions.EditPermissionsName)]
+    public async Task<IActionResult> ImportFile([FromBody] ImportFileRequest request, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(request.VirtualPath))
+        {
+            return BadRequest("Virtual path is required.");
+        }
+
+        if (!_permissionService.IsPermitted(User, PluginPermissions.EditSettings))
+        {
+            return Forbid();
+        }
+
+        if (!string.Equals(request.SourceSiteId ?? string.Empty, request.TargetSiteId ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+        {
+            await _fileContentService.MoveVirtualFileAsync(request.VirtualPath, request.SourceSiteId, request.TargetSiteId, cancellationToken);
+            await _fileLocationService.DeleteFileLocationAsync(request.VirtualPath, request.SourceSiteId, cancellationToken);
+        }
+
+        await _fileLocationService.UpsertFileLocationAsync(new VirtualFileLocation
+        {
+            SiteId = request.TargetSiteId,
+            VirtualPath = request.VirtualPath
+        }, cancellationToken);
+
+        return Ok();
     }
 
     [HttpGet]
@@ -98,14 +244,14 @@ public class DefaultController : Controller
     {
         var locations = _fileLocationService.QueryFileLocationsFuzzy(new VirtualFileLocationQuery
         {
-            VirtualPath = virtualPath,
+            VirtualPaths = string.IsNullOrEmpty(virtualPath) ? null : new[] { virtualPath },
             SiteId = siteId,
             PageNumber = pageNumber
         }, cancellationToken);
 
         await foreach (var location in locations)
         {
-            var siteName = string.IsNullOrWhiteSpace(location.SiteId)
+            var siteName = string.IsNullOrEmpty(location.SiteId)
                 ? "Default (All Sites)"
                 : sites.FirstOrDefault(site => site.SiteId == location.SiteId)?.Name ?? "Unknown";
 
@@ -114,7 +260,7 @@ public class DefaultController : Controller
                 VirtualPath = location.VirtualPath ?? string.Empty,
                 SiteId = location.SiteId,
                 SiteName = siteName,
-                IsDefault = string.IsNullOrWhiteSpace(location.SiteId)
+                IsDefault = string.IsNullOrEmpty(location.SiteId)
             };
         }
     }
@@ -146,7 +292,7 @@ public class DefaultController : Controller
         {
             return NotFound();
         }
-        
+
         return new FileStreamResult(stream, "text/plain");
     }
 
@@ -232,5 +378,12 @@ public class DefaultController : Controller
     {
         public string VirtualPath { get; init; } = string.Empty;
         public string? SiteId { get; init; }
+    }
+
+    public class ImportFileRequest
+    {
+        public string VirtualPath { get; init; } = string.Empty;
+        public string? SourceSiteId { get; init; }
+        public string? TargetSiteId { get; init; }
     }
 }

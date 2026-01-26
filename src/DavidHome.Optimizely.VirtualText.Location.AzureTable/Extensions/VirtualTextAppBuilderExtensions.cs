@@ -19,7 +19,7 @@ public static class VirtualTextAppBuilderExtensions
             var tableClient = clientFactory?.CreateClient(VirtualTextConstants.ClientName);
 
             // Is making sure the table is created while starting the app.
-            tableClient?.CreateTableIfNotExists(VirtualFileLocationService.TableName);
+            tableClient?.CreateTableIfNotExists(TableFileLocationService.TableName);
 
             return app;
         }

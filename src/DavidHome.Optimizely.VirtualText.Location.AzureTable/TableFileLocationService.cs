@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Azure;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace DavidHome.Optimizely.VirtualText.Location.AzureTable;
 
-public class VirtualFileLocationService : IVirtualFileLocationService
+public class TableFileLocationService : IVirtualFileLocationService
 {
     internal const string TableName = "DhVirtualText";
 
@@ -20,22 +21,38 @@ public class VirtualFileLocationService : IVirtualFileLocationService
     private TableServiceClient FileLocationServiceClient => _tableClientFactory.CreateClient(VirtualTextConstants.ClientName);
     private TableClient FileLocationTableClient => FileLocationServiceClient.GetTableClient(TableName);
 
-    public VirtualFileLocationService(IAzureClientFactory<TableServiceClient> tableClientFactory, IOptionsMonitor<VirtualTextOptions> virtualTextOptions)
+    public TableFileLocationService(IAzureClientFactory<TableServiceClient> tableClientFactory, IOptionsMonitor<VirtualTextOptions> virtualTextOptions)
     {
         _tableClientFactory = tableClientFactory;
         _virtualTextOptions = virtualTextOptions;
     }
 
-    public IAsyncEnumerable<VirtualFileLocation> QueryFileLocations(VirtualFileLocationQuery query, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<VirtualFileLocation> QueryFileLocations(VirtualFileLocationQuery query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileLocationsPerPage;
-        var tableQuery = FileLocationTableClient.QueryAsync<FileLocationEntity>(
-            entity => entity.VirtualPath == query.VirtualPath &&
-                      (string.IsNullOrWhiteSpace(query.SiteId) || entity.SiteId == query.SiteId),
-            maxPerPage: maxPageSize,
-            cancellationToken: cancellationToken);
+        var parameter = Expression.Parameter(typeof(FileLocationEntity), "entity");
+        var predicateBody = BuildPredicateBody(query, parameter);
 
-        return ReadFileLocationsPage(tableQuery, query.PageNumber, cancellationToken);
+        if (predicateBody == null)
+        {
+            yield break;
+        }
+
+        var predicate = Expression.Lambda<Func<FileLocationEntity, bool>>(predicateBody, parameter);
+        var tableQuery = await FileLocationTableClient
+            .QueryAsync(predicate, maxPerPage: maxPageSize, cancellationToken: cancellationToken)
+            .AsPages(pageSizeHint: maxPageSize)
+            .SelectPageNumber(query.PageNumber)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+
+        foreach (var entity in tableQuery?.Values ?? [])
+        {
+            yield return new VirtualFileLocation
+            {
+                SiteId = entity.SiteId,
+                VirtualPath = entity.VirtualPath
+            };
+        }
     }
 
     public async IAsyncEnumerable<VirtualFileLocation> QueryFileLocationsFuzzy(VirtualFileLocationQuery query,
@@ -46,14 +63,13 @@ public class VirtualFileLocationService : IVirtualFileLocationService
                 entity => string.IsNullOrEmpty(query.SiteId) || entity.SiteId == query.SiteId,
                 maxPerPage: maxPageSize,
                 cancellationToken: cancellationToken)
-            .Where(entity => string.IsNullOrEmpty(entity.VirtualPath) || string.IsNullOrEmpty(query.VirtualPath) ||
-                             entity.VirtualPath.Contains(query.VirtualPath, StringComparison.OrdinalIgnoreCase))
+            .Where(entity => query.VirtualPaths == null || query.VirtualPaths.Any(value => entity.VirtualPath?.Contains(value, StringComparison.Ordinal) ?? false))
             .Skip(query.PageNumber * maxPageSize - maxPageSize)
             .Take(maxPageSize);
 
         await foreach (var entity in entities)
         {
-            yield return new VirtualFileLocation()
+            yield return new VirtualFileLocation
             {
                 VirtualPath = entity.VirtualPath,
                 SiteId = entity.SiteId,
@@ -127,6 +143,31 @@ public class VirtualFileLocationService : IVirtualFileLocationService
         return Convert.ToBase64String(bytes)
             .Replace('/', '_')
             .Replace('+', '-');
+    }
+
+    private static Expression? BuildPredicateBody(VirtualFileLocationQuery query, ParameterExpression parameter)
+    {
+        Expression? predicateBody = null;
+        var virtualPathProperty = Expression.Property(parameter, nameof(FileLocationEntity.VirtualPath));
+
+        foreach (var path in query.VirtualPaths ?? [])
+        {
+            var equalsExpression = Expression.Equal(virtualPathProperty, Expression.Constant(path));
+
+            predicateBody = predicateBody == null ? equalsExpression : Expression.OrElse(predicateBody, equalsExpression);
+        }
+
+        if (string.IsNullOrEmpty(query.SiteId))
+        {
+            return predicateBody;
+        }
+        
+        var siteIdProperty = Expression.Property(parameter, nameof(FileLocationEntity.SiteId));
+        var siteEquals = Expression.Equal(siteIdProperty, Expression.Constant(query.SiteId));
+
+        predicateBody = predicateBody == null ? siteEquals : Expression.AndAlso(predicateBody, siteEquals);
+
+        return predicateBody;
     }
 }
 

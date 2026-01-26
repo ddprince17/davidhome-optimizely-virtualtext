@@ -1,1 +1,32 @@
-﻿
+﻿@using DavidHome.Optimizely.VirtualText.Models
+@using System.Text.Json
+@using EPiServer.Shell
+@model VirtualTextImportViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+@{
+    var thisType = typeof(VirtualTextImportViewModel);
+    var bootstrap = new
+    {
+        endpoints = new
+        {
+            ImportFileUrl = Url.Action("ImportFile", "Default"),
+            ImportListUrl = Url.Action("ImportList", "Default")
+        },
+        sites = Model.Sites,
+        items = Model.Items,
+        canEdit = Model.CanEdit,
+        antiForgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken
+    };
+    var bootstrapJson = JsonSerializer.Serialize(bootstrap, new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    });
+}
+
+<link rel="stylesheet" href="@Paths.ToClientResource(thisType, "virtualtext-app.css")"/>
+
+<script type="application/json" id="vt-import-bootstrap">@Html.Raw(bootstrapJson)</script>
+<vt-import-app data-bootstrap-id="vt-import-bootstrap"></vt-import-app>
+
+<script src="@Paths.ToClientResource(thisType, "virtualtext-app.js")"></script>

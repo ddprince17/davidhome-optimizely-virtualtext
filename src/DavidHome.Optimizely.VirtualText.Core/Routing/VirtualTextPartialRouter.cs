@@ -29,7 +29,7 @@ public class VirtualTextPartialRouter<TContent> : IPartialRouter<TContent, Virtu
         var fileLocations = _fileLocationService
             .QueryFileLocations(new VirtualFileLocationQuery
             {
-                VirtualPath = remainingSegments
+                VirtualPaths = [remainingSegments]
             })
             .Where(location => location.SiteId == siteId || string.IsNullOrEmpty(location.SiteId))
             .ToArrayAsync();

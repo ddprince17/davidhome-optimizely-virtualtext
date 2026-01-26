@@ -14,3 +14,16 @@ export type VirtualTextFileListResponse = {
   files: VirtualTextFileListItem[];
   hasMore: boolean;
 };
+
+export type VirtualTextImportItem = {
+  virtualPath: string;
+  sourceSiteId: string | null;
+  sourceSiteName: string;
+  isUnknownSite: boolean;
+  selectedSiteId: string | null;
+};
+
+export type VirtualTextImportListResponse = {
+  items: VirtualTextImportItem[];
+  hasMore: boolean;
+};

@@ -2,7 +2,7 @@
 
 public record VirtualFileLocationQuery
 {
-    public string? VirtualPath { get; init; }
+    public IReadOnlyCollection<string>? VirtualPaths { get; init; }
     public string? SiteId { get; init; }
     public int PageNumber { get; init; } = 1;
 }

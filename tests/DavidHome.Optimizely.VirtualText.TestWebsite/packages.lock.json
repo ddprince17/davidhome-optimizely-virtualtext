@@ -1994,7 +1994,8 @@
         "dependencies": {
           "Azure.Storage.Blobs": "[12.13.0, 13.0.0)",
           "DavidHome.Optimizely.VirtualText.Contracts": "[1.0.0, )",
-          "Microsoft.Extensions.Azure": "[1.0.0, 2.0.0)"
+          "Microsoft.Extensions.Azure": "[1.0.0, 2.0.0)",
+          "System.Linq.AsyncEnumerable": "[10.0.0, )"
         }
       },
       "davidhome.optimizely.virtualtext.contracts": {

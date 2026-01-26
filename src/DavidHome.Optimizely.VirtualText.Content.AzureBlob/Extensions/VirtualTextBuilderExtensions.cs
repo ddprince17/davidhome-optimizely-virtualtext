@@ -15,7 +15,7 @@ public static class VirtualTextBuilderExtensions
         public IVirtualTextBuilder AddAzureBlobContent(IConfigurationSection configuration)
         {
             serviceBuilder.Services?
-                .AddTransient<IVirtualFileContentService, VirtualFileContentService>()
+                .AddTransient<IVirtualFileContentService, BlobFileContentService>()
                 .AddAzureClients(builder => builder.AddBlobServiceClient(configuration).WithName(VirtualTextConstants.ClientName));
 
             return serviceBuilder;

@@ -20,7 +20,7 @@ public static class VirtualTextAppBuilderExtensions
 
             // Is making sure the container is created while starting the app.
             blobClient?
-                .GetBlobContainerClient(VirtualFileContentService.BlobContainerName)
+                .GetBlobContainerClient(BlobFileContentService.BlobContainerName)
                 .CreateIfNotExists();
 
             return app;
