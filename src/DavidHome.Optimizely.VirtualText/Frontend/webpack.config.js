@@ -6,7 +6,8 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 module.exports = {
   mode: 'production',
   entry: {
-    'virtualtext-app': path.resolve(__dirname, 'src/index.ts')
+    'virtualtext-app': path.resolve(__dirname, 'src/index-app.ts'),
+    'virtualtext-import': path.resolve(__dirname, 'src/index-import.ts')
   },
   output: {
     path: path.resolve(__dirname, '..', 'ClientResources'),

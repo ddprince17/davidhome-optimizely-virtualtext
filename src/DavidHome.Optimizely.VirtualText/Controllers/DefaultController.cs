@@ -178,11 +178,6 @@ public class DefaultController : Controller
             return BadRequest("Virtual path is required.");
         }
 
-        if (!_permissionService.IsPermitted(User, PluginPermissions.EditSettings))
-        {
-            return Forbid();
-        }
-
         if (!string.Equals(request.SourceSiteId ?? string.Empty, request.TargetSiteId ?? string.Empty, StringComparison.OrdinalIgnoreCase))
         {
             await _fileContentService.MoveVirtualFileAsync(request.VirtualPath, request.SourceSiteId, request.TargetSiteId, cancellationToken);
