@@ -13,6 +13,7 @@ internal static class VirtualTextCoreServiceCollectionExtensions
     public static IVirtualTextBuilder AddDavidHomeVirtualTextCore(this IServiceCollection services)
     {
         services
+            .AddHttpContextAccessor()
             .AddSingleton(typeof(VirtualTextPartialRouter<>))
             .AddSingleton(typeof(IVirtualTextPartialRouterWrapper<>), typeof(VirtualTextPartialRouterWrapper<>));
 

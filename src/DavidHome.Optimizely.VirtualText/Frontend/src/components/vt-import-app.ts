@@ -84,6 +84,7 @@ export class VtImportApp extends LitElement {
               <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                 <th class="px-3 py-2">Virtual path</th>
                 <th class="px-3 py-2">Website</th>
+                <th class="px-3 py-2">Hostname</th>
                 <th class="px-3 py-2">Actions</th>
               </tr>
             </thead>
@@ -111,6 +112,9 @@ export class VtImportApp extends LitElement {
 
   private renderRow(item: VirtualTextImportItem) {
     const isImporting = this.importing.has(this.getRowKey(item));
+    const selectedSite = this.sites.find((site) => (site.siteId || '') === (item.selectedSiteId || ''));
+    const hostOptions = selectedSite?.hosts ?? [];
+    const hostEnabled = Boolean(item.selectedSiteId);
     return html`
       <tr>
         <td class="px-3 py-2">${item.virtualPath}</td>
@@ -122,6 +126,17 @@ export class VtImportApp extends LitElement {
             ${item.isUnknownSite ? html`<option value=${item.sourceSiteId || ''} ?selected=${(item.selectedSiteId || '') === (item.sourceSiteId || '')}>Unknown</option>` : html``}
             ${this.sites.map((site) => html`
               <option value=${site.siteId || ''} ?selected=${(item.selectedSiteId || '') === (site.siteId || '')}>${site.name}</option>
+            `)}
+          </select>
+        </td>
+        <td class="px-3 py-2">
+          <select
+            class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            ?disabled=${!this.canEdit || !hostEnabled}
+            @change=${(event: Event) => this.handleHostChange(item, event)}>
+            <option value="">Default (All Hostnames)</option>
+            ${hostOptions.map((host) => html`
+              <option value=${host} ?selected=${(item.selectedHostName || '') === host}>${host}</option>
             `)}
           </select>
         </td>
@@ -147,7 +162,22 @@ export class VtImportApp extends LitElement {
       }
       return {
         ...entry,
-        selectedSiteId: selected
+        selectedSiteId: selected,
+        selectedHostName: null
+      };
+    });
+  }
+
+  private handleHostChange(item: VirtualTextImportItem, event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const selected = target.value || null;
+    this.items = this.items.map((entry) => {
+      if (this.getRowKey(entry) !== this.getRowKey(item)) {
+        return entry;
+      }
+      return {
+        ...entry,
+        selectedHostName: selected
       };
     });
   }
@@ -184,7 +214,9 @@ export class VtImportApp extends LitElement {
     const payload = {
       virtualPath: item.virtualPath,
       sourceSiteId: item.sourceSiteId,
-      targetSiteId: item.selectedSiteId
+      targetSiteId: item.selectedSiteId,
+      sourceHostName: item.sourceHostName,
+      targetHostName: item.selectedHostName
     };
 
     try {
@@ -242,7 +274,7 @@ export class VtImportApp extends LitElement {
   }
 
   private getRowKey(item: VirtualTextImportItem) {
-    return `${item.virtualPath}::${item.sourceSiteId || 'default'}`;
+    return `${item.virtualPath}::${item.sourceSiteId || 'default'}::${item.sourceHostName || ''}`;
   }
 
   private showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {

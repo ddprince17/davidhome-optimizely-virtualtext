@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import type { VirtualTextSiteOption } from './types';
 
 type MonacoApi = typeof import('monaco-editor');
@@ -109,17 +109,29 @@ export class VtEditorModal extends LitElement {
   private isDirty = false;
   private isReadOnly = false;
   private isCompareMode = false;
-  private currentFile: { virtualPath: string; siteId: string | null; siteName: string } | null = null;
+  private currentFile: { virtualPath: string; siteId: string | null; siteName: string; hostName: string | null } | null = null;
   private saveIndicatorTimer: number | null = null;
   private keydownHandler: ((event: KeyboardEvent) => void) | null = null;
+  @state() accessor compareSiteId: string | null = null;
+  @state() accessor compareHostName: string | null = null;
 
   createRenderRoot() {
     return this;
   }
 
-  open(file: { virtualPath: string; siteId: string | null; siteName: string }, content: string, readOnly: boolean) {
+  protected updated(changed: Map<string, unknown>) {
+    if (changed.has('sites') && !this.compareSiteId && this.sites.length > 0) {
+      this.compareSiteId = this.sites[0]?.siteId ?? null;
+    }
+  }
+
+  open(file: { virtualPath: string; siteId: string | null; siteName: string; hostName: string | null }, content: string, readOnly: boolean) {
     this.currentFile = file;
     this.isReadOnly = readOnly;
+    if (!this.compareSiteId) {
+      this.compareSiteId = this.sites[0]?.siteId ?? null;
+    }
+    this.compareHostName = null;
     this.setHeader(file);
     this.setCompareMode(false);
     this.setPermissionWarning(false);
@@ -287,8 +299,21 @@ export class VtEditorModal extends LitElement {
       return;
     }
     const select = this.querySelector<HTMLSelectElement>('#vt-compare-site');
+    const hostSelect = this.querySelector<HTMLSelectElement>('#vt-compare-host');
     const targetSiteId = select ? select.value || null : null;
-    this.dispatchEvent(new CustomEvent('vt-compare-start', { detail: { targetSiteId, file: this.currentFile, content: this.editor?.getValue() || '' }, bubbles: true, composed: true }));
+    const targetHostName = hostSelect ? hostSelect.value || null : null;
+    this.dispatchEvent(new CustomEvent('vt-compare-start', { detail: { targetSiteId, targetHostName, file: this.currentFile, content: this.editor?.getValue() || '' }, bubbles: true, composed: true }));
+  }
+
+  private handleCompareSiteChange(event: Event) {
+    const target = event.currentTarget as HTMLSelectElement | null;
+    this.compareSiteId = target ? target.value || null : null;
+    this.compareHostName = null;
+  }
+
+  private handleCompareHostChange(event: Event) {
+    const target = event.currentTarget as HTMLSelectElement | null;
+    this.compareHostName = target ? target.value || null : null;
   }
 
   private handleCompareAccept() {
@@ -353,14 +378,16 @@ export class VtEditorModal extends LitElement {
       : 'Editor';
   }
 
-  private setHeader(file: { virtualPath: string; siteId: string | null; siteName: string }) {
+  private setHeader(file: { virtualPath: string; siteId: string | null; siteName: string; hostName: string | null }) {
     const title = this.querySelector<HTMLDivElement>('#vt-editor-title');
     const subtitle = this.querySelector<HTMLDivElement>('#vt-editor-subtitle');
     if (title) {
       title.textContent = file.virtualPath;
     }
     if (subtitle) {
-      subtitle.textContent = file.siteName || 'Default (All Sites)';
+      const siteLabel = file.siteName || 'Default (All Sites)';
+      const hostLabel = file.hostName || 'Default (All Hostnames)';
+      subtitle.textContent = `${siteLabel} · ${hostLabel}`;
     }
   }
 
@@ -377,6 +404,7 @@ export class VtEditorModal extends LitElement {
     const cancel = this.querySelector<HTMLButtonElement>('#vt-compare-cancel');
     const start = this.querySelector<HTMLButtonElement>('#vt-compare-start');
     const select = this.querySelector<HTMLSelectElement>('#vt-compare-site');
+    const hostSelect = this.querySelector<HTMLSelectElement>('#vt-compare-host');
     if (accept) {
       accept.hidden = !enabled;
     }
@@ -388,6 +416,9 @@ export class VtEditorModal extends LitElement {
     }
     if (select) {
       select.disabled = enabled || this.isReadOnly;
+    }
+    if (hostSelect) {
+      hostSelect.disabled = enabled || this.isReadOnly || !this.compareSiteId;
     }
   }
 
@@ -401,11 +432,15 @@ export class VtEditorModal extends LitElement {
   private setCompareDisabled(disabled: boolean) {
     const start = this.querySelector<HTMLButtonElement>('#vt-compare-start');
     const select = this.querySelector<HTMLSelectElement>('#vt-compare-site');
+    const hostSelect = this.querySelector<HTMLSelectElement>('#vt-compare-host');
     if (start) {
       start.disabled = disabled;
     }
     if (select) {
       select.disabled = disabled || this.isCompareMode;
+    }
+    if (hostSelect) {
+      hostSelect.disabled = disabled || this.isCompareMode || !this.compareSiteId;
     }
   }
 
@@ -465,6 +500,10 @@ export class VtEditorModal extends LitElement {
   }
 
   render() {
+    const selectedSite = this.sites.find((site) => (site.siteId || '') === (this.compareSiteId || ''));
+    const hostOptions = selectedSite?.hosts ?? [];
+    const hostEnabled = Boolean(this.compareSiteId);
+
     return html`
       <div class="vt-modal fixed inset-0 z-[2000] hidden flex items-center justify-center" id="vt-editor-modal" aria-hidden="true" hidden @click=${this.handleBackdropClick}>
         <div class="vt-modal-backdrop absolute inset-0 bg-slate-900/60"></div>
@@ -484,8 +523,17 @@ export class VtEditorModal extends LitElement {
             <div class="vt-compare flex flex-wrap items-end gap-3">
               <label class="flex flex-col gap-1 text-sm">
                 Copy to site
-                <select id="vt-compare-site" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200">
-                  ${this.sites.map((site) => html`<option value=${site.siteId || ''}>${site.name}</option>`)}
+                <select id="vt-compare-site" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200" @change=${this.handleCompareSiteChange}>
+                  ${this.sites.map(
+                    (site) => html`<option value=${site.siteId || ''} ?selected=${(site.siteId || '') === (this.compareSiteId || '')}>${site.name}</option>`
+                  )}
+                </select>
+              </label>
+              <label class="flex flex-col gap-1 text-sm">
+                Copy to hostname
+                <select id="vt-compare-host" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200" ?disabled=${!hostEnabled} @change=${this.handleCompareHostChange}>
+                  <option value="">Default (All Hostnames)</option>
+                  ${hostOptions.map((host) => html`<option value=${host} ?selected=${host === (this.compareHostName || '')}>${host}</option>`)}
                 </select>
               </label>
               <button type="button" id="vt-compare-start" class="vt-primary rounded-md bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white shadow hover:bg-slate-800" @click=${this.handleCompareStart}>Preview Copy</button>

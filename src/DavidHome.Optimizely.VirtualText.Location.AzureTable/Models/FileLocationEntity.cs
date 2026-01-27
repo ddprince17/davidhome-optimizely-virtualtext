@@ -10,5 +10,6 @@ internal class FileLocationEntity : ITableEntity
     public DateTimeOffset? Timestamp { get; set; }
     public ETag ETag { get; set; }
     public string? SiteId { get; set; }
+    public string? HostName { get; set; }
     public string? VirtualPath { get; set; }
 }

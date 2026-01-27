@@ -50,6 +50,7 @@ public class TableFileLocationService : IVirtualFileLocationService
             yield return new VirtualFileLocation
             {
                 SiteId = entity.SiteId,
+                HostName = entity.HostName,
                 VirtualPath = entity.VirtualPath
             };
         }
@@ -63,6 +64,7 @@ public class TableFileLocationService : IVirtualFileLocationService
                 entity => string.IsNullOrEmpty(query.SiteId) || entity.SiteId == query.SiteId,
                 maxPerPage: maxPageSize,
                 cancellationToken: cancellationToken)
+            .Where(entity => string.IsNullOrEmpty(query.HostName) || entity.HostName == query.HostName)
             .Where(entity => query.VirtualPaths == null || query.VirtualPaths.Any(value => entity.VirtualPath?.Contains(value, StringComparison.Ordinal) ?? false))
             .Skip(query.PageNumber * maxPageSize - maxPageSize)
             .Take(maxPageSize);
@@ -73,6 +75,7 @@ public class TableFileLocationService : IVirtualFileLocationService
             {
                 VirtualPath = entity.VirtualPath,
                 SiteId = entity.SiteId,
+                HostName = entity.HostName
             };
         }
     }
@@ -85,19 +88,20 @@ public class TableFileLocationService : IVirtualFileLocationService
         }
 
         var partitionKey = string.IsNullOrWhiteSpace(location.SiteId) ? "default" : location.SiteId;
-        var rowKey = EncodeRowKey(location.VirtualPath);
+        var rowKey = EncodeRowKey(location.VirtualPath, location.HostName);
         var entity = new FileLocationEntity
         {
             PartitionKey = partitionKey,
             RowKey = rowKey,
             SiteId = location.SiteId,
+            HostName = location.HostName,
             VirtualPath = location.VirtualPath
         };
 
         await FileLocationTableClient.UpsertEntityAsync(entity, TableUpdateMode.Replace, cancellationToken);
     }
 
-    public async Task DeleteFileLocationAsync(string virtualPath, string? siteId = null, CancellationToken cancellationToken = default)
+    public async Task DeleteFileLocationAsync(string virtualPath, string? siteId = null, string? hostName = null, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(virtualPath))
         {
@@ -105,7 +109,7 @@ public class TableFileLocationService : IVirtualFileLocationService
         }
 
         var partitionKey = string.IsNullOrWhiteSpace(siteId) ? "default" : siteId;
-        var rowKey = EncodeRowKey(virtualPath);
+        var rowKey = EncodeRowKey(virtualPath, hostName);
 
         try
         {
@@ -132,14 +136,18 @@ public class TableFileLocationService : IVirtualFileLocationService
             yield return new VirtualFileLocation
             {
                 SiteId = entity.SiteId,
+                HostName = entity.HostName,
                 VirtualPath = entity.VirtualPath
             };
         }
     }
 
-    private static string EncodeRowKey(string virtualPath)
+    private static string EncodeRowKey(string virtualPath, string? hostName = null)
     {
-        var bytes = Encoding.UTF8.GetBytes(virtualPath);
+        var keyValue = string.IsNullOrEmpty(hostName)
+            ? virtualPath
+            : $"{hostName}::{virtualPath}";
+        var bytes = Encoding.UTF8.GetBytes(keyValue);
         return Convert.ToBase64String(bytes)
             .Replace('/', '_')
             .Replace('+', '-');
@@ -157,15 +165,21 @@ public class TableFileLocationService : IVirtualFileLocationService
             predicateBody = predicateBody == null ? equalsExpression : Expression.OrElse(predicateBody, equalsExpression);
         }
 
-        if (string.IsNullOrEmpty(query.SiteId))
+        if (!string.IsNullOrEmpty(query.SiteId))
         {
-            return predicateBody;
+            var siteIdProperty = Expression.Property(parameter, nameof(FileLocationEntity.SiteId));
+            var siteEquals = Expression.Equal(siteIdProperty, Expression.Constant(query.SiteId));
+            
+            predicateBody = predicateBody == null ? siteEquals : Expression.AndAlso(predicateBody, siteEquals);
         }
-        
-        var siteIdProperty = Expression.Property(parameter, nameof(FileLocationEntity.SiteId));
-        var siteEquals = Expression.Equal(siteIdProperty, Expression.Constant(query.SiteId));
 
-        predicateBody = predicateBody == null ? siteEquals : Expression.AndAlso(predicateBody, siteEquals);
+        if (!string.IsNullOrEmpty(query.HostName))
+        {
+            var hostProperty = Expression.Property(parameter, nameof(FileLocationEntity.HostName));
+            var hostEquals = Expression.Equal(hostProperty, Expression.Constant(query.HostName));
+            
+            predicateBody = predicateBody == null ? hostEquals : Expression.AndAlso(predicateBody, hostEquals);
+        }
 
         return predicateBody;
     }

@@ -37,7 +37,7 @@ type CreateFormApi = {
 };
 
 type EditorModalApi = {
-  open: (file: { virtualPath: string; siteId: string | null; siteName: string }, content: string, readOnly: boolean) => void;
+  open: (file: { virtualPath: string; siteId: string | null; siteName: string; hostName: string | null }, content: string, readOnly: boolean) => void;
   close: () => void;
   showSaveIndicator: () => void;
   markSaved: () => void;
@@ -65,8 +65,9 @@ export class VtApp extends LitElement {
   private endpoints = this.bootstrap.endpoints;
   private antiForgeryToken = '';
   private listPageNumber = 1;
-  private currentFile: { virtualPath: string; siteId: string | null; siteName: string } | null = null;
+  private currentFile: { virtualPath: string; siteId: string | null; siteName: string; hostName: string | null } | null = null;
   private compareTargetSiteId: string | null = null;
+  private compareTargetHostName: string | null = null;
 
   private toastRef = createRef<HTMLElement>();
   private confirmModalRef = createRef<HTMLElement>();
@@ -80,6 +81,7 @@ export class VtApp extends LitElement {
   @state() accessor listLoading = false;
   @state() accessor filterPath = '';
   @state() accessor filterSiteId: string | null = null;
+  @state() accessor filterHostName: string | null = null;
 
   createRenderRoot() {
     return this;
@@ -168,8 +170,13 @@ export class VtApp extends LitElement {
   }
 
   private async handleCreate(event: CustomEvent) {
-    const { virtualPath, siteId, siteName } = event.detail as { virtualPath: string; siteId: string | null; siteName: string };
-    const newFile = { virtualPath, siteId, siteName };
+    const { virtualPath, siteId, siteName, hostName } = event.detail as {
+      virtualPath: string;
+      siteId: string | null;
+      siteName: string;
+      hostName?: string | null;
+    };
+    const newFile = { virtualPath, siteId, siteName, hostName: hostName ?? null };
 
     try {
       const exists = await this.checkFileExists(newFile);
@@ -192,9 +199,10 @@ export class VtApp extends LitElement {
   }
 
   private async handleFilterChange(event: CustomEvent) {
-    const { path, siteId } = event.detail as { path: string; siteId: string | null };
+    const { path, siteId, hostName } = event.detail as { path: string; siteId: string | null; hostName: string | null };
     this.filterPath = path;
     this.filterSiteId = siteId;
+    this.filterHostName = hostName;
     await this.refreshFileList(true);
   }
 
@@ -280,28 +288,33 @@ export class VtApp extends LitElement {
       return;
     }
     const targetSiteId = event.detail?.targetSiteId ?? null;
-    if ((targetSiteId || '') === (currentFile.siteId || '')) {
-      this.showToast('Select a different site to copy to.', 'error');
+    const targetHostName = event.detail?.targetHostName ?? null;
+    if (this.isSameFile(currentFile, { virtualPath: currentFile.virtualPath, siteId: targetSiteId, hostName: targetHostName })) {
+      this.showToast('Select a different site or hostname to copy to.', 'error');
       return;
     }
     this.compareTargetSiteId = targetSiteId;
+    this.compareTargetHostName = targetHostName;
     try {
-      const response = await this.fetchFileContent(currentFile.virtualPath, targetSiteId);
+      const response = await this.fetchFileContent(currentFile.virtualPath, targetSiteId, targetHostName);
       if (response.status === 404) {
         const confirmCopy = await this.confirm('The target site does not have this file yet. Copy it now?', 'Copy now', 'Cancel');
         if (!confirmCopy) {
           this.compareTargetSiteId = null;
+          this.compareTargetHostName = null;
           return;
         }
-        await this.saveToSite(targetSiteId, currentFile.virtualPath, event.detail?.content || '');
+        await this.saveToSite(targetSiteId, targetHostName, currentFile.virtualPath, event.detail?.content || '');
         await this.refreshFileList(true);
         this.closeEditor();
         this.compareTargetSiteId = null;
+        this.compareTargetHostName = null;
         return;
       }
       if (!response.ok) {
         this.showToast('Failed to load target file.', 'error');
         this.compareTargetSiteId = null;
+        this.compareTargetHostName = null;
         return;
       }
       const content = await response.text();
@@ -309,10 +322,12 @@ export class VtApp extends LitElement {
     } catch (error: any) {
       if (error && error.message === 'Permission denied.') {
         this.compareTargetSiteId = null;
+        this.compareTargetHostName = null;
         return;
       }
       this.showToast(error && error.message ? error.message : 'Failed to load target file.', 'error');
       this.compareTargetSiteId = null;
+      this.compareTargetHostName = null;
     }
   }
 
@@ -323,14 +338,16 @@ export class VtApp extends LitElement {
     }
     const contentToCopy = event.detail?.content || '';
     try {
-      await this.saveToSite(this.compareTargetSiteId, currentFile.virtualPath, contentToCopy);
+      await this.saveToSite(this.compareTargetSiteId, this.compareTargetHostName ?? null, currentFile.virtualPath, contentToCopy);
       await this.getEditorModalApi()?.exitDiffMode(false);
       await this.refreshFileList(true);
       this.closeEditor();
       this.compareTargetSiteId = null;
+      this.compareTargetHostName = null;
     } catch (error: any) {
       if (error && error.message === 'Permission denied.') {
         this.compareTargetSiteId = null;
+        this.compareTargetHostName = null;
         return;
       }
       this.showToast(error && error.message ? error.message : 'Failed to save.', 'error');
@@ -339,6 +356,7 @@ export class VtApp extends LitElement {
 
   private handleCompareCancel() {
     this.compareTargetSiteId = null;
+    this.compareTargetHostName = null;
   }
 
   private handleEditorError(event: CustomEvent) {
@@ -346,9 +364,9 @@ export class VtApp extends LitElement {
     this.showToast(message, 'error');
   }
 
-  private async loadContent(file: { virtualPath: string; siteId: string | null; siteName: string }, readOnly: boolean) {
+  private async loadContent(file: { virtualPath: string; siteId: string | null; siteName: string; hostName: string | null }, readOnly: boolean) {
     try {
-      const response = await this.fetchFileContent(file.virtualPath, file.siteId);
+      const response = await this.fetchFileContent(file.virtualPath, file.siteId, file.hostName);
       if (!response.ok) {
         this.showToast('Failed to load file.', 'error');
         return;
@@ -362,10 +380,13 @@ export class VtApp extends LitElement {
     }
   }
 
-  private async fetchFileContent(virtualPath: string, siteId: string | null) {
+  private async fetchFileContent(virtualPath: string, siteId: string | null, hostName: string | null) {
     let url = this.endpoints.fileContentUrl + '?virtualPath=' + encodeURIComponent(virtualPath);
     if (siteId) {
       url += '&siteId=' + encodeURIComponent(siteId);
+    }
+    if (hostName) {
+      url += '&hostName=' + encodeURIComponent(hostName);
     }
     const response = await fetch(url);
     if (this.isPermissionDenied(response)) {
@@ -375,10 +396,11 @@ export class VtApp extends LitElement {
     return response;
   }
 
-  private async saveCurrentFile(file: { virtualPath: string; siteId: string | null }, content: string) {
+  private async saveCurrentFile(file: { virtualPath: string; siteId: string | null; hostName: string | null }, content: string) {
     const payload = {
       virtualPath: file.virtualPath,
       siteId: file.siteId,
+      hostName: file.hostName,
       content: content
     };
     const response = await fetch(this.endpoints.saveFileUrl, {
@@ -398,10 +420,11 @@ export class VtApp extends LitElement {
     }
   }
 
-  private async saveToSite(siteId: string | null, virtualPath: string, content: string) {
+  private async saveToSite(siteId: string | null, hostName: string | null, virtualPath: string, content: string) {
     const payload = {
       virtualPath: virtualPath,
       siteId: siteId,
+      hostName: hostName,
       content: content
     };
     const response = await fetch(this.endpoints.saveFileUrl, {
@@ -422,8 +445,8 @@ export class VtApp extends LitElement {
     this.showToast('Saved', 'success');
   }
 
-  private async checkFileExists(file: { virtualPath: string; siteId: string | null }) {
-    const response = await this.fetchFileContent(file.virtualPath, file.siteId);
+  private async checkFileExists(file: { virtualPath: string; siteId: string | null; hostName: string | null }) {
+    const response = await this.fetchFileContent(file.virtualPath, file.siteId, file.hostName);
     if (response.status === 404) {
       return false;
     }
@@ -433,10 +456,11 @@ export class VtApp extends LitElement {
     return true;
   }
 
-  private async saveNewFile(file: { virtualPath: string; siteId: string | null }) {
+  private async saveNewFile(file: { virtualPath: string; siteId: string | null; hostName: string | null }) {
     const payload = {
       virtualPath: file.virtualPath,
       siteId: file.siteId,
+      hostName: file.hostName,
       content: ''
     };
     const response = await fetch(this.endpoints.saveFileUrl, {
@@ -456,10 +480,11 @@ export class VtApp extends LitElement {
     }
   }
 
-  private async deleteFile(file: { virtualPath: string; siteId: string | null }) {
+  private async deleteFile(file: { virtualPath: string; siteId: string | null; hostName: string | null }) {
     const payload = {
       virtualPath: file.virtualPath,
-      siteId: file.siteId
+      siteId: file.siteId,
+      hostName: file.hostName
     };
     const response = await fetch(this.endpoints.deleteFileUrl, {
       method: 'POST',
@@ -485,6 +510,7 @@ export class VtApp extends LitElement {
     this.getEditorModalApi()?.close();
     this.currentFile = null;
     this.compareTargetSiteId = null;
+    this.compareTargetHostName = null;
   }
 
   private buildFileListUrl(pageNumber: number) {
@@ -495,6 +521,9 @@ export class VtApp extends LitElement {
     }
     if (this.filterSiteId) {
       url.searchParams.set('siteId', this.filterSiteId);
+    }
+    if (this.filterHostName) {
+      url.searchParams.set('hostName', this.filterHostName);
     }
     return url.toString();
   }
@@ -577,7 +606,12 @@ export class VtApp extends LitElement {
     return response.status === 401 || response.status === 403 || response.redirected;
   }
 
-  private isSameFile(a: { virtualPath: string; siteId: string | null }, b: { virtualPath: string; siteId: string | null }) {
-    return a.virtualPath === b.virtualPath && (a.siteId || '') === (b.siteId || '');
+  private isSameFile(
+    a: { virtualPath: string; siteId: string | null; hostName?: string | null },
+    b: { virtualPath: string; siteId: string | null; hostName?: string | null }
+  ) {
+    return a.virtualPath === b.virtualPath
+      && (a.siteId || '') === (b.siteId || '')
+      && (a.hostName || '') === (b.hostName || '');
   }
 }

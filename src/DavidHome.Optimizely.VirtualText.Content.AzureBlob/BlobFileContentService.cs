@@ -24,9 +24,9 @@ public class BlobFileContentService : IVirtualFileContentService
         _virtualTextOptions = virtualTextOptions;
     }
 
-    public async Task<Stream?> GetVirtualFileContentAsync(string? virtualPath, string? siteId = null, CancellationToken cancellationToken = default)
+    public async Task<Stream?> GetVirtualFileContentAsync(string? virtualPath, string? siteId = null, string? hostName = null, CancellationToken cancellationToken = default)
     {
-        var blobName = GetBlobName(virtualPath, siteId);
+        var blobName = GetBlobName(virtualPath, siteId, hostName);
 
         // Path is invalid and cannot be processed.
         if (string.IsNullOrEmpty(blobName))
@@ -39,9 +39,9 @@ public class BlobFileContentService : IVirtualFileContentService
         return await blob.OpenReadAsync(cancellationToken: cancellationToken);
     }
 
-    public async Task SaveVirtualFileContentAsync(string? virtualPath, string? siteId, Stream content, CancellationToken cancellationToken = default)
+    public async Task SaveVirtualFileContentAsync(string? virtualPath, string? siteId, string? hostName, Stream content, CancellationToken cancellationToken = default)
     {
-        var blobName = GetBlobName(virtualPath, siteId);
+        var blobName = GetBlobName(virtualPath, siteId, hostName);
 
         if (string.IsNullOrEmpty(blobName))
         {
@@ -58,9 +58,9 @@ public class BlobFileContentService : IVirtualFileContentService
         await blob.UploadAsync(content, overwrite: true, cancellationToken: cancellationToken);
     }
 
-    public async Task DeleteVirtualFileContentAsync(string? virtualPath, string? siteId, CancellationToken cancellationToken = default)
+    public async Task DeleteVirtualFileContentAsync(string? virtualPath, string? siteId, string? hostName, CancellationToken cancellationToken = default)
     {
-        var blobName = GetBlobName(virtualPath, siteId);
+        var blobName = GetBlobName(virtualPath, siteId, hostName);
 
         if (string.IsNullOrEmpty(blobName))
         {
@@ -87,10 +87,10 @@ public class BlobFileContentService : IVirtualFileContentService
         }
     }
 
-    public async Task MoveVirtualFileAsync(string? virtualPath, string? sourceSiteId, string? targetSiteId, CancellationToken cancellationToken = default)
+    public async Task MoveVirtualFileAsync(string? virtualPath, string? sourceSiteId, string? sourceHostName, string? targetSiteId, string? targetHostName, CancellationToken cancellationToken = default)
     {
-        var sourceName = GetBlobName(virtualPath, sourceSiteId);
-        var targetName = GetBlobName(virtualPath, targetSiteId);
+        var sourceName = GetBlobName(virtualPath, sourceSiteId, sourceHostName);
+        var targetName = GetBlobName(virtualPath, targetSiteId, targetHostName);
 
         if (string.IsNullOrEmpty(sourceName) || string.IsNullOrEmpty(targetName))
         {
@@ -110,9 +110,9 @@ public class BlobFileContentService : IVirtualFileContentService
         await sourceBlob.DeleteIfExistsAsync(cancellationToken: cancellationToken);
     }
 
-    private static string GetBlobName(string? virtualPath, string? siteId)
+    private static string GetBlobName(string? virtualPath, string? siteId, string? hostName = null)
     {
-        var blobPaths = new[] { siteId, virtualPath?.TrimStart('/').TrimEnd('/') }.Where(s => !string.IsNullOrEmpty(s));
+        var blobPaths = new[] { siteId, hostName, virtualPath?.TrimStart('/').TrimEnd('/') }.Where(s => !string.IsNullOrEmpty(s));
         var blobName = string.Join('/', blobPaths);
 
         return blobName;
@@ -120,7 +120,7 @@ public class BlobFileContentService : IVirtualFileContentService
 
     private static ContentServiceFile BuildImportPath(string blobPath)
     {
-        var segments = blobPath.Split('/', 2, StringSplitOptions.RemoveEmptyEntries);
+        var segments = blobPath.Split('/', 3, StringSplitOptions.RemoveEmptyEntries);
         var potentialSite = segments[0];
         if (segments.Length <= 1 || !Guid.TryParse(potentialSite, out var siteGuid))
         {
@@ -132,12 +132,14 @@ public class BlobFileContentService : IVirtualFileContentService
         }
 
         var normalizedSiteId = siteGuid.ToString("N");
-        var virtualPath = segments[1];
+        var virtualPath = segments.Length >= 3 ? segments[2] : segments[1];
+        var hostName = segments.Length >= 3 ? segments[1] : null;
 
         return new ContentServiceFile
         {
             VirtualPath = virtualPath,
-            SourceSiteId = normalizedSiteId
+            SourceSiteId = normalizedSiteId,
+            SourceHostName = hostName
         };
     }
 }

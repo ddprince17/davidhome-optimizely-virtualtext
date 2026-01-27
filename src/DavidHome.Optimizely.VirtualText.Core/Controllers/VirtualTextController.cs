@@ -29,7 +29,10 @@ public class VirtualTextController : Controller, IRenderTemplate<VirtualTextRout
             return NotFound();
         }
 
-        var fileContent = await _fileContentService.GetVirtualFileContentAsync(virtualTextRoutedData.FileLocation.VirtualPath, virtualTextRoutedData.FileLocation.SiteId);
+        var fileContent = await _fileContentService.GetVirtualFileContentAsync(
+            virtualTextRoutedData.FileLocation.VirtualPath,
+            virtualTextRoutedData.FileLocation.SiteId,
+            virtualTextRoutedData.FileLocation.HostName);
 
         if (fileContent == null)
         {

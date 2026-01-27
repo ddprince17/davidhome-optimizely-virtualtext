@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import type { VirtualTextSiteOption } from './types';
 
 @customElement('vt-create-form')
@@ -11,9 +11,16 @@ export class VtCreateForm extends LitElement {
 
   @property({ attribute: false }) accessor sites: VirtualTextSiteOption[] = [];
   @property({ type: Boolean }) accessor canEdit = false;
+  @state() accessor selectedSiteId: string | null = null;
 
   createRenderRoot() {
     return this;
+  }
+
+  protected updated(changed: Map<string, unknown>) {
+    if (changed.has('sites') && !this.selectedSiteId && this.sites.length > 0) {
+      this.selectedSiteId = this.sites[0]?.siteId ?? null;
+    }
   }
 
   reset() {
@@ -21,11 +28,16 @@ export class VtCreateForm extends LitElement {
     if (pathInput) {
       pathInput.value = '';
     }
+    const hostSelect = this.querySelector<HTMLSelectElement>('#vt-new-host');
+    if (hostSelect) {
+      hostSelect.value = '';
+    }
   }
 
   private handleCreate() {
     const pathInput = this.querySelector<HTMLInputElement>('#vt-new-path');
     const siteSelect = this.querySelector<HTMLSelectElement>('#vt-new-site');
+    const hostSelect = this.querySelector<HTMLSelectElement>('#vt-new-host');
     const virtualPath = pathInput?.value.trim() || '';
     if (!virtualPath) {
       this.dispatchEvent(new CustomEvent('vt-create-error', { detail: { message: 'Please enter a virtual path.' }, bubbles: true, composed: true }));
@@ -33,13 +45,27 @@ export class VtCreateForm extends LitElement {
     }
     const siteId = siteSelect ? siteSelect.value || null : null;
     const siteName = siteSelect ? siteSelect.options[siteSelect.selectedIndex]?.text || '' : '';
-    this.dispatchEvent(new CustomEvent('vt-create', { detail: { virtualPath, siteId, siteName }, bubbles: true, composed: true }));
+    const hostName = hostSelect ? hostSelect.value || null : null;
+    this.dispatchEvent(new CustomEvent('vt-create', { detail: { virtualPath, siteId, siteName, hostName }, bubbles: true, composed: true }));
+  }
+
+  private handleSiteChange(event: Event) {
+    const target = event.currentTarget as HTMLSelectElement | null;
+    this.selectedSiteId = target ? target.value || null : null;
+    const hostSelect = this.querySelector<HTMLSelectElement>('#vt-new-host');
+    if (hostSelect) {
+      hostSelect.value = '';
+    }
   }
 
   render() {
     if (!this.canEdit) {
       return html``;
     }
+
+    const selectedSite = this.sites.find((site) => (site.siteId || '') === (this.selectedSiteId || ''));
+    const hostOptions = selectedSite?.hosts ?? [];
+    const hostEnabled = Boolean(this.selectedSiteId);
 
     return html`
       <div class="vt-create flex flex-wrap items-end gap-3">
@@ -49,8 +75,17 @@ export class VtCreateForm extends LitElement {
         </label>
         <label class="flex flex-col gap-1 text-sm">
           Site
-          <select id="vt-new-site" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200">
-            ${this.sites.map((site) => html`<option value=${site.siteId || ''}>${site.name}</option>`)}
+          <select id="vt-new-site" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200" @change=${this.handleSiteChange}>
+            ${this.sites.map(
+              (site) => html`<option value=${site.siteId || ''} ?selected=${(site.siteId || '') === (this.selectedSiteId || '')}>${site.name}</option>`
+            )}
+          </select>
+        </label>
+        <label class="flex flex-col gap-1 text-sm">
+          Hostname
+          <select id="vt-new-host" class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200" ?disabled=${!hostEnabled}>
+            <option value="">Default (All Hostnames)</option>
+            ${hostOptions.map((host) => html`<option value=${host}>${host}</option>`)}
           </select>
         </label>
         <button type="button" id="vt-create-file" class="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-slate-800" @click=${this.handleCreate}>Create</button>
