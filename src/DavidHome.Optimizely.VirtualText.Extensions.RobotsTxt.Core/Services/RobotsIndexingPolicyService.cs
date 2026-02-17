@@ -103,6 +103,16 @@ public class RobotsIndexingPolicyService : IRobotsIndexingPolicyService
         }, cancellationToken);
     }
 
+    public Task ResetEnvironmentSettingAsync(string environmentName, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(environmentName))
+        {
+            throw new ArgumentException("Environment name is required.", nameof(environmentName));
+        }
+
+        return _settingsStore.DeleteAsync(environmentName.Trim(), cancellationToken);
+    }
+
     private static string? ResolveDirective(RobotsEnvironmentIndexingSetting? setting, string environmentName)
     {
         if (!string.IsNullOrWhiteSpace(setting?.RobotsDirective))

@@ -77,6 +77,28 @@ public class TableRobotsEnvironmentIndexingSettingsStore : IRobotsEnvironmentInd
         return tableClient.UpsertEntityAsync(entity, TableUpdateMode.Replace, cancellationToken);
     }
 
+    public async Task DeleteAsync(string environmentName, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(environmentName))
+        {
+            return;
+        }
+
+        var tableClient = TableServiceClient.GetTableClient(RobotsTxtConstants.TableName);
+
+        try
+        {
+            await tableClient.DeleteEntityAsync(
+                RobotsEnvironmentIndexingEntity.Partition,
+                GetRowKey(environmentName),
+                cancellationToken: cancellationToken);
+        }
+        catch (RequestFailedException e) when (e.Status == 404)
+        {
+            // Already absent; nothing to reset.
+        }
+    }
+
     private static string GetRowKey(string environmentName) => environmentName.Trim().ToLowerInvariant();
 }
 

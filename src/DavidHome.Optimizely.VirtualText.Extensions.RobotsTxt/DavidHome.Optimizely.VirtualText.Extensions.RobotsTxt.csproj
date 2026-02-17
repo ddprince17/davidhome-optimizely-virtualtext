@@ -34,4 +34,8 @@
       </None>
     </ItemGroup>
 
+    <PropertyGroup>
+      <DefaultItemExcludes>$(DefaultItemExcludes);Frontend/**</DefaultItemExcludes>
+    </PropertyGroup>
+
 </Project>

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Controllers;
 
 [AnyAuthorizePermission(PluginPermissions.GroupName, PluginPermissions.ViewPermissionsName, PluginPermissions.EditPermissionsName)]
-[ModuleRoute]
+[ModuleRoute(typeof(RobotsAdminController))]
 public class RobotsAdminController : Controller
 {
     private readonly IRobotsIndexingPolicyService _indexingPolicyService;
@@ -45,18 +45,46 @@ public class RobotsAdminController : Controller
     {
         if (string.IsNullOrWhiteSpace(request.EnvironmentName))
         {
-            return BadRequest("Environment name is required.");
+            TempData["RobotsError"] = "Environment name is required.";
+            return RedirectToAction(nameof(Index));
         }
 
         try
         {
-            await _indexingPolicyService.SaveEnvironmentSettingAsync(request.EnvironmentName, request.RobotsDirective, cancellationToken);
+            await _indexingPolicyService.SaveEnvironmentSettingAsync(request.EnvironmentName, request.RobotsDirectivePreset, cancellationToken);
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message);
+            TempData["RobotsError"] = e.Message;
+            return RedirectToAction(nameof(Index));
         }
 
+        TempData["RobotsSuccess"] = $"Directive updated for '{request.EnvironmentName}'.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [AnyAuthorizePermission(PluginPermissions.GroupName, PluginPermissions.EditPermissionsName)]
+    public async Task<IActionResult> Reset([FromForm] string environmentName, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(environmentName))
+        {
+            TempData["RobotsError"] = "Environment name is required.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        try
+        {
+            await _indexingPolicyService.ResetEnvironmentSettingAsync(environmentName, cancellationToken);
+        }
+        catch (ArgumentException e)
+        {
+            TempData["RobotsError"] = e.Message;
+            return RedirectToAction(nameof(Index));
+        }
+
+        TempData["RobotsSuccess"] = $"Directive reset to default for '{environmentName}'.";
         return RedirectToAction(nameof(Index));
     }
 }

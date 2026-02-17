@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DavidHome.Optimizely.VirtualText.Controllers;
 
 [AnyAuthorizePermission(PluginPermissions.GroupName, PluginPermissions.ViewPermissionsName, PluginPermissions.EditPermissionsName)]
-[ModuleRoute]
+[ModuleRoute(typeof(DefaultController))]
 public class DefaultController : Controller
 {
     private readonly IVirtualFileLocationService _fileLocationService;

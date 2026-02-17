@@ -19,9 +19,8 @@ public class RobotsTxtPluginMenuProvider : IMenuProvider
     {
         var moduleType = GetType();
 
-        yield return new UrlMenuItem(_localizationService.GetString("/davidhome/dhopvirtualtext/robotstxt/menu", "Robots.txt"),
-            "/global/cms/dhopvirtualtext/robotstxt",
-            Paths.ToResource(moduleType, $"Default/{nameof(RobotsAdminController.Index)}"))
+        yield return new UrlMenuItem(_localizationService.GetString("/davidhome/dhopvirtualtext/robotstxt/menu", "Robots.txt"), "/global/cms/dhopvirtualtext/robotstxt",
+            Paths.ToResource(moduleType, $"RobotsAdmin/{nameof(RobotsAdminController.Index)}"))
         {
             SortIndex = 30,
             Alignment = 0,

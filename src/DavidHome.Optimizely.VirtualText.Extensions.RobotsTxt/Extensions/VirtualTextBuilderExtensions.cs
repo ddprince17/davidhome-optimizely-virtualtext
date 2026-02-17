@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class VirtualTextBuilderExtensions
 {
-    internal const string ModuleName = "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt";
+    private const string ModuleName = "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt";
     
     extension(IVirtualTextBuilder serviceBuilder)
     {

@@ -3,5 +3,5 @@
 public class SaveRobotsEnvironmentSettingsRequest
 {
     public string EnvironmentName { get; init; } = string.Empty;
-    public string? RobotsDirective { get; init; }
+    public string? RobotsDirectivePreset { get; init; }
 }
