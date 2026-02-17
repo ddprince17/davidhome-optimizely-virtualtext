@@ -32,6 +32,12 @@ public class RobotsMetaTagHelper : TagHelper
             return;
         }
 
-        output.Attributes.SetAttribute(ContentAttributeName, robotsDirective);
+        var metaTagContent = RobotsDirectiveParser.GetMetaTagContent(Name, robotsDirective);
+        if (string.IsNullOrWhiteSpace(metaTagContent))
+        {
+            return;
+        }
+
+        output.Attributes.SetAttribute(ContentAttributeName, metaTagContent);
     }
 }

@@ -5,6 +5,8 @@ namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Services;
 
 internal static partial class RobotsDirectiveParser
 {
+    private const string RobotsName = "robots";
+
     private static readonly HashSet<string> PlainDirectives =
     [
         "all",
@@ -15,6 +17,14 @@ internal static partial class RobotsDirectiveParser
         "indexifembedded",
         "notranslate",
         "noimageindex"
+    ];
+
+    private static readonly HashSet<string> ParameterizedDirectivePrefixes =
+    [
+        "max-snippet",
+        "max-video-preview",
+        "max-image-preview",
+        "unavailable_after"
     ];
 
     public static bool TryNormalize(string? input, out string? normalized, out string? error)
@@ -39,7 +49,7 @@ internal static partial class RobotsDirectiveParser
                 continue;
             }
 
-            if (!TryNormalizePart(part, out var normalizedPart, out error))
+            if (!TryNormalizePart(part, allowUserAgent: true, out var normalizedPart, out error))
             {
                 normalized = null;
                 return false;
@@ -60,10 +70,43 @@ internal static partial class RobotsDirectiveParser
         return true;
     }
 
-    [GeneratedRegex(",\\s*(?=(?:all|noindex|nofollow|none|nosnippet|indexifembedded|notranslate|noimageindex|max-snippet:|max-image-preview:|max-video-preview:|unavailable_after:))", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    public static string? GetMetaTagContent(string? tagName, string? normalizedDirectives)
+    {
+        if (string.IsNullOrWhiteSpace(tagName) || string.IsNullOrWhiteSpace(normalizedDirectives))
+        {
+            return null;
+        }
+
+        var normalizedTagName = tagName.Trim().ToLowerInvariant();
+        if (!string.Equals(normalizedTagName, RobotsName, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        var parts = DirectiveSplitRegex().Split(normalizedDirectives.Trim());
+        var output = new List<string>();
+
+        foreach (var rawPart in parts)
+        {
+            var part = rawPart.Trim();
+            if (part.Length == 0)
+            {
+                continue;
+            }
+
+            if (!TryExtractUserAgentDirective(part, out _, out _))
+            {
+                output.Add(part);
+            }
+        }
+
+        return output.Count == 0 ? null : string.Join(", ", output);
+    }
+
+    [GeneratedRegex(@",\s*(?=(?:all|noindex|nofollow|none|nosnippet|indexifembedded|notranslate|noimageindex|max-snippet:|max-image-preview:|max-video-preview:|unavailable_after:|[a-z0-9_*\-]+\s*:))", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex DirectiveSplitRegex();
 
-    private static bool TryNormalizePart(string part, out string normalizedPart, out string? error)
+    private static bool TryNormalizePart(string part, bool allowUserAgent, out string normalizedPart, out string? error)
     {
         var lower = part.ToLowerInvariant();
         if (PlainDirectives.Contains(lower))
@@ -113,6 +156,19 @@ internal static partial class RobotsDirectiveParser
             return true;
         }
 
+        if (allowUserAgent && TryExtractUserAgentDirective(part, out var userAgent, out var userAgentDirective))
+        {
+            if (!TryNormalizePart(userAgentDirective, allowUserAgent: false, out var normalizedUserAgentDirective, out error))
+            {
+                normalizedPart = string.Empty;
+                return false;
+            }
+
+            normalizedPart = $"{userAgent}: {normalizedUserAgentDirective}";
+            error = null;
+            return true;
+        }
+
         normalizedPart = string.Empty;
         error = $"Unknown robots directive: '{part}'.";
         return false;
@@ -132,4 +188,35 @@ internal static partial class RobotsDirectiveParser
         error = null;
         return true;
     }
+
+    private static bool TryExtractUserAgentDirective(string part, out string userAgent, out string directive)
+    {
+        userAgent = string.Empty;
+        directive = string.Empty;
+
+        var separatorIndex = part.IndexOf(':');
+        if (separatorIndex <= 0)
+        {
+            return false;
+        }
+
+        var possiblePrefix = part[..separatorIndex].Trim().ToLowerInvariant();
+        if (possiblePrefix.Length == 0 || ParameterizedDirectivePrefixes.Contains(possiblePrefix) || !UserAgentRegex().IsMatch(possiblePrefix))
+        {
+            return false;
+        }
+
+        var possibleDirective = part[(separatorIndex + 1)..].Trim();
+        if (possibleDirective.Length == 0)
+        {
+            return false;
+        }
+
+        userAgent = possiblePrefix;
+        directive = possibleDirective;
+        return true;
+    }
+
+    [GeneratedRegex("^[a-z0-9][a-z0-9_\\-*]*$", RegexOptions.CultureInvariant)]
+    private static partial Regex UserAgentRegex();
 }
