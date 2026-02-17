@@ -13,6 +13,6 @@ internal class RobotsEnvironmentIndexingEntity : ITableEntity
     public ETag ETag { get; set; }
 
     public string EnvironmentName { get; set; } = string.Empty;
-    public bool AllowIndexing { get; set; }
+    public string? RobotsDirective { get; set; }
     public DateTimeOffset UpdatedUtc { get; set; }
 }

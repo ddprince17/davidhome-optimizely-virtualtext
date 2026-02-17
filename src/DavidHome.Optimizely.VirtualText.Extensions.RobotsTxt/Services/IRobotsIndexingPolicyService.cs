@@ -7,5 +7,5 @@ public interface IRobotsIndexingPolicyService
     Task<bool> ShouldAllowIndexingCurrentEnvironmentAsync(CancellationToken cancellationToken = default);
     Task<string?> GetRobotsDirectiveForCurrentEnvironmentAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<RobotsEnvironmentPolicyViewModel>> ListVisibleEnvironmentsAsync(CancellationToken cancellationToken = default);
-    Task SaveEnvironmentSettingAsync(string environmentName, bool allowIndexing, CancellationToken cancellationToken = default);
+    Task SaveEnvironmentSettingAsync(string environmentName, string? robotsDirective, CancellationToken cancellationToken = default);
 }

@@ -3,5 +3,5 @@
 public class SaveRobotsEnvironmentSettingsRequest
 {
     public string EnvironmentName { get; init; } = string.Empty;
-    public bool AllowIndexing { get; init; }
+    public string? RobotsDirective { get; init; }
 }

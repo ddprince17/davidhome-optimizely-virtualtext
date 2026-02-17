@@ -60,7 +60,14 @@ public class RobotsAdminController : Controller
             return BadRequest("The specified environment cannot be managed.");
         }
 
-        await _indexingPolicyService.SaveEnvironmentSettingAsync(request.EnvironmentName, request.AllowIndexing, cancellationToken);
+        try
+        {
+            await _indexingPolicyService.SaveEnvironmentSettingAsync(request.EnvironmentName, request.RobotsDirective, cancellationToken);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
+        }
 
         return RedirectToAction(nameof(Index));
     }

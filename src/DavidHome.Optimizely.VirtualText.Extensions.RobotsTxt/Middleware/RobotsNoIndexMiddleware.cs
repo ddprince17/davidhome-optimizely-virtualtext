@@ -21,8 +21,8 @@ public class RobotsNoIndexMiddleware
         {
             var httpContext = (HttpContext)state;
 
-            var allowIndexing = await indexingPolicyService.ShouldAllowIndexingCurrentEnvironmentAsync(httpContext.RequestAborted);
-            if (allowIndexing)
+            var robotsDirective = await indexingPolicyService.GetRobotsDirectiveForCurrentEnvironmentAsync(httpContext.RequestAborted);
+            if (string.IsNullOrWhiteSpace(robotsDirective))
             {
                 return;
             }
@@ -30,16 +30,13 @@ public class RobotsNoIndexMiddleware
             if (httpContext.Response.Headers.TryGetValue(HeaderName, out var existingValue))
             {
                 var headerValue = existingValue.ToString();
-                if (headerValue.Contains("noindex", StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
-
-                httpContext.Response.Headers[HeaderName] = string.Concat(headerValue, ", ", RobotsTxtConstants.NoIndexDirective);
+                httpContext.Response.Headers[HeaderName] = string.IsNullOrWhiteSpace(headerValue)
+                    ? robotsDirective
+                    : string.Concat(headerValue, ", ", robotsDirective);
                 return;
             }
 
-            httpContext.Response.Headers[HeaderName] = RobotsTxtConstants.NoIndexDirective;
+            httpContext.Response.Headers[HeaderName] = robotsDirective;
         }, context);
 
         await _next(context);

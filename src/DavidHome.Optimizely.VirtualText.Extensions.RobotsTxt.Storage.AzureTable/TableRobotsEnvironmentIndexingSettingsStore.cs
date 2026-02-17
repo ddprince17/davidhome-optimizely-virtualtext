@@ -70,7 +70,7 @@ public class TableRobotsEnvironmentIndexingSettingsStore : IRobotsEnvironmentInd
         {
             RowKey = GetRowKey(setting.EnvironmentName),
             EnvironmentName = setting.EnvironmentName.Trim(),
-            AllowIndexing = setting.AllowIndexing,
+            RobotsDirective = setting.RobotsDirective,
             UpdatedUtc = setting.UpdatedUtc
         };
 
@@ -87,7 +87,7 @@ internal static class RobotsEnvironmentIndexingEntityExtensions
         return new RobotsEnvironmentIndexingSetting
         {
             EnvironmentName = entity.EnvironmentName,
-            AllowIndexing = entity.AllowIndexing,
+            RobotsDirective = entity.RobotsDirective,
             UpdatedUtc = entity.UpdatedUtc
         };
     }

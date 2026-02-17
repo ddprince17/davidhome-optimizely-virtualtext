@@ -9,7 +9,7 @@
         <tr>
             <th>Environment</th>
             <th>Source</th>
-            <th>Allow indexing</th>
+            <th>Directives</th>
             <th></th>
         </tr>
         </thead>
@@ -31,22 +31,30 @@
                         <form method="post" asp-action="Save" class="epi-u-displayInlineBlock">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="EnvironmentName" value="@environment.EnvironmentName" />
-                            <label class="epi-form__label" style="display:flex;align-items:center;gap:8px;">
-                                <input type="checkbox" name="AllowIndexing" value="true" @(environment.AllowIndexing ? "checked" : null) />
-                                <span>@(environment.AllowIndexing ? "Enabled" : "Disabled")</span>
+                            <label class="epi-form__label" style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;max-width:520px;">
+                                <span>Comma-separated robots directives. Leave blank to allow indexing.</span>
+                                <input type="text"
+                                       class="epi-input"
+                                       style="width:100%;"
+                                       name="RobotsDirective"
+                                       value="@environment.RobotsDirective" />
                             </label>
                             <button type="submit" class="epi-button epi-button--primary epi-u-marginTopSmall">Save</button>
                         </form>
                     }
                     else
                     {
-                        <span>@(environment.AllowIndexing ? "Enabled" : "Disabled")</span>
+                        <span>@(string.IsNullOrWhiteSpace(environment.RobotsDirective) ? "None (indexing allowed)" : environment.RobotsDirective)</span>
                     }
                 </td>
                 <td>
-                    @if (!environment.AllowIndexing)
+                    @if (!string.IsNullOrWhiteSpace(environment.RobotsDirective))
                     {
-                        <span class="epi-badge">Will output: noindex, nofollow</span>
+                        <span class="epi-badge">Will output: @environment.RobotsDirective</span>
+                    }
+                    else
+                    {
+                        <span class="epi-badge">Indexing allowed</span>
                     }
                 </td>
             </tr>
