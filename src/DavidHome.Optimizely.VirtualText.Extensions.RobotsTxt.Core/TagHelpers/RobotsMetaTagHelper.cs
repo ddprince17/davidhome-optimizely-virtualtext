@@ -1,7 +1,7 @@
-using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Services;
+using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Services;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.TagHelpers;
+namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.TagHelpers;
 
 [HtmlTargetElement("meta", Attributes = NameAttributeName)]
 public class RobotsMetaTagHelper : TagHelper

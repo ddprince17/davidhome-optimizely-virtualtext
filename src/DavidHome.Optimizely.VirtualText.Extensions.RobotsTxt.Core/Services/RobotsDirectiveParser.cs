@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Services;
+namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Services;
 
 internal static partial class RobotsDirectiveParser
 {

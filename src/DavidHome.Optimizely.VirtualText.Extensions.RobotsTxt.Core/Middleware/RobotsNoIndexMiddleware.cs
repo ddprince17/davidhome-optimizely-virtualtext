@@ -1,27 +1,26 @@
-using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts;
-using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Services;
+using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Services;
 using Microsoft.AspNetCore.Http;
 
-namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Middleware;
+namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Middleware;
 
-public class RobotsNoIndexMiddleware
+public class RobotsNoIndexMiddleware : IMiddleware
 {
     private const string HeaderName = "X-Robots-Tag";
 
-    private readonly RequestDelegate _next;
+    private readonly IRobotsIndexingPolicyService _indexingPolicyService;
 
-    public RobotsNoIndexMiddleware(RequestDelegate next)
+    public RobotsNoIndexMiddleware(IRobotsIndexingPolicyService indexingPolicyService)
     {
-        _next = next;
+        _indexingPolicyService = indexingPolicyService;
     }
 
-    public async Task InvokeAsync(HttpContext context, IRobotsIndexingPolicyService indexingPolicyService)
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         context.Response.OnStarting(async state =>
         {
             var httpContext = (HttpContext)state;
 
-            var robotsDirective = await indexingPolicyService.GetRobotsDirectiveForCurrentEnvironmentAsync(httpContext.RequestAborted);
+            var robotsDirective = await _indexingPolicyService.GetRobotsDirectiveForCurrentEnvironmentAsync(httpContext.RequestAborted);
             if (string.IsNullOrWhiteSpace(robotsDirective))
             {
                 return;
@@ -39,6 +38,6 @@ public class RobotsNoIndexMiddleware
             httpContext.Response.Headers[HeaderName] = robotsDirective;
         }, context);
 
-        await _next(context);
+        await next(context);
     }
 }

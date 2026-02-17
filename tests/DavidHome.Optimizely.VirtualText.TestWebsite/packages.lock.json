@@ -2017,13 +2017,19 @@
         "type": "Project",
         "dependencies": {
           "DavidHome.Optimizely.VirtualText": "[1.0.0, )",
-          "DavidHome.Optimizely.VirtualText.Contracts": "[1.0.0, )",
-          "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts": "[1.0.0, )",
+          "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core": "[1.0.0, )",
           "EPiServer.CMS.UI.Core": "[12.17.0, 13.0.0)"
         }
       },
       "davidhome.optimizely.virtualtext.extensions.robotstxt.contracts": {
         "type": "Project"
+      },
+      "davidhome.optimizely.virtualtext.extensions.robotstxt.core": {
+        "type": "Project",
+        "dependencies": {
+          "DavidHome.Optimizely.VirtualText.Contracts": "[1.0.0, )",
+          "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts": "[1.0.0, )"
+        }
       },
       "davidhome.optimizely.virtualtext.extensions.robotstxt.storage.azuretable": {
         "type": "Project",

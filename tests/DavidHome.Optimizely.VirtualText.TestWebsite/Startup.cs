@@ -52,10 +52,10 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseDavidHomeVirtualText()
-            .UseRobotsTxtExtension()
-            .UseAzureTableRobotsTxtStorage()
             .UseAzureTableFileLocation()
-            .UseAzureBlobFileStorage();
+            .UseAzureBlobFileStorage()
+            .UseRobotsTxtExtension()
+            .UseAzureTableRobotsTxtStorage();
 
         if (env.IsDevelopment())
         {

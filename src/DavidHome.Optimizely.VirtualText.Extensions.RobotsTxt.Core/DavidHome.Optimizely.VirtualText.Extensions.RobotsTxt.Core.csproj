@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <Title>DavidHome Optimizely VirtualText RobotsTxt Core</Title>
+        <Description>Core runtime library for the VirtualText RobotsTxt extension.</Description>
+        <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Contracts\DavidHome.Optimizely.VirtualText.Contracts.csproj" />
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="GitVersion.MsBuild">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <InternalsVisibleTo Include="DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt" />
+    </ItemGroup>
+</Project>

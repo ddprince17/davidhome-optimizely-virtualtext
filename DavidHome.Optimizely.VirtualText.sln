@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidHome.Optimizely.Virtua
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Storage.AzureTable", "src\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Storage.AzureTable\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Storage.AzureTable.csproj", "{942E791A-86A9-4482-AE69-14C5048DB514}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core", "src\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.csproj", "{7EE4055C-1DA9-4057-8CFC-863AF587F484}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,7 @@ Global
 		{652C9CDF-660E-47E2-8DBC-EA64019288FF} = {03F70132-3C94-433B-9E8E-5F52C422405C}
 		{4BA50453-F2A9-4593-B1DF-7055445C5404} = {03F70132-3C94-433B-9E8E-5F52C422405C}
 		{942E791A-86A9-4482-AE69-14C5048DB514} = {03F70132-3C94-433B-9E8E-5F52C422405C}
+		{7EE4055C-1DA9-4057-8CFC-863AF587F484} = {03F70132-3C94-433B-9E8E-5F52C422405C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{92D811F1-C244-4BEC-AD41-97AAEA996058}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -95,5 +98,9 @@ Global
 		{942E791A-86A9-4482-AE69-14C5048DB514}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{942E791A-86A9-4482-AE69-14C5048DB514}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{942E791A-86A9-4482-AE69-14C5048DB514}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EE4055C-1DA9-4057-8CFC-863AF587F484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EE4055C-1DA9-4057-8CFC-863AF587F484}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EE4055C-1DA9-4057-8CFC-863AF587F484}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EE4055C-1DA9-4057-8CFC-863AF587F484}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -12,8 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DavidHome.Optimizely.VirtualText\DavidHome.Optimizely.VirtualText.csproj" />
-      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Contracts\DavidHome.Optimizely.VirtualText.Contracts.csproj" />
-      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts.csproj" />
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>

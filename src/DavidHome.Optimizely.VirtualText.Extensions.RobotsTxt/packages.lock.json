@@ -393,6 +393,13 @@
       "davidhome.optimizely.virtualtext.extensions.robotstxt.contracts": {
         "type": "Project"
       },
+      "davidhome.optimizely.virtualtext.extensions.robotstxt.core": {
+        "type": "Project",
+        "dependencies": {
+          "DavidHome.Optimizely.VirtualText.Contracts": "[1.0.0, )",
+          "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts": "[1.0.0, )"
+        }
+      },
       "davidhome.optimizely.virtualtext.models": {
         "type": "Project"
       },
@@ -874,6 +881,13 @@
       },
       "davidhome.optimizely.virtualtext.extensions.robotstxt.contracts": {
         "type": "Project"
+      },
+      "davidhome.optimizely.virtualtext.extensions.robotstxt.core": {
+        "type": "Project",
+        "dependencies": {
+          "DavidHome.Optimizely.VirtualText.Contracts": "[1.0.0, )",
+          "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts": "[1.0.0, )"
+        }
       },
       "davidhome.optimizely.virtualtext.models": {
         "type": "Project"

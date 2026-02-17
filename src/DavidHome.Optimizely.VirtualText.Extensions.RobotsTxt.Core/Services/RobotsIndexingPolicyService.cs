@@ -1,8 +1,8 @@
 using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts;
-using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Models;
+using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Models;
 using Microsoft.Extensions.Hosting;
 
-namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Services;
+namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Services;
 
 public class RobotsIndexingPolicyService : IRobotsIndexingPolicyService
 {
@@ -15,15 +15,10 @@ public class RobotsIndexingPolicyService : IRobotsIndexingPolicyService
         _hostEnvironment = hostEnvironment;
     }
 
-    public async Task<bool> ShouldAllowIndexingCurrentEnvironmentAsync(CancellationToken cancellationToken = default)
-    {
-        var robotsDirective = await GetRobotsDirectiveForCurrentEnvironmentAsync(cancellationToken);
-        return string.IsNullOrWhiteSpace(robotsDirective);
-    }
-
     public async Task<string?> GetRobotsDirectiveForCurrentEnvironmentAsync(CancellationToken cancellationToken = default)
     {
         var setting = await _settingsStore.GetAsync(_hostEnvironment.EnvironmentName, cancellationToken);
+        
         return ResolveDirective(setting, _hostEnvironment.EnvironmentName);
     }
 

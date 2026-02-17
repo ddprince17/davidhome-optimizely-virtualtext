@@ -1,10 +1,9 @@
+using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Services;
 using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Models;
-using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Services;
 using DavidHome.Optimizely.VirtualText.Plugin;
 using DavidHome.Optimizely.VirtualText.Routing;
 using EPiServer.Security;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 
 namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Controllers;
 
@@ -13,15 +12,13 @@ namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Controllers;
 public class RobotsAdminController : Controller
 {
     private readonly IRobotsIndexingPolicyService _indexingPolicyService;
-    private readonly IHostEnvironment _hostEnvironment;
     private readonly PermissionService _permissionService;
 
     [ViewData] public string? Title { get; set; }
 
-    public RobotsAdminController(IRobotsIndexingPolicyService indexingPolicyService, IHostEnvironment hostEnvironment, PermissionService permissionService)
+    public RobotsAdminController(IRobotsIndexingPolicyService indexingPolicyService, PermissionService permissionService)
     {
         _indexingPolicyService = indexingPolicyService;
-        _hostEnvironment = hostEnvironment;
         _permissionService = permissionService;
     }
 
@@ -33,7 +30,7 @@ public class RobotsAdminController : Controller
         var environments = await _indexingPolicyService.ListVisibleEnvironmentsAsync(cancellationToken);
         var model = new RobotsTxtIndexViewModel
         {
-            CurrentEnvironment = _hostEnvironment.EnvironmentName,
+            CurrentEnvironment = environments.FirstOrDefault(environment => environment.IsCurrent)?.EnvironmentName ?? string.Empty,
             Environments = environments,
             CanEdit = _permissionService.IsPermitted(User, PluginPermissions.EditSettings)
         };
@@ -49,15 +46,6 @@ public class RobotsAdminController : Controller
         if (string.IsNullOrWhiteSpace(request.EnvironmentName))
         {
             return BadRequest("Environment name is required.");
-        }
-
-        var environments = await _indexingPolicyService.ListVisibleEnvironmentsAsync(cancellationToken);
-        var canManageEnvironment = environments.Any(environment =>
-            string.Equals(environment.EnvironmentName, request.EnvironmentName, StringComparison.OrdinalIgnoreCase));
-
-        if (!canManageEnvironment)
-        {
-            return BadRequest("The specified environment cannot be managed.");
         }
 
         try

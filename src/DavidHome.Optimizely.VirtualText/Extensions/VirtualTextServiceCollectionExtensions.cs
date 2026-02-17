@@ -9,16 +9,19 @@ public static class VirtualTextServiceCollectionExtensions
 {
     internal const string ModuleName = "DavidHome.Optimizely.VirtualText";
 
-    public static IVirtualTextBuilder AddDavidHomeVirtualText(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        return services
-            .Configure<ProtectedModuleOptions>(options =>
-            {
-                if (!options.Items.Any(item => item.Name.Equals(ModuleName, StringComparison.OrdinalIgnoreCase)))
+        public IVirtualTextBuilder AddDavidHomeVirtualText()
+        {
+            return services
+                .Configure<ProtectedModuleOptions>(options =>
                 {
-                    options.Items.Add(new ModuleDetails { Name = ModuleName });
-                }
-            })
-            .AddDavidHomeVirtualTextCore();
+                    if (!options.Items.Any(item => item.Name.Equals(ModuleName, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        options.Items.Add(new ModuleDetails { Name = ModuleName });
+                    }
+                })
+                .AddDavidHomeVirtualTextCore();
+        }
     }
 }
