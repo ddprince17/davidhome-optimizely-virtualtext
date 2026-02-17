@@ -21,7 +21,7 @@ public class RobotsTxtPluginMenuProvider : IMenuProvider
 
         yield return new UrlMenuItem(_localizationService.GetString("/davidhome/dhopvirtualtext/robotstxt/menu", "Robots.txt"),
             "/global/cms/dhopvirtualtext/robotstxt",
-            Paths.ToResource(moduleType, $"Default/{nameof(DefaultController.Index)}"))
+            Paths.ToResource(moduleType, $"Default/{nameof(RobotsAdminController.Index)}"))
         {
             SortIndex = 30,
             Alignment = 0,

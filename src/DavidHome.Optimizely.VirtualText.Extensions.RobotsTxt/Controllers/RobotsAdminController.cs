@@ -1,7 +1,7 @@
 using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Models;
-using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Routing;
 using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Services;
 using DavidHome.Optimizely.VirtualText.Plugin;
+using DavidHome.Optimizely.VirtualText.Routing;
 using EPiServer.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -10,7 +10,7 @@ namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Controllers;
 
 [AnyAuthorizePermission(PluginPermissions.GroupName, PluginPermissions.ViewPermissionsName, PluginPermissions.EditPermissionsName)]
 [ModuleRoute]
-public class DefaultController : Controller
+public class RobotsAdminController : Controller
 {
     private readonly IRobotsIndexingPolicyService _indexingPolicyService;
     private readonly IHostEnvironment _hostEnvironment;
@@ -18,7 +18,7 @@ public class DefaultController : Controller
 
     [ViewData] public string? Title { get; set; }
 
-    public DefaultController(IRobotsIndexingPolicyService indexingPolicyService, IHostEnvironment hostEnvironment, PermissionService permissionService)
+    public RobotsAdminController(IRobotsIndexingPolicyService indexingPolicyService, IHostEnvironment hostEnvironment, PermissionService permissionService)
     {
         _indexingPolicyService = indexingPolicyService;
         _hostEnvironment = hostEnvironment;

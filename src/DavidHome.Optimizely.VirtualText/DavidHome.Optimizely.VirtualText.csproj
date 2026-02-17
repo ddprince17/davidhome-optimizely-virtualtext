@@ -41,4 +41,8 @@
         <DefaultItemExcludes>$(DefaultItemExcludes);Frontend/**</DefaultItemExcludes>
     </PropertyGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt" />
+    </ItemGroup>
+
 </Project>

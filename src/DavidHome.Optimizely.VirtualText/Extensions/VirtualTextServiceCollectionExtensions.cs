@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class VirtualTextServiceCollectionExtensions
 {
-    private const string ModuleName = "DavidHome.Optimizely.VirtualText";
+    internal const string ModuleName = "DavidHome.Optimizely.VirtualText";
 
     public static IVirtualTextBuilder AddDavidHomeVirtualText(this IServiceCollection services)
     {

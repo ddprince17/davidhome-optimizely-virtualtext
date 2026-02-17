@@ -10,11 +10,11 @@
     {
         endpoints = new
         {
-            FileContentUrl = Url.Action("FileContent", "Default"),
-            SaveFileUrl = Url.Action("SaveFile", "Default"),
-            CopyFileUrl = Url.Action("CopyFile", "Default"),
-            DeleteFileUrl = Url.Action("DeleteFile", "Default"),
-            FileListUrl = Url.Action("FileList", "Default")
+            FileContentUrl = Url.Action("FileContent", "RobotsAdmin"),
+            SaveFileUrl = Url.Action("SaveFile", "RobotsAdmin"),
+            CopyFileUrl = Url.Action("CopyFile", "RobotsAdmin"),
+            DeleteFileUrl = Url.Action("DeleteFile", "RobotsAdmin"),
+            FileListUrl = Url.Action("FileList", "RobotsAdmin")
         },
         sites = Model.Sites,
         files = Model.Files,

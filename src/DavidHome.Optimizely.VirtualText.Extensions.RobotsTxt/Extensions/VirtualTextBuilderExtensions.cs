@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class VirtualTextBuilderExtensions
 {
-    private const string ModuleName = "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt";
+    private const string ModuleName = "DavidHome.Optimizely.VirtualText";
 
     extension(IVirtualTextBuilder serviceBuilder)
     {
@@ -19,13 +19,18 @@ public static class VirtualTextBuilderExtensions
             serviceBuilder.Services?
                 .Configure<ProtectedModuleOptions>(options =>
                 {
-                    if (!options.Items.Any(item => item.Name.Equals(ModuleName, StringComparison.OrdinalIgnoreCase)))
+                    var assemblyName = typeof(VirtualTextBuilderExtensions).Assembly.GetName().Name ??
+                                       throw new InvalidOperationException("Could not resolve RobotsTxt extension assembly name.");
+                    var module = options.Items.FirstOrDefault(item => item.Name.Equals(VirtualTextServiceCollectionExtensions.ModuleName, StringComparison.OrdinalIgnoreCase));
+                    if (module is null)
                     {
-                        options.Items.Add(new ModuleDetails { Name = ModuleName });
+                        throw new InvalidOperationException(
+                            $"{VirtualTextServiceCollectionExtensions.ModuleName} module is not registered. Call AddDavidHomeVirtualText() before AddRobotsTxtExtension().");
                     }
+
+                    module.Assemblies.Add(assemblyName);
                 })
-                .AddTransient<IRobotsIndexingPolicyService, RobotsIndexingPolicyService>()
-                .TryAddSingleton<IRobotsEnvironmentIndexingSettingsStore, InMemoryRobotsEnvironmentIndexingSettingsStore>();
+                .AddTransient<IRobotsIndexingPolicyService, RobotsIndexingPolicyService>();
 
             return serviceBuilder;
         }
