@@ -2013,6 +2013,27 @@
           "System.Linq.AsyncEnumerable": "[10.0.0, )"
         }
       },
+      "davidhome.optimizely.virtualtext.extensions.robotstxt": {
+        "type": "Project",
+        "dependencies": {
+          "DavidHome.Optimizely.VirtualText": "[1.0.0, )",
+          "DavidHome.Optimizely.VirtualText.Contracts": "[1.0.0, )",
+          "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts": "[1.0.0, )",
+          "EPiServer.CMS.UI.Core": "[12.17.0, 13.0.0)"
+        }
+      },
+      "davidhome.optimizely.virtualtext.extensions.robotstxt.contracts": {
+        "type": "Project"
+      },
+      "davidhome.optimizely.virtualtext.extensions.robotstxt.storage.azuretable": {
+        "type": "Project",
+        "dependencies": {
+          "Azure.Data.Tables": "[12.0.0, 13.0.0)",
+          "DavidHome.Optimizely.VirtualText.Contracts": "[1.0.0, )",
+          "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts": "[1.0.0, )",
+          "Microsoft.Extensions.Azure": "[1.0.0, 2.0.0)"
+        }
+      },
       "davidhome.optimizely.virtualtext.location.azuretable": {
         "type": "Project",
         "dependencies": {

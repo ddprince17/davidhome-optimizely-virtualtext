@@ -1,12 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <Title>DavidHome Optimizely VirtualText</Title>
-        <Description>Virtual text editor for static content on your website(s).</Description>
-        <UserSecretsId>eb82a134-d22d-4f0d-a974-48fccfc38c1c</UserSecretsId>
-    </PropertyGroup>
-
-    <PropertyGroup>
+        <Title>DavidHome Optimizely VirtualText robots.txt extension</Title>
+        <Description>Robots.txt extension that augments the capabilities of this plugin, allowing further fine grained control over what is being indexed by search engines.</Description>
         <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     </PropertyGroup>
 
@@ -15,7 +11,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Core\DavidHome.Optimizely.VirtualText.Core.csproj" />
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText\DavidHome.Optimizely.VirtualText.csproj" />
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Contracts\DavidHome.Optimizely.VirtualText.Contracts.csproj" />
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -36,9 +34,5 @@
         <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       </None>
     </ItemGroup>
-
-    <PropertyGroup>
-        <DefaultItemExcludes>$(DefaultItemExcludes);Frontend/**</DefaultItemExcludes>
-    </PropertyGroup>
 
 </Project>

@@ -5,23 +5,23 @@
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 
 @{
-    var thisType = typeof(VirtualTextImportViewModel);
-    var bootstrap = new
+  var thisType = typeof(VirtualTextImportViewModel);
+  var bootstrap = new
+  {
+    endpoints = new
     {
-        endpoints = new
-        {
-            ImportFileUrl = Url.Action("ImportFile", "Default"),
-            ImportListUrl = Url.Action("ImportList", "Default")
-        },
-        sites = Model.Sites,
-        items = Model.Items,
-        canEdit = Model.CanEdit,
-        antiForgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken
-    };
-    var bootstrapJson = JsonSerializer.Serialize(bootstrap, new JsonSerializerOptions
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    });
+      ImportFileUrl = Url.Action("ImportFile", "Default"),
+      ImportListUrl = Url.Action("ImportList", "Default")
+    },
+    sites = Model.Sites,
+    items = Model.Items,
+    canEdit = Model.CanEdit,
+    antiForgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken
+  };
+  var bootstrapJson = JsonSerializer.Serialize(bootstrap, new JsonSerializerOptions
+  {
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+  });
 }
 
 <link rel="stylesheet" href="@Paths.ToClientResource(thisType, "virtualtext-import.css")"/>

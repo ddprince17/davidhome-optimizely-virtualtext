@@ -25,6 +25,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\DavidHome.Optimizely.VirtualText.Content.AzureBlob\DavidHome.Optimizely.VirtualText.Content.AzureBlob.csproj" />
+      <ProjectReference Include="..\..\src\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Storage.AzureTable\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Storage.AzureTable.csproj" />
+      <ProjectReference Include="..\..\src\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.csproj" />
       <ProjectReference Include="..\..\src\DavidHome.Optimizely.VirtualText.Location.AzureTable\DavidHome.Optimizely.VirtualText.Location.AzureTable.csproj" />
       <ProjectReference Include="..\..\src\DavidHome.Optimizely.VirtualText\DavidHome.Optimizely.VirtualText.csproj" />
     </ItemGroup>

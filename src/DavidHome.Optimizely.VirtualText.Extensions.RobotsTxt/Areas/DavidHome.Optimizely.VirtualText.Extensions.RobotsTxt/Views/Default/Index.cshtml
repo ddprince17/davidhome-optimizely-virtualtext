@@ -1,0 +1,56 @@
+@model RobotsTxtIndexViewModel
+
+<section class="epi-padding">
+    <h1 class="epi-u-marginBottomSmall">Robots.txt Indexing Settings</h1>
+    <p class="epi-u-marginBottomMedium">Current environment: <strong>@Model.CurrentEnvironment</strong></p>
+
+    <table class="epi-table epi-u-marginBottomMedium" style="width:100%; max-width: 960px;">
+        <thead>
+        <tr>
+            <th>Environment</th>
+            <th>Source</th>
+            <th>Allow indexing</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var environment in Model.Environments)
+        {
+            <tr>
+                <td>
+                    @environment.EnvironmentName
+                    @if (environment.IsCurrent)
+                    {
+                        <span class="epi-badge">Current</span>
+                    }
+                </td>
+                <td>@(environment.IsExplicit ? "Azure Table" : "Default policy")</td>
+                <td>
+                    @if (Model.CanEdit)
+                    {
+                        <form method="post" asp-action="Save" class="epi-u-displayInlineBlock">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="EnvironmentName" value="@environment.EnvironmentName" />
+                            <label class="epi-form__label" style="display:flex;align-items:center;gap:8px;">
+                                <input type="checkbox" name="AllowIndexing" value="true" @(environment.AllowIndexing ? "checked" : null) />
+                                <span>@(environment.AllowIndexing ? "Enabled" : "Disabled")</span>
+                            </label>
+                            <button type="submit" class="epi-button epi-button--primary epi-u-marginTopSmall">Save</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span>@(environment.AllowIndexing ? "Enabled" : "Disabled")</span>
+                    }
+                </td>
+                <td>
+                    @if (!environment.AllowIndexing)
+                    {
+                        <span class="epi-badge">Will output: noindex, nofollow</span>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</section>

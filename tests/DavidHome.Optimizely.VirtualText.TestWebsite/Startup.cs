@@ -31,6 +31,8 @@ public class Startup
             .AddCms()
             .AddAlloy()
             .AddDavidHomeVirtualText()
+            .AddRobotsTxtExtension()
+            .AddAzureTableRobotsTxtStorage(_configuration.GetSection("ConnectionStrings:EPiServerAzureBlobs"))
             .AddAzureTableLocation(_configuration.GetSection("ConnectionStrings:EPiServerAzureBlobs"))
             .AddAzureBlobContent(_configuration.GetSection("ConnectionStrings:EPiServerAzureBlobs")).Services
             .AddAdminUserRegistration()
@@ -50,6 +52,8 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseDavidHomeVirtualText()
+            .UseRobotsTxtExtension()
+            .UseAzureTableRobotsTxtStorage()
             .UseAzureTableFileLocation()
             .UseAzureBlobFileStorage();
 

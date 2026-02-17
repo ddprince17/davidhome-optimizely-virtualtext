@@ -31,6 +31,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{26B4C6B3-8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidHome.Optimizely.VirtualText.Core", "src\DavidHome.Optimizely.VirtualText.Core\DavidHome.Optimizely.VirtualText.Core.csproj", "{411C5DF9-F3E8-4E53-8244-A80B99B25F3F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt", "src\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.csproj", "{652C9CDF-660E-47E2-8DBC-EA64019288FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts", "src\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts.csproj", "{4BA50453-F2A9-4593-B1DF-7055445C5404}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Storage.AzureTable", "src\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Storage.AzureTable\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Storage.AzureTable.csproj", "{942E791A-86A9-4482-AE69-14C5048DB514}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +50,9 @@ Global
 		{64AED842-B9A0-4105-97A2-6EDEE32B984F} = {03F70132-3C94-433B-9E8E-5F52C422405C}
 		{EC1147CF-7A43-44BD-9776-43395A5E77E2} = {82A4B821-2BD9-4022-BF51-3A33E7862C6E}
 		{411C5DF9-F3E8-4E53-8244-A80B99B25F3F} = {03F70132-3C94-433B-9E8E-5F52C422405C}
+		{652C9CDF-660E-47E2-8DBC-EA64019288FF} = {03F70132-3C94-433B-9E8E-5F52C422405C}
+		{4BA50453-F2A9-4593-B1DF-7055445C5404} = {03F70132-3C94-433B-9E8E-5F52C422405C}
+		{942E791A-86A9-4482-AE69-14C5048DB514} = {03F70132-3C94-433B-9E8E-5F52C422405C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{92D811F1-C244-4BEC-AD41-97AAEA996058}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -74,5 +83,17 @@ Global
 		{411C5DF9-F3E8-4E53-8244-A80B99B25F3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{411C5DF9-F3E8-4E53-8244-A80B99B25F3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{411C5DF9-F3E8-4E53-8244-A80B99B25F3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{652C9CDF-660E-47E2-8DBC-EA64019288FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{652C9CDF-660E-47E2-8DBC-EA64019288FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{652C9CDF-660E-47E2-8DBC-EA64019288FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{652C9CDF-660E-47E2-8DBC-EA64019288FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BA50453-F2A9-4593-B1DF-7055445C5404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BA50453-F2A9-4593-B1DF-7055445C5404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BA50453-F2A9-4593-B1DF-7055445C5404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BA50453-F2A9-4593-B1DF-7055445C5404}.Release|Any CPU.Build.0 = Release|Any CPU
+		{942E791A-86A9-4482-AE69-14C5048DB514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{942E791A-86A9-4482-AE69-14C5048DB514}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{942E791A-86A9-4482-AE69-14C5048DB514}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{942E791A-86A9-4482-AE69-14C5048DB514}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
