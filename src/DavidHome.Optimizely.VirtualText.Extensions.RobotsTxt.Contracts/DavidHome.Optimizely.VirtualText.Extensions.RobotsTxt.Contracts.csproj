@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Title>DavidHome Optimizely VirtualText RobotsTxt Contracts</Title>
+        <Description>Contracts for the VirtualText RobotsTxt extension.</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="GitVersion.MsBuild">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+</Project>

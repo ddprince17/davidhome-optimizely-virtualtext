@@ -1,8 +1,6 @@
-using DavidHome.Optimizely.VirtualText;
 using DavidHome.Optimizely.VirtualText.Contracts;
-using DavidHome.Optimizely.VirtualText.Routing;
-using DavidHome.Optimizely.VirtualText.Services;
-using Microsoft.Extensions.Azure;
+using DavidHome.Optimizely.VirtualText.Models;
+using EPiServer.Shell.Modules;
 using Microsoft.Extensions.Configuration;
 
 // ReSharper disable CheckNamespace
@@ -11,21 +9,26 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class VirtualTextServiceCollectionExtensions
 {
-    internal const string ClientName = "DavidHomeVirtualText";
+    private const string ModuleName = "DavidHome.Optimizely.VirtualText";
 
-    public static IServiceCollection AddDavidHomeVirtualText(this IServiceCollection services, IConfiguration configuration)
+    extension(IServiceCollection services)
     {
-        services
-            .AddSingleton(typeof(VirtualTextPartialRouter<>))
-            .AddSingleton(typeof(IVirtualTextPartialRouterWrapper<>), typeof(VirtualTextPartialRouterWrapper<>))
-            .AddTransient<IVirtualFileLocationService, VirtualFileLocationService>()
-            .AddTransient<IVirtualFileContentService, VirtualFileContentService>()
-            .AddAzureClients(builder =>
-            {
-                builder.AddTableServiceClient(configuration).WithName(ClientName);
-                builder.AddBlobServiceClient(configuration).WithName(ClientName);
-            });
-
-        return services;
+        public IVirtualTextBuilder AddDavidHomeVirtualText(IConfiguration configuration)
+        {
+            var configSection = configuration
+                .GetSection(nameof(DavidHome))
+                .GetSection(nameof(DavidHome.Optimizely.VirtualText));
+            
+            return services
+                .Configure<VirtualTextOptions>(configSection)
+                .Configure<ProtectedModuleOptions>(options =>
+                {
+                    if (!options.Items.Any(item => item.Name.Equals(ModuleName, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        options.Items.Add(new ModuleDetails { Name = ModuleName });
+                    }
+                })
+                .AddDavidHomeVirtualTextCore();
+        }
     }
 }

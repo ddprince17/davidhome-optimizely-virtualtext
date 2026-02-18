@@ -1,0 +1,143 @@
+@model RobotsTxtIndexViewModel
+@using EPiServer.Shell
+@using System.Linq
+
+@{
+    var thisType = typeof(RobotsTxtIndexViewModel);
+    var suggestedDirectives = new[] { "", "noindex", "nofollow", "noindex, nofollow", "nosnippet", "noimageindex", "notranslate", "none" };
+    var defaultManipulatorContent = string.IsNullOrWhiteSpace(Model.DefaultManipulatorContent)
+        ? "User-agent: *\nDisallow: /"
+        : Model.DefaultManipulatorContent;
+}
+
+<link rel="stylesheet" href="@Paths.ToClientResource(thisType, "robotstxt-app.css")"/>
+
+<section class="space-y-6 text-slate-800">
+    @if (TempData["RobotsError"] is string errorMessage)
+    {
+        <div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">@errorMessage</div>
+    }
+    @if (TempData["RobotsSuccess"] is string successMessage)
+    {
+        <div class="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">@successMessage</div>
+    }
+
+    <div class="rounded-xl border border-slate-200 bg-white p-4">
+        <h2 class="mb-2 text-base font-semibold text-slate-900">How This Extension Works</h2>
+        <div class="space-y-3 text-sm text-slate-700">
+            <p>
+                This extension dynamically override the content of <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">robots.txt</code> when that file exists in the Virtual Text file manager.
+                It only applies in non-production environments.
+            </p>
+            <div>
+                <div class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Default robots.txt content returned by the manipulator</div>
+                <pre class="overflow-x-auto rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-800"><code>@defaultManipulatorContent</code></pre>
+            </div>
+            <p>
+                You can disable this behavior with
+                <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">DavidHome:VirtualText:RobotsTxt:DisableRobotsTxtManipulator</code>
+                and customize the default content with
+                <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">DavidHome:VirtualText:RobotsTxt:DefaultManipulatorContent</code>
+                in <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">appsettings.json</code>.
+            </p>
+            @if (Model.DisableRobotsTxtManipulator)
+            {
+                <div class="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+                    The manipulator is currently disabled by configuration.
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="rounded-xl border border-slate-200 bg-white p-4">
+        <h2 class="mb-2 text-base font-semibold text-slate-900">Configure Environment Policies</h2>
+        <p class="mb-4 text-sm text-slate-600">
+            These environment policies are applied on every request as robots indexing directives (for example via <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">X-Robots-Tag</code> and robots meta output).
+            Restrictive values such as <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">noindex</code> prevent search engines from indexing your site.
+        </p>
+        <p class="mb-2 text-sm text-slate-600">Set a directive directly. You can type your own value or pick a suggested preset.</p>
+
+        @if (!Model.CanEdit)
+        {
+            <p class="text-sm text-slate-600">You do not have permission to edit settings.</p>
+        }
+        else
+        {
+            <div class="overflow-visible">
+                <table class="min-w-full border-collapse text-sm">
+                    <thead>
+                    <tr class="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
+                        <th class="px-2 py-2 font-semibold">Environment</th>
+                        <th class="px-2 py-2 font-semibold">Current</th>
+                        <th class="px-2 py-2 font-semibold">Directive (editable)</th>
+                        <th class="px-2 py-2 text-right font-semibold">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var environment in Model.Environments)
+                    {
+                        var normalizedDirective = environment.RobotsDirective?.Trim() ?? string.Empty;
+                        var safeEnvironmentName = environment.EnvironmentName.ToLowerInvariant().Replace(" ", "-");
+                        var formId = $"save-form-{safeEnvironmentName}";
+
+                        <tr class="border-b border-slate-100 align-top">
+                            <td class="px-2 py-3">
+                                <div class="font-medium">@environment.EnvironmentName</div>
+                                <div class="text-xs text-slate-500">@((environment.IsExplicit ? "Azure Table" : "Default policy"))</div>
+                                @if (environment.IsCurrent)
+                                {
+                                    <span class="mt-1 inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">Current environment</span>
+                                }
+                            </td>
+                            <td class="px-2 py-3">
+                                @if (string.IsNullOrWhiteSpace(environment.RobotsDirective))
+                                {
+                                    <span class="inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Indexing allowed</span>
+                                }
+                                else
+                                {
+                                    <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">@environment.RobotsDirective</code>
+                                }
+                            </td>
+                            <td class="px-2 py-3">
+                                <form id="@formId" method="post" asp-action="Save" class="space-y-2">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="EnvironmentName" value="@environment.EnvironmentName" />
+                                    <div class="rt-directive-combobox relative">
+                                        <input type="text" class="rt-directive-input w-full min-w-64 rounded-md border border-slate-300 bg-white px-3 py-2 pr-10 text-sm text-slate-800" name="RobotsDirectivePreset" value="@normalizedDirective" placeholder="Type a directive or choose a preset" />
+                                        <button type="button" class="rt-directive-toggle absolute inset-y-0 right-0 inline-flex items-center rounded-r-md border-l border-slate-300 bg-slate-50 px-3 text-slate-600 hover:bg-slate-100" aria-label="Show directive presets">
+                                            <span aria-hidden="true">&#9662;</span>
+                                        </button>
+                                        <div class="rt-directive-menu absolute z-20 mt-1 hidden w-full rounded-md border border-slate-300 bg-white py-1 shadow-lg">
+                                            <button type="button" class="rt-directive-option block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100" data-value="">Allow indexing (empty)</button>
+                                            @foreach (var directive in suggestedDirectives.Where(d => !string.IsNullOrWhiteSpace(d)))
+                                            {
+                                                <button type="button" class="rt-directive-option block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100" data-value="@directive">@directive</button>
+                                            }
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
+                            <td class="px-2 py-3 text-right">
+                                <div class="flex justify-end gap-2">
+                                    @if (environment.IsExplicit)
+                                    {
+                                        <form method="post" asp-action="Reset" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="environmentName" value="@environment.EnvironmentName" />
+                                            <button type="submit" class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100">Reset to default</button>
+                                        </form>
+                                    }
+                                    <button type="submit" form="@formId" class="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">Save</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>
+
+<script src="@Paths.ToClientResource(thisType, "robotstxt-app.js")"></script>

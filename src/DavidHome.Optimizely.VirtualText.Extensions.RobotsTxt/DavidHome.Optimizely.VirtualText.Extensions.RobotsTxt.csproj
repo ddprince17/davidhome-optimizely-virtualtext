@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <Title>DavidHome Optimizely VirtualText robots.txt extension</Title>
+        <Description>Robots.txt extension that augments the capabilities of this plugin, allowing further fine grained control over what is being indexed by search engines.</Description>
+        <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText\DavidHome.Optimizely.VirtualText.csproj" />
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="EPiServer.CMS.UI.Core" />
+      <PackageReference Include="GitVersion.MsBuild">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="module.config" />
+      <None Include="module.config">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </None>
+      <Content Remove="packages.lock.json" />
+      <None Include="packages.lock.json">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <DefaultItemExcludes>$(DefaultItemExcludes);Frontend/**</DefaultItemExcludes>
+    </PropertyGroup>
+
+</Project>

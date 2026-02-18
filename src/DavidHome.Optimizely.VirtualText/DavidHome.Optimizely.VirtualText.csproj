@@ -3,6 +3,7 @@
     <PropertyGroup>
         <Title>DavidHome Optimizely VirtualText</Title>
         <Description>Virtual text editor for static content on your website(s).</Description>
+        <UserSecretsId>eb82a134-d22d-4f0d-a974-48fccfc38c1c</UserSecretsId>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -14,21 +15,30 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Contracts\DavidHome.Optimizely.VirtualText.Contracts.csproj" />
-      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Models\DavidHome.Optimizely.VirtualText.Models.csproj" />
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Core\DavidHome.Optimizely.VirtualText.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Azure.Data.Tables" />
-      <PackageReference Include="Azure.Storage.Blobs" />
-      <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" />
-      <PackageReference Include="EPiServer.CMS.Core" />
+      <PackageReference Include="EPiServer.CMS.UI.Core" />
       <PackageReference Include="GitVersion.MsBuild">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Microsoft.Extensions.Azure" />
-      <PackageReference Include="System.Linq.AsyncEnumerable" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="module.config" />
+      <None Include="module.config">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </None>
+      <Content Remove="packages.lock.json" />
+      <None Include="packages.lock.json">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <PropertyGroup>
+        <DefaultItemExcludes>$(DefaultItemExcludes);Frontend/**</DefaultItemExcludes>
+    </PropertyGroup>
 
 </Project>

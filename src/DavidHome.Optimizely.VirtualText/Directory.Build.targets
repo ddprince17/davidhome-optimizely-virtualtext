@@ -1,0 +1,41 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Ensure our target is in the pack & build pipelines -->
+    <BuildDependsOn>$(BuildDependsOn);CreateCmsAddOnZip</BuildDependsOn>
+    <PackDependsOn>$(PackDependsOn);CreateCmsAddOnZip</PackDependsOn>
+  </PropertyGroup>
+
+  <!-- Multitargeting hook (runs once) -->
+  <Target Name="RunWhenMultiTargeting"
+          BeforeTargets="DispatchToInnerBuilds"
+          DependsOnTargets="CreateCmsAddOnZip"
+          Condition="'$(IsCrossTargetingBuild)' == 'true'"/>
+
+  <!-- Create the zip ONCE and incrementally -->
+  <Target Name="CreateCmsAddOnZip"
+          Inputs="$(ProjectDir)module.config;@(ClientResources)"
+          Outputs="$(ZipOutputFile)">
+
+    <Message Importance="High"
+             Text="Running CreateCmsAddOnZip once: IsCrossTargetingBuild=$(IsCrossTargetingBuild)  TF=$(TargetFramework)  TFMs=$(TargetFrameworks)  Zip=$(ZipOutputFile)"/>
+
+    <!-- Stage -->
+    <Copy SourceFiles="$(ProjectDir)module.config"
+          DestinationFolder="$(TmpOutDir)\content"/>
+    <Copy SourceFiles="@(ClientResources)"
+          DestinationFiles="@(ClientResources -> '$(TmpOutDir)\content\$(PackageVersion)\%(RecursiveDir)%(Filename)%(Extension)')"/>
+
+    <!-- Patch -->
+    <XmlPoke XmlInputPath="$(TmpOutDir)\content\module.config"
+             Query="/module/@clientResourceRelativePath"
+             Value="$(PackageVersion)"/>
+
+    <!-- Zip -->
+    <ZipDirectory SourceDirectory="$(TmpOutDir)\content"
+                  DestinationFile="$(ZipOutputFile)"
+                  Overwrite="true"/>
+
+    <!-- Cleanup -->
+    <RemoveDir Directories="$(TmpOutDir)"/>
+  </Target>
+</Project>

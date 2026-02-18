@@ -1,0 +1,18 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildProjectDirectory)/../Directory.Build.targets" Condition="Exists('$(MSBuildProjectDirectory)/../Directory.Build.targets')"/>
+
+    <Target Name="EnsureModulesFolder" BeforeTargets="CopyOptiPluginZip">
+        <MakeDir Directories="@(OptiPluginZip->'%(TargetCopyDir)')"/>
+    </Target>
+
+    <Target Name="CopyOptiPluginZip"
+            BeforeTargets="Build"
+            DependsOnTargets="EnsureModulesFolder"
+            Inputs="@(OptiPluginZip)"
+            Outputs="@(OptiPluginZip->'%(TargetCopyDir)%(TargetFileName)')">
+        <Message Importance="High" Text="Copying %(OptiPluginZip.Identity) to %(OptiPluginZip.TargetCopyDir)"/>
+        <Copy SourceFiles="%(OptiPluginZip.Identity)"
+              DestinationFiles="%(OptiPluginZip.TargetCopyDir)%(OptiPluginZip.TargetFileName)"
+              Condition="Exists('%(OptiPluginZip.Identity)')"/>
+    </Target>
+</Project>

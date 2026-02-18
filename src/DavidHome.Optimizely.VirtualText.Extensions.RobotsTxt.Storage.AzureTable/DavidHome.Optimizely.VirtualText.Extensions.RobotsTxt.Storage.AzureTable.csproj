@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Title>DavidHome Optimizely VirtualText RobotsTxt Azure Table Storage</Title>
+        <Description>Azure Table storage implementation for RobotsTxt indexing settings.</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Contracts.csproj" />
+      <ProjectReference Include="..\DavidHome.Optimizely.VirtualText.Contracts\DavidHome.Optimizely.VirtualText.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Azure.Data.Tables" />
+      <PackageReference Include="GitVersion.MsBuild">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.Extensions.Azure" />
+    </ItemGroup>
+
+</Project>

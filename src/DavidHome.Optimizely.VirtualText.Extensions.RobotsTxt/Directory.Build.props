@@ -1,0 +1,22 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildProjectDirectory)/../Directory.Build.props" />
+    <ItemGroup>
+        <ClientResources Include="$(ProjectDir)ClientResources\**\*"/>
+    </ItemGroup>
+    <PropertyGroup>
+        <TmpOutDir>$([System.IO.Path]::Combine($(ProjectDir), 'tmp'))</TmpOutDir>
+        <ZipOutputFile>$(ProjectDir)$(MSBuildProjectName).zip</ZipOutputFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <Content Include="$(MSBuildProjectName).zip">
+            <Pack>true</Pack>
+            <PackagePath>contentFiles\any\any\modules\_protected\$(MSBuildProjectName)</PackagePath>
+            <BuildAction>None</BuildAction>
+            <PackageCopyToOutput>true</PackageCopyToOutput>
+        </Content>
+        <Content Include="msbuild\CopyZipFiles.targets" >
+            <Pack>true</Pack>
+            <PackagePath>build\$(MSBuildProjectName).targets</PackagePath>
+        </Content>
+    </ItemGroup>
+</Project>

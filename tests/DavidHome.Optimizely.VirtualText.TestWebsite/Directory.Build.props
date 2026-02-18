@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildProjectDirectory)/../Directory.Build.props" />
+    <ItemGroup>
+        <OptiPluginZip Include="$(SolutionDir)src\DavidHome.Optimizely.VirtualText\DavidHome.Optimizely.VirtualText.zip">
+            <TargetCopyDir>$(ProjectDir)modules\_protected\DavidHome.Optimizely.VirtualText\</TargetCopyDir>
+            <TargetFileName>DavidHome.Optimizely.VirtualText.zip</TargetFileName>
+        </OptiPluginZip>
+        <OptiPluginZip Include="$(SolutionDir)src\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.zip">
+            <TargetCopyDir>$(ProjectDir)modules\_protected\DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt\</TargetCopyDir>
+            <TargetFileName>DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.zip</TargetFileName>
+        </OptiPluginZip>
+    </ItemGroup>
+</Project>

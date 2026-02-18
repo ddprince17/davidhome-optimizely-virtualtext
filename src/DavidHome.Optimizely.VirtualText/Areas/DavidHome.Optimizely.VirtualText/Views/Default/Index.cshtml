@@ -1,0 +1,35 @@
+﻿@using DavidHome.Optimizely.VirtualText.Models
+@using System.Text.Json
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@using EPiServer.Shell
+@model VirtualTextIndexViewModel
+
+@{
+    var thisType = typeof(VirtualTextIndexViewModel);
+    var bootstrap = new
+    {
+        endpoints = new
+        {
+            FileContentUrl = Url.Action("FileContent", "Default"),
+            SaveFileUrl = Url.Action("SaveFile", "Default"),
+            CopyFileUrl = Url.Action("CopyFile", "Default"),
+            DeleteFileUrl = Url.Action("DeleteFile", "Default"),
+            FileListUrl = Url.Action("FileList", "Default")
+        },
+        sites = Model.Sites,
+        files = Model.Files,
+        canEdit = Model.CanEdit,
+        antiForgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken
+    };
+    var bootstrapJson = JsonSerializer.Serialize(bootstrap, new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    });
+}
+
+<link rel="stylesheet" href="@Paths.ToClientResource(thisType, "virtualtext-app.css")"/>
+
+<script type="application/json" id="vt-bootstrap">@Html.Raw(bootstrapJson)</script>
+<vt-app data-bootstrap-id="vt-bootstrap"></vt-app>
+
+<script src="@Paths.ToClientResource(thisType, "virtualtext-app.js")"></script>

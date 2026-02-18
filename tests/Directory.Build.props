@@ -1,0 +1,7 @@
+<Project>
+    <PropertyGroup>
+        <NoWarn>NU1507</NoWarn>
+        <RestorePackagesWithLockFile>True</RestorePackagesWithLockFile>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+</Project>

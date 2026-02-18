@@ -1,0 +1,32 @@
+﻿@using EPiServer.Shell.Navigation
+
+@{
+    var title = ViewData["Title"] ?? "Virtual Text Editor";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@title</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/Util/images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+@Html.AntiForgeryToken()
+@Html.CreatePlatformNavigationMenu()
+<div @Html.ApplyPlatformNavigation("min-h-screen bg-slate-100 text-slate-900")>
+    <div>
+        <div class="mx-auto w-full max-w-6xl px-6 py-6">
+            <div class="mb-6 rounded-xl bg-white px-6 py-4 shadow-sm">
+                <h1 class="text-2xl font-semibold text-slate-900">@title</h1>
+            </div>
+            <div class="rounded-xl bg-white px-6 py-6 shadow-sm">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
