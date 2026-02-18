@@ -1,9 +1,11 @@
 using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Services;
+using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Models;
 using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Models;
 using DavidHome.Optimizely.VirtualText.Plugin;
 using DavidHome.Optimizely.VirtualText.Routing;
 using EPiServer.Security;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Controllers;
 
@@ -13,13 +15,18 @@ public class RobotsAdminController : Controller
 {
     private readonly IRobotsIndexingPolicyService _indexingPolicyService;
     private readonly PermissionService _permissionService;
+    private readonly IOptionsMonitor<RobotsTxtVirtualTextOptions> _optionsMonitor;
 
     [ViewData] public string? Title { get; set; }
 
-    public RobotsAdminController(IRobotsIndexingPolicyService indexingPolicyService, PermissionService permissionService)
+    public RobotsAdminController(
+        IRobotsIndexingPolicyService indexingPolicyService,
+        PermissionService permissionService,
+        IOptionsMonitor<RobotsTxtVirtualTextOptions> optionsMonitor)
     {
         _indexingPolicyService = indexingPolicyService;
         _permissionService = permissionService;
+        _optionsMonitor = optionsMonitor;
     }
 
     [HttpGet]
@@ -32,7 +39,9 @@ public class RobotsAdminController : Controller
         {
             CurrentEnvironment = environments.FirstOrDefault(environment => environment.IsCurrent)?.EnvironmentName ?? string.Empty,
             Environments = environments,
-            CanEdit = _permissionService.IsPermitted(User, PluginPermissions.EditSettings)
+            CanEdit = _permissionService.IsPermitted(User, PluginPermissions.EditSettings),
+            DisableRobotsTxtManipulator = _optionsMonitor.CurrentValue.RobotsTxt.DisableRobotsTxtManipulator,
+            DefaultManipulatorContent = _optionsMonitor.CurrentValue.RobotsTxt.DefaultManipulatorContent
         };
 
         return View(model);

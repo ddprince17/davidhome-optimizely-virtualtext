@@ -4,8 +4,10 @@
 
 @{
     var thisType = typeof(RobotsTxtIndexViewModel);
-    var currentEnvironment = Model.Environments.FirstOrDefault(environment => environment.IsCurrent);
     var suggestedDirectives = new[] { "", "noindex", "nofollow", "noindex, nofollow", "nosnippet", "noimageindex", "notranslate", "none" };
+    var defaultManipulatorContent = string.IsNullOrWhiteSpace(Model.DefaultManipulatorContent)
+        ? "User-agent: *\nDisallow: /"
+        : Model.DefaultManipulatorContent;
 }
 
 <link rel="stylesheet" href="@Paths.ToClientResource(thisType, "robotstxt-app.css")"/>
@@ -21,42 +23,39 @@
     }
 
     <div class="rounded-xl border border-slate-200 bg-white p-4">
-        <h2 class="mb-3 text-base font-semibold text-slate-900">Current Effective Policy</h2>
-        @if (currentEnvironment is null)
-        {
-            <p class="text-sm text-slate-600">No environment policy found.</p>
-        }
-        else
-        {
-            <div class="mt-4 grid gap-3 px-1 text-sm md:grid-cols-3">
-                <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                    <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">Environment</div>
-                    <div class="mt-1 font-medium">@currentEnvironment.EnvironmentName</div>
-                </div>
-                <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                    <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">Source</div>
-                    <div class="mt-1">@((currentEnvironment.IsExplicit ? "Azure Table" : "Default policy"))</div>
-                </div>
-                <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                    <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">Directive in effect</div>
-                    <div class="mt-1">
-                        @if (string.IsNullOrWhiteSpace(currentEnvironment.RobotsDirective))
-                        {
-                            <span class="inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Indexing allowed</span>
-                        }
-                        else
-                        {
-                            <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">@currentEnvironment.RobotsDirective</code>
-                        }
-                    </div>
-                </div>
+        <h2 class="mb-2 text-base font-semibold text-slate-900">How This Extension Works</h2>
+        <div class="space-y-3 text-sm text-slate-700">
+            <p>
+                This extension dynamically override the content of <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">robots.txt</code> when that file exists in the Virtual Text file manager.
+                It only applies in non-production environments.
+            </p>
+            <div>
+                <div class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Default robots.txt content returned by the manipulator</div>
+                <pre class="overflow-x-auto rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-800"><code>@defaultManipulatorContent</code></pre>
             </div>
-        }
+            <p>
+                You can disable this behavior with
+                <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">DavidHome:VirtualText:RobotsTxt:DisableRobotsTxtManipulator</code>
+                and customize the default content with
+                <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">DavidHome:VirtualText:RobotsTxt:DefaultManipulatorContent</code>
+                in <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">appsettings.json</code>.
+            </p>
+            @if (Model.DisableRobotsTxtManipulator)
+            {
+                <div class="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+                    The manipulator is currently disabled by configuration.
+                </div>
+            }
+        </div>
     </div>
 
     <div class="rounded-xl border border-slate-200 bg-white p-4">
         <h2 class="mb-2 text-base font-semibold text-slate-900">Configure Environment Policies</h2>
-        <p class="mb-4 text-sm text-slate-600">Set a directive directly. You can type your own value or pick a suggested preset.</p>
+        <p class="mb-4 text-sm text-slate-600">
+            These environment policies are applied on every request as robots indexing directives (for example via <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">X-Robots-Tag</code> and robots meta output).
+            Restrictive values such as <code class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-700">noindex</code> prevent search engines from indexing your site.
+        </p>
+        <p class="mb-2 text-sm text-slate-600">Set a directive directly. You can type your own value or pick a suggested preset.</p>
 
         @if (!Model.CanEdit)
         {
