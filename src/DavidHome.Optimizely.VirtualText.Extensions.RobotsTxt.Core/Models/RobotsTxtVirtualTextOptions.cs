@@ -10,4 +10,5 @@ public class RobotsTxtVirtualTextOptions : VirtualTextOptions
 public class RobotsTxtOptions
 {
     public bool DisableRobotsTxtManipulator { get; set; } = false;
+    public string DefaultManipulatorContent { get; set; } = "User-agent: *\nDisallow: /\n";
 }

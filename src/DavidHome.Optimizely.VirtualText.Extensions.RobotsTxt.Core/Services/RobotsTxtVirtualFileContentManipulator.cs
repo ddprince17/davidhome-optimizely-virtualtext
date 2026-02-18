@@ -10,7 +10,7 @@ namespace DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Services;
 internal sealed class RobotsTxtVirtualFileContentManipulator : IVirtualFileContentManipulator
 {
     private const string RobotsFileName = "robots.txt";
-    private const string DisallowAllContent = "User-agent: *\nDisallow: /\n";
+    private const string DefaultDisallowAllContent = "User-agent: *\nDisallow: /\n";
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IOptionsMonitor<RobotsTxtVirtualTextOptions> _virtualTextOptions;
 
@@ -30,7 +30,13 @@ internal sealed class RobotsTxtVirtualFileContentManipulator : IVirtualFileConte
             return Task.FromResult(content);
         }
 
-        Stream transformed = new MemoryStream(Encoding.UTF8.GetBytes(DisallowAllContent));
+        var replacementContent = _virtualTextOptions.CurrentValue.RobotsTxt.DefaultManipulatorContent;
+        if (string.IsNullOrEmpty(replacementContent))
+        {
+            replacementContent = DefaultDisallowAllContent;
+        }
+
+        Stream transformed = new MemoryStream(Encoding.UTF8.GetBytes(replacementContent));
 
         return Task.FromResult(transformed);
     }

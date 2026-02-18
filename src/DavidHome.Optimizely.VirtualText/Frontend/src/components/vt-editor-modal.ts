@@ -110,7 +110,6 @@ export class VtEditorModal extends LitElement {
   private isReadOnly = false;
   private isCompareMode = false;
   private currentFile: { virtualPath: string; siteId: string | null; siteName: string; hostName: string | null } | null = null;
-  private saveIndicatorTimer: number | null = null;
   private keydownHandler: ((event: KeyboardEvent) => void) | null = null;
   @state() accessor compareSiteId: string | null = null;
   @state() accessor compareHostName: string | null = null;
@@ -190,24 +189,8 @@ export class VtEditorModal extends LitElement {
     }
   }
 
-  showSaveIndicator() {
-    const indicator = this.querySelector<HTMLSpanElement>('#vt-save-indicator');
-    if (!indicator) {
-      return;
-    }
-    indicator.hidden = false;
-    if (this.saveIndicatorTimer) {
-      window.clearTimeout(this.saveIndicatorTimer);
-    }
-    this.saveIndicatorTimer = window.setTimeout(() => {
-      indicator.hidden = true;
-      this.saveIndicatorTimer = null;
-    }, 2500);
-  }
-
   markSaved() {
     this.setDirty(false);
-    this.showSaveIndicator();
   }
 
   showPermissionWarning(message: string) {
@@ -516,7 +499,6 @@ export class VtEditorModal extends LitElement {
               </div>
               <div class="vt-modal-actions flex items-center gap-2">
                 <button type="button" id="vt-save" class="vt-primary rounded-md bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white shadow hover:bg-slate-800" @click=${this.handleSave}>Save</button>
-                <span id="vt-save-indicator" class="vt-save-indicator text-xs font-semibold text-emerald-600" hidden>Saved</span>
                 <button type="button" id="vt-close" class="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100" @click=${this.handleCloseRequest}>Close</button>
               </div>
             </div>

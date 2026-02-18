@@ -39,7 +39,6 @@ type CreateFormApi = {
 type EditorModalApi = {
   open: (file: { virtualPath: string; siteId: string | null; siteName: string; hostName: string | null }, content: string, readOnly: boolean) => void;
   close: () => void;
-  showSaveIndicator: () => void;
   markSaved: () => void;
   showPermissionWarning: (message: string) => void;
   enterDiffMode: (sourceContent: string) => void;
