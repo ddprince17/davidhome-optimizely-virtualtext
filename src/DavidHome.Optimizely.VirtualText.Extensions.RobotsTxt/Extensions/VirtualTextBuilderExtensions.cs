@@ -1,5 +1,7 @@
 using DavidHome.Optimizely.VirtualText.Contracts;
+using DavidHome.Optimizely.VirtualText.Extensions.RobotsTxt.Core.Models;
 using EPiServer.Shell.Modules;
+using Microsoft.Extensions.Configuration;
 
 // ReSharper disable CheckNamespace
 
@@ -11,9 +13,14 @@ public static class VirtualTextBuilderExtensions
     
     extension(IVirtualTextBuilder serviceBuilder)
     {
-        public IVirtualTextBuilder AddRobotsTxtExtension()
+        public IVirtualTextBuilder AddRobotsTxtExtension(IConfiguration configuration)
         {
+            var configSection = configuration
+                .GetSection(nameof(DavidHome))
+                .GetSection(nameof(DavidHome.Optimizely.VirtualText));
+            
             serviceBuilder.Services?
+                .Configure<RobotsTxtVirtualTextOptions>(configSection)
                 .Configure<ProtectedModuleOptions>(options =>
                 {
                     if (!options.Items.Any(item => item.Name.Equals(ModuleName, StringComparison.OrdinalIgnoreCase)))

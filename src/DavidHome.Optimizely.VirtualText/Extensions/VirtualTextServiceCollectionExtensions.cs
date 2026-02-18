@@ -1,5 +1,7 @@
 using DavidHome.Optimizely.VirtualText.Contracts;
+using DavidHome.Optimizely.VirtualText.Models;
 using EPiServer.Shell.Modules;
+using Microsoft.Extensions.Configuration;
 
 // ReSharper disable CheckNamespace
 
@@ -11,9 +13,14 @@ public static class VirtualTextServiceCollectionExtensions
 
     extension(IServiceCollection services)
     {
-        public IVirtualTextBuilder AddDavidHomeVirtualText()
+        public IVirtualTextBuilder AddDavidHomeVirtualText(IConfiguration configuration)
         {
+            var configSection = configuration
+                .GetSection(nameof(DavidHome))
+                .GetSection(nameof(DavidHome.Optimizely.VirtualText));
+            
             return services
+                .Configure<VirtualTextOptions>(configSection)
                 .Configure<ProtectedModuleOptions>(options =>
                 {
                     if (!options.Items.Any(item => item.Name.Equals(ModuleName, StringComparison.OrdinalIgnoreCase)))

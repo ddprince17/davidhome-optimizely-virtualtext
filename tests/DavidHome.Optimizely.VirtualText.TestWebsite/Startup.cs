@@ -30,10 +30,10 @@ public class Startup
             .AddCmsAspNetIdentity<ApplicationUser>()
             .AddCms()
             .AddAlloy()
-            .AddDavidHomeVirtualText()
+            .AddDavidHomeVirtualText(_configuration)
             .AddAzureTableLocation(_configuration.GetSection("ConnectionStrings:EPiServerAzureBlobs"))
             .AddAzureBlobContent(_configuration.GetSection("ConnectionStrings:EPiServerAzureBlobs"))
-            .AddRobotsTxtExtension()
+            .AddRobotsTxtExtension(_configuration)
             .AddAzureTableRobotsTxtStorage(_configuration.GetSection("ConnectionStrings:EPiServerAzureBlobs")).Services
             .AddAdminUserRegistration()
             .AddEmbeddedLocalization<Startup>();
