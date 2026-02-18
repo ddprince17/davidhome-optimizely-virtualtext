@@ -41,20 +41,20 @@ Add package references to your web project (`.csproj`), for example:
 
 ## Configure `appsettings.json`
 
+All settings are optional and have defaults. The following example shows all available settings:
+
 ```json
 {
   "ConnectionStrings": {
     "EPiServerAzureBlobs": "<your-azure-storage-connection-string>"
   },
-  "DavidHome": {
-    "Optimizely": {
-      "VirtualText": {
-        "MaxFileLocationsPerPage": 50,
-        "MaxFileContentsPerPage": 50,
-        "RobotsTxt": {
-          "DisableRobotsTxtManipulator": false,
-          "DefaultManipulatorContent": "User-agent: *\nDisallow: /\n"
-        }
+  "DavidHome": {    
+    "VirtualText": {
+      "MaxFileLocationsPerPage": 50,
+      "MaxFileContentsPerPage": 50,
+      "RobotsTxt": {
+        "DisableRobotsTxtManipulator": false,
+        "DefaultManipulatorContent": "User-agent: *\nDisallow: /\n"
       }
     }
   }
@@ -106,8 +106,8 @@ Grant these to the appropriate editor/admin roles in Optimizely.
 - Environment policies are used to emit robots directives (for example `X-Robots-Tag` / robots meta behavior).
 - The optional `robots.txt` manipulator only applies in non-production environments.
 - Manipulator behavior is configurable through:
-  - `DavidHome:Optimizely:VirtualText:RobotsTxt:DisableRobotsTxtManipulator`
-  - `DavidHome:Optimizely:VirtualText:RobotsTxt:DefaultManipulatorContent`
+  - `DavidHome:VirtualText:RobotsTxt:DisableRobotsTxtManipulator`
+  - `DavidHome:VirtualText:RobotsTxt:DefaultManipulatorContent`
 
 ## Local Development (This Repository)
 
