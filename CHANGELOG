@@ -1,13 +1,5 @@
-## 1.1.0
+## 1.1.2
 
-First public release of `DavidHome.Optimizely.VirtualText`.
+### Fixed
 
-### Included
-
-- VirtualText CMS module for managing root-level text files.
-- Azure Table location storage provider and Azure Blob content storage provider.
-- Optional RobotsTxt extension module with:
-  - environment indexing policy management
-  - optional non-production `robots.txt` manipulator
-  - configurable manipulator options in `appsettings.json`
-- Developer setup documentation in root `README.md`.
+- Corrected behavior in `RobotsMetaTagHelper` to ensure robots meta directives are rendered as expected.

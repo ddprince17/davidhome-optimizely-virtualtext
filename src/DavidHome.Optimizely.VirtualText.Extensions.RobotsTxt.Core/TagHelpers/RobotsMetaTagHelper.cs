@@ -38,6 +38,7 @@ public class RobotsMetaTagHelper : TagHelper
             return;
         }
 
+        output.Attributes.SetAttribute(NameAttributeName, Name);
         output.Attributes.SetAttribute(ContentAttributeName, metaTagContent);
     }
 }
