@@ -154,8 +154,8 @@ public class DefaultController : Controller
             var results = await _fileLocationService.QueryFileLocations(new VirtualFileLocationQuery
                 {
                     VirtualPaths = paths,
-                    SiteId = string.IsNullOrEmpty(group.Key.SiteId) ? null : group.Key.SiteId,
-                    HostName = string.IsNullOrEmpty(group.Key.SiteId) ? null : group.Key.HostName
+                    SiteId = group.Key.SiteId,
+                    HostName = string.IsNullOrEmpty(group.Key.SiteId) ? string.Empty : group.Key.HostName
                 }, cancellationToken)
                 .ToArrayAsync(cancellationToken: cancellationToken);
 
@@ -266,11 +266,14 @@ public class DefaultController : Controller
             hostName = null;
         }
 
+        var normalizedSiteId = siteId ?? string.Empty;
+        var normalizedHostName = hostName ?? string.Empty;
+
         var locations = _fileLocationService.QueryFileLocationsFuzzy(new VirtualFileLocationQuery
         {
             VirtualPaths = string.IsNullOrEmpty(virtualPath) ? null : new[] { virtualPath },
-            SiteId = siteId,
-            HostName = hostName,
+            SiteId = normalizedSiteId,
+            HostName = normalizedHostName,
             PageNumber = pageNumber
         }, cancellationToken);
 
