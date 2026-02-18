@@ -14,6 +14,7 @@ internal static class RobotsTxtCoreServiceCollectionExtensions
         {
             serviceBuilder.Services?
                 .AddTransient<IRobotsIndexingPolicyService, RobotsIndexingPolicyService>()
+                .AddTransient<IVirtualFileContentManipulator, RobotsTxtVirtualFileContentManipulator>()
                 .AddTransient<RobotsNoIndexMiddleware>();
             
             return serviceBuilder;
