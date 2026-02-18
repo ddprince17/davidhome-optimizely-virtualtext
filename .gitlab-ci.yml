@@ -77,6 +77,8 @@ release_job:
   rules:
    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   needs:
+    - job: build_backend
+      artifacts: true
     - job: deploy
       optional: true
   script:
