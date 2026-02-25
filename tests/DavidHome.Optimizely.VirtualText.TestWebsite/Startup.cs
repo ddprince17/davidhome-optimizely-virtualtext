@@ -1,6 +1,7 @@
 using DavidHome.Optimizely.VirtualText.TestWebsite.Extensions;
-using EPiServer.Cms.Shell;
 using EPiServer.Cms.UI.AspNetIdentity;
+using EPiServer.Data;
+using EPiServer.DependencyInjection;
 using EPiServer.Scheduler;
 using EPiServer.Web.Routing;
 
@@ -27,6 +28,7 @@ public class Startup
         }
 
         services
+            .Configure<DataAccessOptions>(options => { options.UpdateDatabaseCompatibilityLevel = true; })
             .AddCmsAspNetIdentity<ApplicationUser>()
             .AddCms()
             .AddAlloy()
@@ -36,7 +38,8 @@ public class Startup
             .AddRobotsTxtExtension(_configuration)
             .AddAzureTableRobotsTxtStorage(_configuration.GetSection("ConnectionStrings:EPiServerAzureBlobs")).Services
             .AddAdminUserRegistration()
-            .AddEmbeddedLocalization<Startup>();
+            .AddEmbeddedLocalization<Startup>()
+            .AddVisitorGroups();
 
         // Required by Wangkanai.Detection
         services.AddDetection();

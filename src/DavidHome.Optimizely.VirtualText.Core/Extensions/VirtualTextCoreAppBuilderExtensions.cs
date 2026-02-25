@@ -162,7 +162,6 @@ internal static class VirtualTextCoreAppBuilderExtensions
 
     private static PipelineDefinition GetVirtualTextPipelineDefinition()
     {
-        var rootResolver = (Func<SiteDefinition, ContentReference>)(s => s.StartPage);
         var pipelineDefinition = new PipelineDefinition("VirtualTextRoute", RouteContextMode.Default)
         {
             new PipelineStepDefinition
@@ -183,7 +182,7 @@ internal static class VirtualTextCoreAppBuilderExtensions
                 CustomArguments =
                 [
                     true,
-                    rootResolver
+                    RoutingEntryPoint.StartPage
                 ]
             },
             new PipelineStepDefinition
