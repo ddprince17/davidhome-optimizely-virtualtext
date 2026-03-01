@@ -1,6 +1,7 @@
 using DavidHome.Optimizely.VirtualText.TestWebsite.Business;
 using DavidHome.Optimizely.VirtualText.TestWebsite.Models.Pages;
 using DavidHome.Optimizely.VirtualText.TestWebsite.Models.ViewModels;
+using EPiServer.Applications;
 using EPiServer.Framework.DataAnnotations;
 using EPiServer.Framework.Web;
 using EPiServer.Framework.Web.Mvc;
@@ -26,18 +27,25 @@ public class PreviewController : ActionControllerBase, IRenderTemplate<BlockData
     private readonly IContentLoader _contentLoader;
     private readonly TemplateResolver _templateResolver;
     private readonly DisplayOptions _displayOptions;
+    private readonly IApplicationResolver _applicationResolver;
 
-    public PreviewController(IContentLoader contentLoader, TemplateResolver templateResolver, DisplayOptions displayOptions)
+    public PreviewController(
+        IContentLoader contentLoader,
+        TemplateResolver templateResolver,
+        DisplayOptions displayOptions,
+        IApplicationResolver applicationResolver)
     {
         _contentLoader = contentLoader;
         _templateResolver = templateResolver;
         _displayOptions = displayOptions;
+        _applicationResolver = applicationResolver;
     }
 
     public IActionResult Index(IContent currentContent)
     {
         //As the layout requires a page for title etc we "borrow" the start page
-        var startPage = _contentLoader.Get<StartPage>(SiteDefinition.Current.StartPage);
+        var startPageLink = (_applicationResolver.GetByContent(currentContent.ContentLink, false) as IRoutableApplication)?.RoutingEntryPoint;
+        var startPage = _contentLoader.Get<StartPage>(startPageLink);
 
         var model = new PreviewModel(startPage, currentContent);
 

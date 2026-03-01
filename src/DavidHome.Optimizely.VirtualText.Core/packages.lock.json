@@ -26,12 +26,6 @@
         "resolved": "6.5.1",
         "contentHash": "92zAmfGWVtjHM8eR7O+1WWxqP+gulXvVqu3Sb1+KzuImdmxBt/bln/dMRvsIyV69KEiSrtbUoet4HBjG+bOLyw=="
       },
-      "System.Linq.AsyncEnumerable": {
-        "type": "Direct",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "t1jnw7So3eeZVemma+82w+Y394oPX1bebkr3gY3IzyotP3kKC/JWwGRz2WssoUFODWWvkACT2hXliumgCHu9LQ=="
-      },
       "Azure.Core": {
         "type": "Transitive",
         "resolved": "1.47.1",

@@ -1,6 +1,11 @@
+@using EPiServer.Applications
 @*Helper used as template for a page in the bread crumb, recursively triggering the rendering of the next page*@
+@inject IApplicationResolver ApplicationResolver
 
 @{
+    Application application = await ApplicationResolver.GetByContentAsync(Model.CurrentPage.ContentLink, false);
+    var startPage = (application as IRoutableApplication)?.RoutingEntryPoint;
+
     HelperResult ItemTemplate(HtmlHelpers.MenuItem breadCrumbItem)
     {
         if (breadCrumbItem.Selected)
@@ -31,8 +36,8 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb d-none d-lg-flex">
         <li class="breadcrumb-item">
-            <a epi-property="@SiteDefinition.Current.StartPage"/>
+            <a epi-property="@startPage"/>
         </li>
-        @Html.MenuList(SiteDefinition.Current.StartPage, ItemTemplate, requireVisibleInMenu: false, requirePageTemplate: false)
+        @Html.MenuList(startPage, ItemTemplate, requireVisibleInMenu: false, requirePageTemplate: false)
     </ol>
 </nav>

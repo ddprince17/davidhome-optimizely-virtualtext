@@ -10,7 +10,6 @@
     <PackageVersion Include="EPiServer.CMS.AspNetCore.Mvc" Version="[13.0.0-preview2,13.0.0)" />
     <PackageVersion Include="GitVersion.MsBuild" Version="6.5.1" />
     <PackageVersion Include="Microsoft.Extensions.Azure" Version="[1.0.0,2.0.0)" />
-    <PackageVersion Include="System.Linq.AsyncEnumerable" Version="[10.0.0,)" />
     <!-- The following are transitive packages forced to a version without known security vulnerabilities. -->
     <PackageVersion Include="Azure.Identity" Version="[1.15.0,)" />
   </ItemGroup>
