@@ -39,7 +39,7 @@ public class Startup
             .AddAzureTableRobotsTxtStorage(_configuration.GetSection("ConnectionStrings:EPiServerAzureBlobs")).Services
             .AddAdminUserRegistration()
             .AddEmbeddedLocalization<Startup>()
-            .AddVisitorGroups();
+            .AddVisitorGroupsMvc();
 
         // Required by Wangkanai.Detection
         services.AddDetection();

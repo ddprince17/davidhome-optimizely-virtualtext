@@ -60,7 +60,7 @@ internal static class VirtualTextCoreAppBuilderExtensions
 
             foreach (var routableApplication in applicationRepository.List().OfType<IRoutableApplication>())
             {
-                if (!contentLoader.TryGet(routableApplication.RoutingEntryPoint, out IContent startPage))
+                if (!contentLoader.TryGet(routableApplication.EntryPoint, out IContent startPage))
                 {
                     continue;
                 }

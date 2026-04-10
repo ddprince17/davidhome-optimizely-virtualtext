@@ -40,7 +40,7 @@ public class PageViewContextFactory
 
     public virtual LayoutModel CreateLayoutModel(ContentReference currentContentLink, HttpContext httpContext)
     {
-        var startPageContentLink = (_applicationResolver.GetByContent(currentContentLink, false) as IRoutableApplication)?.RoutingEntryPoint;
+        var startPageContentLink = (_applicationResolver.GetByContent(currentContentLink, false) as IRoutableApplication)?.EntryPoint;
 
         // Use the content link with version information when editing the startpage,
         // otherwise the published version will be used when rendering the props below.
@@ -74,7 +74,7 @@ public class PageViewContextFactory
     public virtual IContent GetSection(ContentReference contentLink)
     {
         var currentContent = _contentLoader.Get<IContent>(contentLink);
-        var startPage = (_applicationResolver.GetByContent(contentLink, false) as IRoutableApplication)?.RoutingEntryPoint;
+        var startPage = (_applicationResolver.GetByContent(contentLink, false) as IRoutableApplication)?.EntryPoint;
 
         if (IsSectionRoot(currentContent.ParentLink))
         {

@@ -104,7 +104,7 @@ public class ContentLocator
     /// <returns></returns>
     public IEnumerable<ContactPage> GetContactPages()
     {
-        var startPageLink = (_applicationResolver.GetByContext() as IRoutableApplication)?.RoutingEntryPoint;
+        var startPageLink = (_applicationResolver.GetByContext() as IRoutableApplication)?.EntryPoint;
         var contactsRootPageLink = _contentLoader.Get<StartPage>(startPageLink).ContactsPageLink;
 
         if (ContentReference.IsNullOrEmpty(contactsRootPageLink))

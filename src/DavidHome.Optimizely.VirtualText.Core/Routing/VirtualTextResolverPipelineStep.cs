@@ -24,7 +24,7 @@ public class VirtualTextResolverPipelineStep : IUrlResolverPipelineStep
             return RoutingState.Abort;
         }
 
-        var requestStartPage = (_applicationResolver.GetByContent(requestContent.ContentLink, false) as IRoutableApplication)?.RoutingEntryPoint;
+        var requestStartPage = (_applicationResolver.GetByContent(requestContent.ContentLink, false) as IRoutableApplication)?.EntryPoint;
 
         // It would mean that this request fits something that would otherwise hit the home page, which is what we are looking for. 
         return Equals(requestStartPage, requestContent.ContentLink) ? RoutingState.Continue : RoutingState.Abort;

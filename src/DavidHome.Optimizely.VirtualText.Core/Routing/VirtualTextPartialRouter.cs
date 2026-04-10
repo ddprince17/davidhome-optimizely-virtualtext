@@ -86,7 +86,7 @@ public class VirtualTextPartialRouter<TContent> : IPartialRouter<TContent, Virtu
         {
             return new PartialRouteData
             {
-                BasePathRoot = routableApplication.RoutingEntryPoint,
+                BasePathRoot = routableApplication.EntryPoint,
                 PartialVirtualPath = content.FileLocation.VirtualPath
             };
         }

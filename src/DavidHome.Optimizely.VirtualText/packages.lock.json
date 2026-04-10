@@ -4,28 +4,27 @@
     "net10.0": {
       "EPiServer.Cms.UI.Core": {
         "type": "Direct",
-        "requested": "[13.0.0-preview2, 13.0.0)",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "2mfxCOynhfptkecghgQYyB8W0A2xrRU8OGFewubL2bZ36s8AAipiuFZe6goX3DBeG3Pc9rg8qqA129gVu20Sxw==",
+        "requested": "[13.0.0, 14.0.0)",
+        "resolved": "13.0.0",
+        "contentHash": "KIPMdFE5emkPb2dCAwHkSp4gDn98yZBGDsjEQGoHd3nID5GRq+Ht0YuaEuC0WVFIzpR4sMGFlAZBx1L5uBN2OQ==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer.Cms.Shell.UI": "[13.0.0-preview2]",
-          "EPiServer.Shell": "[13.0.0-preview2]",
-          "EPiServer.Shell.UI": "[13.0.0-preview2]",
+          "EPiServer.Cms.Shell.UI": "[13.0.0]",
+          "EPiServer.Shell": "[13.0.0]",
+          "EPiServer.Shell.UI": "[13.0.0]",
           "EPiServer.Turnstile.Contracts.Hmac": "[4.5.2, 5.0.0)",
-          "EPiServer.UI": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
-          "Microsoft.Extensions.Http.Resilience": "10.0.0",
+          "EPiServer.UI": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
+          "Microsoft.Extensions.Http.Resilience": "10.2.0",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
           "Reinforced.Typings": "[1.6.7, 2.0.0)",
-          "SixLabors.ImageSharp": "[3.1.11, 4.0.0)",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0",
-          "System.ServiceModel.Syndication": "10.0.0"
+          "SixLabors.ImageSharp": "[3.1.12, 4.0.0)",
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2",
+          "System.ServiceModel.Syndication": "10.0.2"
         }
       },
       "GitVersion.MsBuild": {
@@ -36,18 +35,18 @@
       },
       "Azure.Core": {
         "type": "Transitive",
-        "resolved": "1.47.1",
-        "contentHash": "oPcncSsDHuxB8SC522z47xbp2+ttkcKv2YZ90KXhRKN0YQd2+7l1UURT9EBzUNEXtkLZUOAB5xbByMTrYRh3yA==",
+        "resolved": "1.50.0",
+        "contentHash": "GBNKZEhdIbTXxedvD3R7I/yDVFX9jJJEz02kCziFSJxspSQ5RMHc3GktulJ1s7+ffXaXD7kMgrtdQTaggyInLw==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "8.0.0",
-          "System.ClientModel": "1.5.1",
+          "System.ClientModel": "1.8.0",
           "System.Memory.Data": "8.0.1"
         }
       },
       "BouncyCastle.Cryptography": {
         "type": "Transitive",
-        "resolved": "2.5.0",
-        "contentHash": "rc7vRCq/KD3GtIwSgRtjanGaBwTb9nLenFDZnEcauWlssuuEoxcbMfWA3QWWho6QDMSOSkWjs657McdHzEtEcw=="
+        "resolved": "2.6.2",
+        "contentHash": "7oWOcvnntmMKNzDLsdxAYqApt+AjpRpP2CShjMfIa3umZ42UQMvH0tl1qAliYPNYO6vTdcGMqnRrCPmsfzTI1w=="
       },
       "Castle.Core": {
         "type": "Transitive",
@@ -56,337 +55,317 @@
       },
       "EPiServer": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "LUZYSkbNYUgecDBbNb76B9yj5cpDAceIXbcL+QTEo+6fHB8gFkB91k9LqjJARo0l7X2SH26O3ZG7ZlRbOniXKA==",
+        "resolved": "13.0.0",
+        "contentHash": "Mch0shBAxPHP6Taljh7tYPkI6vBleqi6wwQ0g/BUfyoEEPW+g/lYA7LTgFQ1FQM3vp4HgzYcZyUywVCYT3Q6Vw==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer.ApplicationModules": "[13.0.0-preview2]",
-          "EPiServer.Data": "[13.0.0-preview2]",
-          "EPiServer.Events": "[13.0.0-preview2]",
-          "EPiServer.Framework": "[13.0.0-preview2]",
-          "EPiServer.HtmlParsing": "[13.0.0-preview2]",
-          "EPiServer.ImageLibrary": "[13.0.0-preview2]",
-          "EPiServer.Licensing": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer.ApplicationModules": "[13.0.0]",
+          "EPiServer.Data": "[13.0.0]",
+          "EPiServer.Events": "[13.0.0]",
+          "EPiServer.Framework": "[13.0.0]",
+          "EPiServer.HtmlParsing": "[13.0.0]",
+          "EPiServer.ImageLibrary": "[13.0.0]",
+          "EPiServer.Licensing": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.ApplicationModules": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "L2gfFzsiXPFhAVqgAoU6NEnt3In03qOzAtFY/cwaiK1Z/vdKt+wI0dznv/vUg0ifz38U1yPftmJWc8QPE8Lf+Q==",
+        "resolved": "13.0.0",
+        "contentHash": "1zJ9ItrCZV5Ai4Co3LZzQEoLq8iRV6QvEe6Pakj6tpYvGtXTtDs2aNRmm9kcpCe11M7PQkyFEsgoZOwrjUKoRQ==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
-          "EPiServer.Data": "[13.0.0-preview2]",
-          "EPiServer.Events": "[13.0.0-preview2]",
-          "EPiServer.Framework": "[13.0.0-preview2]",
-          "EPiServer.Licensing": "[13.0.0-preview2]",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "Azure.Identity": "1.17.1",
+          "EPiServer.Data": "[13.0.0]",
+          "EPiServer.Events": "[13.0.0]",
+          "EPiServer.Framework": "[13.0.0]",
+          "EPiServer.Licensing": "[13.0.0]",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.Blobs": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "eL9L5PRk8UKx2SjLIUcnjcM02cNISAfDAHMw7hTHtug2BeJJvhBGv3lkce0aIDJAmydvMScdQ6zXT/T9fN/r4Q=="
+        "resolved": "13.0.0",
+        "contentHash": "DkiQtagyTJOwgpCH6J5P8kumwYl+2ZQqdSoS06+waFilqKVVj8malSuKxZAGUpTR79ovOpMkW5TF3nq9Xwp0Vg=="
       },
       "EPiServer.Cache": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "82mwwyuANOSUkz8Dt8pU+s8L4eF22eMrNohkw6GU2IhzOxGnA3exzw4VpX6D62GtQMT3Z1n+umW+lrrXft2saA==",
+        "resolved": "13.0.0",
+        "contentHash": "GxNPapbyNCxda4g7F1BMQy8Y6uIAxlXLmKCUrwT/e5wm3NkUB+YzLHS/M1C5/j8zQt6dqvkAmRD1gSM5tuuQ9w==",
         "dependencies": {
-          "EPiServer.Events": "[13.0.0-preview2]"
+          "EPiServer.Events": "[13.0.0]"
         }
       },
       "EPiServer.Cms.AspNetCore": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "ghb3vurSNyD1y2+ynlr9Ke6591j2oTvW9GS2UzUq1ySmmGhLcc9FHiUEpa7pTbmYO6FF/H+qRh3PfhYhy+cH3A==",
+        "resolved": "13.0.0",
+        "contentHash": "lJmekjfTyNigZiABCULBWsuxaFtHY0t3kmcMV00ZIhCoY2ojeATgrsD86IP+ywXZ0Vy1ijakjwm9sSqtZLFhlw==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer.Cms.Core": "[13.0.0-preview2]",
-          "EPiServer.Framework.AspNetCore": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer.Cms.Core": "[13.0.0]",
+          "EPiServer.Framework.AspNetCore": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.Cms.AspNetCore.Routing": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "zftXgzMGJYvn0uhQsZ4ZTJVVwhZfI695MwfDC89UpWlSN5+Jgoa8wwCm6Za5UZMd+rpO4QqXcCxVqoY9UcE8Cw==",
+        "resolved": "13.0.0",
+        "contentHash": "b4CwAaDpWsvLxEaeVDm1/L4hXLLK72DsqiULFVam3f4EfSvOZ0jq5mrlAcTF5BfNtL77Bl47EkDtODrtBUZkcA==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer.Cms.AspNetCore.Templating": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer.Cms.AspNetCore.Templating": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.Cms.AspNetCore.Templating": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "B7ONm77D6/H/cfuIqlJkgoOOcASmxAmnQiq6GosgU4M+591+xCQm+U1ytHMqQUwaTf775F3/u3U12YvCvIFdiw==",
+        "resolved": "13.0.0",
+        "contentHash": "JW8WgKnCzjUWU5GN0ggvSmUxSe3mAiswx0uVRITE09I6cZcrZnbgHSygej9HZSl8am17XyKuElM7YTWOarbh7A==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer.Cms.AspNetCore": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer.Cms.AspNetCore": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.Cms.Core": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "aigfARXSy2gOO9Xrx2cB1lFWIR92/mIFw5Qw6h5ffTMwbndY59PKXwlIKct3gb/XhbmIZO3acB4u79FWmFnXgg==",
+        "resolved": "13.0.0",
+        "contentHash": "W9fiRbVe6ti5WwPdRk3Y41ZKpnRRQEi34nMxvEkIjgVHJ85JDU3zkuIWESAkPTDZ+4bAGk0+vlvFzT8vLDUk7Q==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer": "[13.0.0-preview2]",
-          "EPiServer.Enterprise": "[13.0.0-preview2]",
-          "EPiServer.LinkAnalyzer": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer": "[13.0.0]",
+          "EPiServer.Enterprise": "[13.0.0]",
+          "EPiServer.LinkAnalyzer": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
-      },
-      "EPiServer.Cms.FeatureManagement": {
-        "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "1LbJLEsHaiQ75iYH3PUDf9NQ8a9bq37N0aK6pzxVyoq6t5rPrRbZJLiB77x3Fe0s2wxVVxDmZj2NJ0fKvqt4Bg=="
       },
       "EPiServer.Cms.Shell.UI": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "CjAmDVv8oG+QMyJlCtEWFuCJjs5z9C2Hbb9KZeW/j58jAzUVIyn0HBp4chuMW/HbLF2/VGWVGG9YfeVUoy/3Fg==",
+        "resolved": "13.0.0",
+        "contentHash": "zAgnoY4mIvAuZofpWn80gr6AEZuiXe6ANdBxwiBjHcuRMJSpU14Y7n9j+l0DmrdqPqUPOLQoCb0C6VuqNqJBNw==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer.Cms.AspNetCore.Templating": "[13.0.0-preview2]",
-          "EPiServer.LinkAnalyzer": "[13.0.0-preview2]",
-          "EPiServer.MachineTranslation": "[13.0.0-preview2]",
+          "EPiServer.Cms.AspNetCore.Templating": "[13.0.0]",
+          "EPiServer.LinkAnalyzer": "[13.0.0]",
+          "EPiServer.MachineTranslation": "[13.0.0]",
           "EPiServer.Turnstile.Contracts.Hmac": "[4.5.2, 5.0.0)",
-          "EPiServer.UI": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
-          "Microsoft.Extensions.Http.Resilience": "10.0.0",
+          "EPiServer.UI": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
+          "Microsoft.Extensions.Http.Resilience": "10.2.0",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
           "Reinforced.Typings": "[1.6.7, 2.0.0)",
-          "SixLabors.ImageSharp": "[3.1.11, 4.0.0)",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0",
-          "System.ServiceModel.Syndication": "10.0.0"
+          "SixLabors.ImageSharp": "[3.1.12, 4.0.0)",
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2",
+          "System.ServiceModel.Syndication": "10.0.2"
         }
       },
       "EPiServer.Data": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "vBcFlGFhirlfiUIsUHil875yGUICPDejQPnJ3mCmpg+VfyGzubntPPM2pdRRMiRyT+sfEdkOcmg2c1O+J/OALw==",
+        "resolved": "13.0.0",
+        "contentHash": "lL4n3IplJIfo89KJzM6bAFo9PUQrXVLjOTe1ba/rYmxn0FVJfUej+8I6IYjaeDTY7zpyz2A1MIBzyCFwP6w28A==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
-          "EPiServer.Framework": "[13.0.0-preview2]",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
-          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0"
+          "Azure.Identity": "1.17.1",
+          "EPiServer.Framework": "[13.0.0]",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0"
         }
       },
       "EPiServer.Enterprise": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "pF8mNP0B3H1N7qxYzrtAujL4FS9pdXpQlKiTY1PIGk8GMYEsQfgJkFaoGivwGnAKGeOsPjDz3kfYxeJgSs63qg==",
+        "resolved": "13.0.0",
+        "contentHash": "qqMEekjwtjF0ddoRJ5BxZjM/IMtUcv2TKMG7M7Lq36dEBRPIkfwOXmPHaOGLZuhn+AiNSjJ6l+jsaB887XI0gw==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.Events": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "YYH3GoZGZTWjt3Pg2RAO7jdW9wElnHvsAilZYV6pZrHY/E/zx8VBOIE3nsggmV8PVtZMffIKUlyUjHf8/d9jlw=="
+        "resolved": "13.0.0",
+        "contentHash": "/nqLlgR9jjtE6rB/cLM9CeCZ3m1zQBgzF1RsKlGBPIos7flSr+cIAizPyKY1JJXGc47QxUaKDGjIs8yYp3C0NQ=="
       },
       "EPiServer.Framework": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "xOfczljz5X+FXk3d2KxiwKYUB/YzK40zWKCJUCK1Rrp1/w62rJTJsf17BvvA50Fv6iOoUVBzPgALhO1evdrbKg==",
+        "resolved": "13.0.0",
+        "contentHash": "hghPBzJgq7lcMY7W4jIgnuEv7yjk9bmJUFwEk6NkIpca8NdjwdUuBKXgVFMn6naqzyd2mIU1sb6LPNSkzoVkAg==",
         "dependencies": {
-          "EPiServer.Blobs": "[13.0.0-preview2]",
-          "EPiServer.Cache": "[13.0.0-preview2]",
-          "EPiServer.Logging": "[13.0.0-preview2]",
-          "Microsoft.Extensions.DependencyModel": "10.0.0"
+          "EPiServer.Blobs": "[13.0.0]",
+          "EPiServer.Cache": "[13.0.0]",
+          "EPiServer.Logging": "[13.0.0]",
+          "Microsoft.Extensions.DependencyModel": "10.0.2"
         }
       },
       "EPiServer.Framework.AspNetCore": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "80oFzeZrU/9TOj6ilxjU34DeeMKfKE3jEb2xnWv3NdTOdtUMPdXkHHE/tG65porW2wD7tC3X/Wlux+oNDs3Kvw==",
+        "resolved": "13.0.0",
+        "contentHash": "LJL4h85V8JTQtX56E8U8O8elGubXXoMQkq4d0QRYi1R8XKHhhC+SbGcacc/05YtC3Ek/sT1fvPytLgdxu5CPig==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
-          "EPiServer.ApplicationModules": "[13.0.0-preview2]",
-          "EPiServer.Framework": "[13.0.0-preview2]",
-          "EPiServer.Geolocation": "[13.0.0-preview2]",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "Azure.Identity": "1.17.1",
+          "EPiServer.ApplicationModules": "[13.0.0]",
+          "EPiServer.Framework": "[13.0.0]",
+          "EPiServer.Geolocation": "[13.0.0]",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.Geolocation": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "7+654z2YkO9SGkn8gLTUjXii18ZtzweNnoSNEBU8CYGafaggaCzm23zN8h26Y4vqisxt8a+EWl6qmD4x5cSCmw=="
+        "resolved": "13.0.0",
+        "contentHash": "5KzikHDexWolAEl+64ueX7XpMcYpZrZh00iLJGmV8KPPMT2YEnzXKKqCn+fRoCRAYkvGlbgHoiUjKQDo6okZZA=="
       },
       "EPiServer.HtmlParsing": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "CYtGDugEEVFd+5uhSmbdApIPUcdEJULO2pItojhMFWEJCnxcI7emIowQDKVFPxUSTn4NqPNaw2lsQGVUmZZIaQ=="
+        "resolved": "13.0.0",
+        "contentHash": "j7dW4wtfuIFdXq06kGy8SOSfZwnxhAfRX1tRLy1EhyMuw27DManemkL1r1bCcp2qt+Qlc3DojH6bway1nAIF/A=="
       },
       "EPiServer.ImageLibrary": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "kNGB3DPEap3Q3baIxn/4qxZVolIBhUE/kxLStTwMgEBLrrVSY2IGMgCwtXw6jjuOQrQ4dTCbjyZkBn/Nrd5Csg=="
+        "resolved": "13.0.0",
+        "contentHash": "c/WIwwbQV79MmPoDdxpt7fbCjpn0RfmxJ47i0iKZy1IB54sTqvQggEck1Am18nnqH6HNmgcp8n3CHZfp7auLWw=="
       },
       "EPiServer.ImageLibrary.ImageSharp": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "BUg8fzyVtwmoGERCyJf3aT7dtypEXACXHOFDrPgZmXM2DUMpyXD5QND9DiUYo57OogbiXnUX2PQ68nANutfwpw==",
+        "resolved": "13.0.0",
+        "contentHash": "rB2S50cM8LyGK9+uFWQd6zoPjSym/uMYUUVuv6eBDuNa7pnr2LXWy7eP9DmrOdMyZyv2mdtNHZ1AZXvri3+UNw==",
         "dependencies": {
-          "EPiServer.ImageLibrary": "[13.0.0-preview2]",
-          "SixLabors.ImageSharp": "[3.1.11, 4.0.0)"
+          "EPiServer.ImageLibrary": "[13.0.0]",
+          "SixLabors.ImageSharp": "[3.1.12, 4.0.0)"
         }
       },
       "EPiServer.Licensing": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "IQ2Isyj9RoUpSOwmOutxIKv89M7ZzG/BdyZF/7+PyN4HX8TdABcjAufeL0O2xnE5JHI8pAvI/7fClAZrMbSfSA==",
+        "resolved": "13.0.0",
+        "contentHash": "i8cLxs9TUxNMYO3ygQCTQg0EQffsxko1T3ACQiq4kbaGLlYiXFVqyB7XoRx801jDKVIdm0CC4yarhzYojkU60g==",
         "dependencies": {
-          "System.Security.Permissions": "10.0.0"
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.LinkAnalyzer": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "ivKO/f/B1Y0CREPWHsNR9GGCQpE599SBUo/LYN4syotLMOjlgee60iUv1FrHHL4a+J+qeBIIH69fHYrwxdmByg==",
+        "resolved": "13.0.0",
+        "contentHash": "5fEWQ8Q0uISCqeL8K2rSNf3WI2R4dDN82bFq8hj2IomCDUOx7X0wndDiEH4Cp5Krurk8X7W5wd7Hho5qtNBk/w==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.Logging": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "/qEn56Xcx2D49idoAlx1pJvTcQqmHwCNCod8Ym08r4v1AnrdxzjSqhbII07WtL56boLM8sYWXuOjhgzHkLutQg=="
+        "resolved": "13.0.0",
+        "contentHash": "jcGVJFWZH0GeSOANi8gNsj6s7vKxyW+3mfUqcUIc5M6dHQ7bNA+UFlWQSzh3G0zwe/mrqSsoIdfXYTG2/P9/Pg=="
       },
       "EPiServer.MachineTranslation": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "+KLVymPZAsnAC5s0eEL5FzeB5gS4bgcrGZf57tqWLXfeJ6915l+/+SJN1iPYtZOpIcc677QQBkyNfsUy2u80FA==",
+        "resolved": "13.0.0",
+        "contentHash": "cvWONZ8PL0F+zilw8tYhpBXExFO9HWQfVcPVGZBrCnLq2x7qEThpOf7wO+21o1CmtTWgzH98AxZmaI99r889QQ==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer": "[13.0.0-preview2]",
-          "EPiServer.Framework": "[13.0.0-preview2]",
+          "EPiServer": "[13.0.0]",
+          "EPiServer.Framework": "[13.0.0]",
           "EPiServer.Turnstile.Contracts.Hmac": "[4.5.2, 5.0.0)",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
-          "Microsoft.Extensions.Http.Resilience": "10.0.0",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
+          "Microsoft.Extensions.Http.Resilience": "10.2.0",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.Shell": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "F8WsiMd3P97Xx0OOz8eTMf87+SAQH1kMgpBZquhIYxIBnW2cipjNb701akRPQ1qwI+942rvyEZ73XmRPqcbQDQ==",
+        "resolved": "13.0.0",
+        "contentHash": "0u41EGlwO693coNFXx/SOAUc5Q9on6JW9A3EV+HJTBLzlONY03GUoFyAbBYIcWOwlgaCAI77iXihx6gvBrW/Hg==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer.Cms.AspNetCore.Routing": "[13.0.0-preview2]",
-          "EPiServer.Cms.FeatureManagement": "[13.0.0-preview2]",
-          "EPiServer.ImageLibrary.ImageSharp": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer.Cms.AspNetCore.Routing": "[13.0.0]",
+          "EPiServer.ImageLibrary.ImageSharp": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "SixLabors.ImageSharp": "[3.1.11, 4.0.0)",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "SixLabors.ImageSharp": "[3.1.12, 4.0.0)",
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.Shell.UI": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "/KmGl/Xge9zGzFAqyssV3rKczyl+YH36jfneR9mb4fIcTXLHSeC7DVEZ+DieZvPWfGcyx4fDUjOxo86YhCuoEQ==",
+        "resolved": "13.0.0",
+        "contentHash": "I4yZiAwpYciJggW0T1OCvOmZAxY06FAYTLajswTYxl0HYiIOs6E/7hAAu6mZAgj3sGYMcWOagPMR1yM5cKF1Zw==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer.Shell": "[13.0.0-preview2]",
-          "EPiServer.Telemetry": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer.Shell": "[13.0.0]",
+          "EPiServer.Telemetry": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "SixLabors.ImageSharp": "[3.1.11, 4.0.0)",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "SixLabors.ImageSharp": "[3.1.12, 4.0.0)",
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "EPiServer.Telemetry": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "UFqYElpTWG5vI85GnJ3PmSijqXZhH9QEuoJh15lkncPZKHusLuDd1njwhfXlOhQU9ZG3p6Z3m7eu8yRhTkjB4A=="
+        "resolved": "13.0.0",
+        "contentHash": "jzPicgApA5YYssBFAXZyTwqr+Kjf7evWXXFKsVYCgbx1RKrfeIDD3aimmjuJ6gw/AQxIGCeRjq7w+vm9EU4rew=="
       },
       "EPiServer.Turnstile.Contracts.Hmac": {
         "type": "Transitive",
@@ -395,28 +374,27 @@
       },
       "EPiServer.UI": {
         "type": "Transitive",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "54GgS5xdUHTPDgLxZCda3wB0U3bM3TMGWl2vqlkbpFgvQ1Y0nKoqC6M863cENkG/scyS0aTO7YGc0ICmAnKcDw==",
+        "resolved": "13.0.0",
+        "contentHash": "lOTeImIIW0GHeDpxpKPxipFYEfXsL9H8OnzQbXfMk36YIu0iwslWppR2THiLyGIBaA8lkT5fSDW5MrSBYS07Dw==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer.Shell.UI": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer.Shell.UI": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "SixLabors.ImageSharp": "[3.1.11, 4.0.0)",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "SixLabors.ImageSharp": "[3.1.12, 4.0.0)",
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       },
       "MailKit": {
         "type": "Transitive",
-        "resolved": "4.9.0",
-        "contentHash": "wRUVzYXRWbjdUixwtSp7ivVHPhWw17h+BvwIVaouBike68B56Xk9b5+QRT39EK/QN8XF7MtOgt9caHvUaCvhIQ==",
+        "resolved": "4.15.1",
+        "contentHash": "4mLbqTbH3ctd0NlukHjVQbU3ZnNDuCtB6ttNZDLPZLWMA2Dr31rh/eCSTqOwDojUX8zfDOVaxstMgJTE9PwZNA==",
         "dependencies": {
-          "MimeKit": "4.9.0"
+          "MimeKit": "4.15.1"
         }
       },
       "Microsoft.Bcl.AsyncInterfaces": {
@@ -424,25 +402,21 @@
         "resolved": "8.0.0",
         "contentHash": "3WA9q9yVqJp222P3x1wYIGDAkpjAku0TMUaaQV22g6L67AI0LdOIrVS7Ht2vJfLHGSPVuqN94vIr15qn+HEkHw=="
       },
-      "Microsoft.Bcl.Cryptography": {
-        "type": "Transitive",
-        "resolved": "9.0.4",
-        "contentHash": "YgZYAWzyNuPVtPq6WNm0bqOWNjYaWgl5mBWTGZyNoXitYBUYSp6iUB9AwK0V1mo793qRJUXz2t6UZrWITZSvuQ=="
-      },
       "Microsoft.Data.SqlClient": {
         "type": "Transitive",
-        "resolved": "6.1.3",
-        "contentHash": "ys/z8Tx8074CDU20EilNvBRJuJdwKSthpHkzUpt3JghnjB6GjbZusoOcCtNbhPCCWsEJqN8bxaT7HnS3UZuUDQ==",
+        "resolved": "6.1.4",
+        "contentHash": "lQcSog5LLImg4yNEuuG6ccvdzXnCvER8Rms9Ngk9zB4Q8na4f+S7/abSoC7gnEltBg4e5xTnLAWmMLIOtLg4pg==",
         "dependencies": {
-          "Azure.Core": "1.47.1",
-          "Azure.Identity": "1.14.2",
-          "Microsoft.Bcl.Cryptography": "9.0.4",
+          "Azure.Core": "1.50.0",
+          "Azure.Identity": "1.17.1",
           "Microsoft.Data.SqlClient.SNI.runtime": "6.0.2",
+          "Microsoft.Identity.Client": "4.80.0",
           "Microsoft.IdentityModel.JsonWebTokens": "7.7.1",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.7.1",
           "Microsoft.SqlServer.Server": "1.0.0",
-          "System.Configuration.ConfigurationManager": "9.0.4",
-          "System.Security.Cryptography.Pkcs": "9.0.4"
+          "System.Configuration.ConfigurationManager": "9.0.11",
+          "System.IdentityModel.Tokens.Jwt": "7.7.1",
+          "System.Security.Cryptography.Pkcs": "9.0.11"
         }
       },
       "Microsoft.Data.SqlClient.SNI.runtime": {
@@ -452,89 +426,89 @@
       },
       "Microsoft.Extensions.AmbientMetadata.Application": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "bqA2KZIknwyE9DCKEe3qvmr7odWRHmcMHlBwGvIPdFyaaxedeIQrELs+ryUgHHtgYK6TfK82jEMwBpJtERST6A=="
+        "resolved": "10.2.0",
+        "contentHash": "CNrEjaOCZ8d1HtB0mvpiX4EWxLkee2xy+CsYXxmsEYJSFgw3OmF9pIhP/tCTeYBHhpsKJj5wM63G8IBFGxAcsw=="
       },
       "Microsoft.Extensions.Compliance.Abstractions": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "dfJxd9USR8BbRzZZPWVoqFVVESJRTUh2tn6TmSPQsJ2mJjvGsGJGlELM9vctAfgthajBicRZ9zzxsu6s4VUmMQ=="
+        "resolved": "10.2.0",
+        "contentHash": "1a4xDAT6fRyP8t419q3WvWMmMslDTvI7OAZLWBhn5rysFG0bl5xFenTswd1xAbT/3u3mx4Xyb5bPx+V+18tJeQ=="
       },
       "Microsoft.Extensions.DependencyInjection.AutoActivation": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "5t17Z77ysTmEla9/xUiOJLYLc8/9OyzlZJRxjTaSyiCi0mEroR0PwldKZsfwFLUOMSaNP6vngptYFbw7stO0rw=="
+        "resolved": "10.2.0",
+        "contentHash": "Z/OI261l7LnxyODKPx0trQyIHFyicCR/akfn64lGOjPcf4FpAZ7ePAGl2HPvQBUBSNfPTF0gWeCfuFmyftMgYA=="
       },
       "Microsoft.Extensions.DependencyModel": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "RFYJR7APio/BiqdQunRq6DB+nDB6nc2qhHr77mlvZ0q0BT8PubMXN7XicmfzCbrDE/dzhBnUKBRXLTcqUiZDGg=="
+        "resolved": "10.0.2",
+        "contentHash": "DHXzj/FKmUDmhzw7AHbMXbNNcgO8Cb9PDbYOUDICjFAdIALy2WbC6pm+dFKiAUNtcYMucZu2iMVw1ef/sdcZFw=="
       },
       "Microsoft.Extensions.Diagnostics.ExceptionSummarization": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "rfirztoSX5INXWX6YJ1iwTPfmsl53c3t3LN7rjOXbt5w5e0CmGVaUHYhABYq+rn+d+w0HWqgMiQubOZeirUAfw=="
+        "resolved": "10.2.0",
+        "contentHash": "3qMK1D40D10kb5TdBtFJpzz6/WH0NinWs68ZZS8jCFgHMXDiOjGiPOneMmIocCP/wnUUW4Hzf8lMsIE1xIGxDA=="
       },
       "Microsoft.Extensions.Http.Diagnostics": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "Ll00tZzMmIO9wnA0JCqsmuDHfT1YXmtiGnpazZpAilwS/ro0gf8JIqgWOy6cLfBNDxFruaJhhvTKdLSlgcomHw==",
+        "resolved": "10.2.0",
+        "contentHash": "I0FBgF6yZRwYH9E3KQ2vHm80YZ7YBj+52GDsmOWXPBv/p15b/wUoNupV9kw3LnSNVsWMqlGbiuZgBnHpMwPh+Q==",
         "dependencies": {
-          "Microsoft.Extensions.Telemetry": "10.0.0"
+          "Microsoft.Extensions.Telemetry": "10.2.0"
         }
       },
       "Microsoft.Extensions.Http.Resilience": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "Mn/diApGtdtz83Mi+XO57WhO+FsiSScfjUsIU/h8nryh3pkUNZGhpUx22NtuOxgYSsrYfODgOa2QMtIQAOv/dA==",
+        "resolved": "10.2.0",
+        "contentHash": "Lg+OjBW+ODDbM4Ax4LoERvQ1dqSZ8I2gQc2+B0/WOWl2+PunLJ3xb3x8MtHGfcb/Mp98RoMpwRKm6Aj9mzXwrA==",
         "dependencies": {
-          "Microsoft.Extensions.Http.Diagnostics": "10.0.0",
-          "Microsoft.Extensions.Resilience": "10.0.0"
+          "Microsoft.Extensions.Http.Diagnostics": "10.2.0",
+          "Microsoft.Extensions.Resilience": "10.2.0"
         }
       },
       "Microsoft.Extensions.Resilience": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "EPW15dqrBiqkD6YE4XVWivGMXTTPE3YAmXJ32wr1k8E1l7veEYUHwzetOonV76GTe4oJl1np3AXYFnCRpBYU+w==",
+        "resolved": "10.2.0",
+        "contentHash": "v4WOdAOFxB3AcsUkZWNcHL3mYzs4KAPtHO8rkoQlFKOBoD3KyjjAL+h3tRwSK5i4UpF/yhxsQRY0JxKj4osxxw==",
         "dependencies": {
-          "Microsoft.Extensions.Diagnostics.ExceptionSummarization": "10.0.0",
-          "Microsoft.Extensions.Telemetry.Abstractions": "10.0.0",
+          "Microsoft.Extensions.Diagnostics.ExceptionSummarization": "10.2.0",
+          "Microsoft.Extensions.Telemetry.Abstractions": "10.2.0",
           "Polly.Extensions": "8.4.2",
           "Polly.RateLimiting": "8.4.2"
         }
       },
       "Microsoft.Extensions.Telemetry": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "dII0Kuh699xBMBmK7oLJNNXmJ+kMRcpabil/VbAtO08zjSNQPb/dk/kBI6sVfWw20po1J/up03SAYeLKPc3LEg==",
+        "resolved": "10.2.0",
+        "contentHash": "ssW5gosYlewNH/ISTyaLD/XfJT4GSjwShOUKv61fpXrqVmHkhuIA/5bBAGStM1XbzJjt9IG2vzfdHTu4zlX9Ew==",
         "dependencies": {
-          "Microsoft.Extensions.AmbientMetadata.Application": "10.0.0",
-          "Microsoft.Extensions.DependencyInjection.AutoActivation": "10.0.0",
-          "Microsoft.Extensions.Telemetry.Abstractions": "10.0.0"
+          "Microsoft.Extensions.AmbientMetadata.Application": "10.2.0",
+          "Microsoft.Extensions.DependencyInjection.AutoActivation": "10.2.0",
+          "Microsoft.Extensions.Telemetry.Abstractions": "10.2.0"
         }
       },
       "Microsoft.Extensions.Telemetry.Abstractions": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "M17n6IpgutodXxwTZk1r5Jp2ZZ995FJTKMxiEQSr6vT3iwRfRq2HWzzrR1B6N3MpJhDfI2QuMdCOLUq++GCsQg==",
+        "resolved": "10.2.0",
+        "contentHash": "6V4V6NX6RLUYWwV89DeW/4zK5xOycYHWhsfMXSpKVGgMHfXcczmbk6hBeqTnRPzhpATYcOWlmA6hk1jgdxUugA==",
         "dependencies": {
-          "Microsoft.Extensions.Compliance.Abstractions": "10.0.0"
+          "Microsoft.Extensions.Compliance.Abstractions": "10.2.0"
         }
       },
       "Microsoft.Identity.Client": {
         "type": "Transitive",
-        "resolved": "4.73.1",
-        "contentHash": "NnDLS8QwYqO5ZZecL2oioi1LUqjh5Ewk4bMLzbgiXJbQmZhDLtKwLxL3DpGMlQAJ2G4KgEnvGPKa+OOgffeJbw==",
+        "resolved": "4.80.0",
+        "contentHash": "nmg+q17mKdNafWvaX7Of5Xh8sxc4acsD6xOOczp7kgjAzR7bpseYGZzg38XPoS/vW7k92sGKCWgHSogB0K62KQ==",
         "dependencies": {
-          "Microsoft.IdentityModel.Abstractions": "6.35.0"
+          "Microsoft.IdentityModel.Abstractions": "8.14.0"
         }
       },
       "Microsoft.Identity.Client.Extensions.Msal": {
         "type": "Transitive",
-        "resolved": "4.73.1",
-        "contentHash": "xDztAiV2F0wI0W8FLKv5cbaBefyLD6JVaAsvgSN7bjWNCzGYzHbcOEIP5s4TJXUpQzMfUyBsFl1mC6Zmgpz0PQ==",
+        "resolved": "4.78.0",
+        "contentHash": "DYU9o+DrDQuyZxeq91GBA9eNqBvA3ZMkLzQpF7L9dTk6FcIBM1y1IHXWqiKXTvptPF7CZE59upbyUoa+FJ5eiA==",
         "dependencies": {
-          "Microsoft.Identity.Client": "4.73.1",
+          "Microsoft.Identity.Client": "4.78.0",
           "System.Security.Cryptography.ProtectedData": "4.5.0"
         }
       },
@@ -591,11 +565,11 @@
       },
       "MimeKit": {
         "type": "Transitive",
-        "resolved": "4.9.0",
-        "contentHash": "DZXXMZzmAABDxFhOSMb6SE8KKxcRd/sk1E6aJTUE5ys2FWOQhznYV2Gl3klaaSfqKn27hQ32haqquH1J8Z6kJw==",
+        "resolved": "4.15.1",
+        "contentHash": "cxCcQhD0zhboFoG136jJuJtQjNRDJ+BxBm3f2vWn+53bff/CRo+K1mAkWjsW4Wuyy5O22F40MdMG2nRzQu1cJw==",
         "dependencies": {
-          "BouncyCastle.Cryptography": "2.5.0",
-          "System.Security.Cryptography.Pkcs": "8.0.1"
+          "BouncyCastle.Cryptography": "2.6.2",
+          "System.Security.Cryptography.Pkcs": "10.0.0"
         }
       },
       "Polly.Core": {
@@ -626,23 +600,23 @@
       },
       "SixLabors.ImageSharp": {
         "type": "Transitive",
-        "resolved": "3.1.11",
-        "contentHash": "JfPLyigLthuE50yi6tMt7Amrenr/fA31t2CvJyhy/kQmfulIBAqo5T/YFUSRHtuYPXRSaUHygFeh6Qd933EoSw=="
+        "resolved": "3.1.12",
+        "contentHash": "iAg6zifihXEFS/t7fiHhZBGAdCp3FavsF4i2ZIDp0JfeYeDVzvmlbY1CNhhIKimaIzrzSi5M/NBFcWvZT2rB/A=="
       },
       "System.ClientModel": {
         "type": "Transitive",
-        "resolved": "1.5.1",
-        "contentHash": "k2jKSO0X45IqhVOT9iQB4xralNN9foRQsRvXBTyRpAVxyzCJlG895T9qYrQWbcJ6OQXxOouJQ37x5nZH5XKK+A==",
+        "resolved": "1.8.0",
+        "contentHash": "AqRzhn0v29GGGLj/Z6gKq4lGNtvPHT4nHdG5PDJh9IfVjv/nYUVmX11hwwws1vDFeIAzrvmn0dPu8IjLtu6fAw==",
         "dependencies": {
           "System.Memory.Data": "8.0.1"
         }
       },
       "System.Configuration.ConfigurationManager": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "0B+BzJ6pPMrRzJrVsttKf9MfDj6Syw9xoY+agcS9VssYQali1446+jTf5v1K94AMFUBxLXqDZlaTjO5edaI3jA==",
+        "resolved": "9.0.11",
+        "contentHash": "vPinosRgEk1CGjohbv0pDuz6gPprkWo5xvBTjOJjks5JOgOEWvPndq5NngGxiTcBcy1+k9GwzZ1c3Bp2fU5ezw==",
         "dependencies": {
-          "System.Security.Cryptography.ProtectedData": "10.0.0"
+          "System.Security.Cryptography.ProtectedData": "9.0.11"
         }
       },
       "System.IdentityModel.Tokens.Jwt": {
@@ -656,8 +630,8 @@
       },
       "System.IO.Packaging": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "b9T8htKhiQ1ufCLhLQdb5NPGvhUSnT2/5GXMbaB7xk1dxMB17dGVMA4D6hpavyeSW97blOfYfTaAcSz4o2mQBA=="
+        "resolved": "10.0.2",
+        "contentHash": "JTpM4z0wpoIHHDvlCU27HsXo+zVnpWib94HXQpzzr+jc/P9NYf4w353AK4MXyGq/grm1mbLi7eXsOsDU8sGmNg=="
       },
       "System.Memory.Data": {
         "type": "Transitive",
@@ -666,31 +640,31 @@
       },
       "System.Security.Cryptography.Pkcs": {
         "type": "Transitive",
-        "resolved": "9.0.4",
-        "contentHash": "cUFTcMlz/Qw9s90b2wnWSCvHdjv51Bau9FQqhsr4TlwSe1OX+7SoXUqphis5G74MLOvMOCghxPPlEqOdCrVVGA=="
+        "resolved": "10.0.0",
+        "contentHash": "UPWqLSygJlFerRi9XNIuM0a1VC8gHUIufyP24xQ0sc+XimqUAEcjpOz9DhKpyDjH+5B/wO3RpC0KpkEeDj/ddg=="
       },
       "System.Security.Cryptography.ProtectedData": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "qy6C3gQRTrfhFfuiIYU1jNwWfFdJpBVo1BARW7jgMm1zTEm3LRzLLyOLJGaAuKE+nZCGkEP71y4rj9NWjqLGdQ=="
+        "resolved": "9.0.11",
+        "contentHash": "s8yUYuYYu+PAwvBdhLG1KyrGrk9gkYeuPxfAsXsTqqWyepwSyEw8hAaflW4nO98NG52YpYI1am2+9o+79h2RtQ=="
       },
       "System.Security.Permissions": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "phfAYbiBkzdAF9ps7rJ8PQ3h52uY4xOnBs6Wern+ljdz3Fq3YIUezZDQIXl6+p8sbotkzltvESq+7PglxlEyuw==",
+        "resolved": "10.0.2",
+        "contentHash": "6u42B99m8M38sQJh8njFrffV4TeD6Z5ilyJNgBN49nRvawQC5VedMUk9btFyU7t7+WSbVse7Sxc9ahRm8JXd+A==",
         "dependencies": {
-          "System.Windows.Extensions": "10.0.0"
+          "System.Windows.Extensions": "10.0.2"
         }
       },
       "System.ServiceModel.Syndication": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "HBrGaOQoEaDlMOykS/LfQr9BZ0pEF4SOcscH5oMpBF46+lqMMfgfat3Jm5SpW8IaDzzn/IakYjpWk3bEGSh1vA=="
+        "resolved": "10.0.2",
+        "contentHash": "t28WU9anHmmRD5GHz5qBv/tokqDmU/Ksexz2DI6jAcoSX+p8VQ7rzHCxubDqK6baOtxEyza/oHECzBGi3rHyHQ=="
       },
       "System.Windows.Extensions": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "W2xPfgCUO83kPEtfkSsXpHT9KX4YiajDgtuJhjfOY18u58vMGyoBG44QIQCs2nTugmzsm506S/ur29k1WpE9+w=="
+        "resolved": "10.0.2",
+        "contentHash": "FJEb7THQLoYQDSIfu656zidYmLFZTBE9gi/IdKpPV9KhGuMZL/xLpLpRNLr7WDt2oLNldae8Jp/1e2H+MPCxGg=="
       },
       "davidhome.optimizely.virtualtext.contracts": {
         "type": "Project",
@@ -703,7 +677,7 @@
         "dependencies": {
           "DavidHome.Optimizely.VirtualText.Contracts": "[1.0.0, )",
           "DavidHome.Optimizely.VirtualText.Models": "[1.0.0, )",
-          "EPiServer.CMS.AspNetCore.Mvc": "[13.0.0-preview2, 13.0.0)"
+          "EPiServer.CMS.AspNetCore.Mvc": "[13.0.0, 14.0.0)"
         }
       },
       "davidhome.optimizely.virtualtext.models": {
@@ -711,31 +685,30 @@
       },
       "Azure.Identity": {
         "type": "CentralTransitive",
-        "requested": "[1.15.0, )",
-        "resolved": "1.15.0",
-        "contentHash": "tvJVy5s8VdsAYHIcBw1KrwDTcTWr2K5fG5o/xEJ2zU3+QUViDx/utut83+fGoB/bcBspxuC6wG650GwAUkU2UQ==",
+        "requested": "[1.17.1, )",
+        "resolved": "1.17.1",
+        "contentHash": "MSZkBrctcpiGxs9Cvr2VKKoN6qFLZlP3I6xuCWJ9iTgitI5Rgxtk5gfOSpXPZE3+CJmZ/mnqpQyGyjawFn5Vvg==",
         "dependencies": {
-          "Azure.Core": "1.47.1",
-          "Microsoft.Identity.Client": "4.73.1",
-          "Microsoft.Identity.Client.Extensions.Msal": "4.73.1"
+          "Azure.Core": "1.50.0",
+          "Microsoft.Identity.Client": "4.78.0",
+          "Microsoft.Identity.Client.Extensions.Msal": "4.78.0"
         }
       },
       "EPiServer.Cms.AspNetCore.Mvc": {
         "type": "CentralTransitive",
-        "requested": "[13.0.0-preview2, 13.0.0)",
-        "resolved": "13.0.0-preview2",
-        "contentHash": "ExjZ1dMBFBSJP8juYtvf2zNd4O2ogiLkzlbU5nc6Js2ZWeZymp0P3hz1KI0RQXc/T+rBjaAnK31Cu5ynp1J4JA==",
+        "requested": "[13.0.0, 14.0.0)",
+        "resolved": "13.0.0",
+        "contentHash": "e0HJNQBHot2204QVZNSyUTQ66f/BSKaUQOWLK9P4wNsW0rfH6mVb31aSobK0HWMg3b0QWTIP8gMxLuzeI2GSxQ==",
         "dependencies": {
-          "Azure.Identity": "1.15.0",
+          "Azure.Identity": "1.17.1",
           "Castle.Core": "[5.2.1, 6.0.0)",
-          "EPiServer.Cms.AspNetCore.Routing": "[13.0.0-preview2]",
-          "MailKit": "[4.9.0, 5.0.0)",
-          "Microsoft.Data.SqlClient": "[6.1.3, 7.0.0)",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "EPiServer.Cms.AspNetCore.Routing": "[13.0.0]",
+          "MailKit": "[4.15.1, 5.0.0)",
+          "Microsoft.Data.SqlClient": "[6.1.4, 7.0.0)",
+          "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.15.0",
-          "System.Configuration.ConfigurationManager": "10.0.0",
-          "System.IO.Packaging": "10.0.0",
-          "System.Security.Permissions": "10.0.0"
+          "System.IO.Packaging": "10.0.2",
+          "System.Security.Permissions": "10.0.2"
         }
       }
     }

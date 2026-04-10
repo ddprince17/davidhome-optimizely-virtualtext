@@ -44,7 +44,7 @@ public class PreviewController : ActionControllerBase, IRenderTemplate<BlockData
     public IActionResult Index(IContent currentContent)
     {
         //As the layout requires a page for title etc we "borrow" the start page
-        var startPageLink = (_applicationResolver.GetByContent(currentContent.ContentLink, false) as IRoutableApplication)?.RoutingEntryPoint;
+        var startPageLink = (_applicationResolver.GetByContent(currentContent.ContentLink, false) as IRoutableApplication)?.EntryPoint;
         var startPage = _contentLoader.Get<StartPage>(startPageLink);
 
         var model = new PreviewModel(startPage, currentContent);

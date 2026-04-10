@@ -38,11 +38,11 @@ internal class ApplicationEventsSubscriber : IEventSubscriber<ApplicationCreated
 
     private Task HandleApplicationChange(ApplicationEvent eventData, EventContext context, CancellationToken cancellationToken)
     {
-        var currentStartPage = (eventData.Application as IRoutableApplication)?.RoutingEntryPoint;
+        var currentStartPage = (eventData.Application as IRoutableApplication)?.EntryPoint;
 
         if (eventData is ApplicationUpdatedEvent updateEventData)
         {
-            var previousStartPage = (updateEventData.PreviousApplication as IRoutableApplication)?.RoutingEntryPoint;
+            var previousStartPage = (updateEventData.PreviousApplication as IRoutableApplication)?.EntryPoint;
 
             // If both references are the same, we don't need to update the routers.
             if (Equals(previousStartPage, currentStartPage))

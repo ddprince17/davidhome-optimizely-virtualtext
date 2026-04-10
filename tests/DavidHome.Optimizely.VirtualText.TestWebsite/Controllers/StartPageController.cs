@@ -18,7 +18,7 @@ public class StartPageController : PageControllerBase<StartPage>
     public IActionResult Index(StartPage currentPage)
     {
         var model = PageViewModel.Create(currentPage);
-        var startPage = (_applicationResolver.GetByContent(currentPage.ContentLink, false) as IRoutableApplication)?.RoutingEntryPoint;
+        var startPage = (_applicationResolver.GetByContent(currentPage.ContentLink, false) as IRoutableApplication)?.EntryPoint;
 
         // Check if it is the StartPage or just a page of the StartPage type.
         if (startPage?.CompareToIgnoreWorkID(currentPage.ContentLink) ?? false)

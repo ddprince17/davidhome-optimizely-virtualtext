@@ -18,8 +18,8 @@ internal static class VirtualTextCoreServiceCollectionExtensions
             .AddSingleton(typeof(VirtualTextPartialRouter<>))
             .AddSingleton(typeof(IVirtualTextPartialRouterWrapper<>), typeof(VirtualTextPartialRouterWrapper<>))
             .AddTransient<ApplicationEventsSubscriber>()
-            .AddCmsEventSubscriber<ApplicationCreatedEvent>(provider => provider.GetRequiredService<ApplicationEventsSubscriber>())
-            .AddCmsEventSubscriber<ApplicationUpdatedEvent>(provider => provider.GetRequiredService<ApplicationEventsSubscriber>());
+            .AddCmsEventSubscriber<ApplicationCreatedEvent, ApplicationEventsSubscriber>()
+            .AddCmsEventSubscriber<ApplicationUpdatedEvent, ApplicationEventsSubscriber>();
 
         return new VirtualTextBuilder { Services = services };
     }

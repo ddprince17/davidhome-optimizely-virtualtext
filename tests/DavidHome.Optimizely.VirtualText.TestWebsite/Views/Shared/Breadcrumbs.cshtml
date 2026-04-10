@@ -4,7 +4,7 @@
 
 @{
     Application application = await ApplicationResolver.GetByContentAsync(Model.CurrentPage.ContentLink, false);
-    var startPage = (application as IRoutableApplication)?.RoutingEntryPoint;
+    var startPage = (application as IRoutableApplication)?.EntryPoint;
 
     HelperResult ItemTemplate(HtmlHelpers.MenuItem breadCrumbItem)
     {
