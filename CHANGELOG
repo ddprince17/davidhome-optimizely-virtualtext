@@ -1,5 +1,15 @@
-## 1.1.2
+## 2.0.0
 
-### Fixed
+### Breaking
 
-- Corrected behavior in `RobotsMetaTagHelper` to ensure robots meta directives are rendered as expected.
+- Upgraded the package to support Optimizely CMS 13, replacing the previous CMS 12 integration.
+- Refactored virtual text routing to use CMS 13 application APIs such as `IApplicationRepository`, `IApplicationResolver`, and `RoutingEntryPoint` instead of site definition-based APIs.
+
+### Added
+
+- Added `ApplicationEventsSubscriber` so virtual text partial routers are registered when routable applications are created or updated.
+
+### Changed
+
+- Updated the test website to the CMS 13 stack, including ASP.NET Identity UI, Visitor Groups, and database compatibility configuration.
+- Removed the direct `System.Linq.AsyncEnumerable` dependency and refreshed package locks to align with the CMS 13 dependency set.

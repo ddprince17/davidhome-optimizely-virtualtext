@@ -1,5 +1,6 @@
 using DavidHome.Optimizely.VirtualText.TestWebsite.Models.Pages;
 using DavidHome.Optimizely.VirtualText.TestWebsite.Models.ViewModels;
+using EPiServer.Applications;
 using EPiServer.Data;
 using EPiServer.ServiceLocation;
 using EPiServer.Web;
@@ -18,22 +19,28 @@ public class PageViewContextFactory
     private readonly UrlResolver _urlResolver;
     private readonly IDatabaseMode _databaseMode;
     private readonly CookieAuthenticationOptions _cookieAuthenticationOptions;
+    private readonly IApplicationResolver _applicationResolver;
+    private readonly SystemDefinition _systemDefinition;
 
     public PageViewContextFactory(
         IContentLoader contentLoader,
         UrlResolver urlResolver,
         IDatabaseMode databaseMode,
-        IOptionsMonitor<CookieAuthenticationOptions> optionMonitor)
+        IOptionsMonitor<CookieAuthenticationOptions> optionMonitor,
+        IApplicationResolver applicationResolver,
+        SystemDefinition systemDefinition)
     {
         _contentLoader = contentLoader;
         _urlResolver = urlResolver;
         _databaseMode = databaseMode;
         _cookieAuthenticationOptions = optionMonitor.Get(IdentityConstants.ApplicationScheme);
+        _applicationResolver = applicationResolver;
+        _systemDefinition = systemDefinition;
     }
 
     public virtual LayoutModel CreateLayoutModel(ContentReference currentContentLink, HttpContext httpContext)
     {
-        var startPageContentLink = SiteDefinition.Current.StartPage;
+        var startPageContentLink = (_applicationResolver.GetByContent(currentContentLink, false) as IRoutableApplication)?.EntryPoint;
 
         // Use the content link with version information when editing the startpage,
         // otherwise the published version will be used when rendering the props below.
@@ -47,14 +54,14 @@ public class PageViewContextFactory
         return new LayoutModel
         {
             Logotype = startPage.SiteLogotype,
-            LogotypeLinkUrl = new HtmlString(_urlResolver.GetUrl(SiteDefinition.Current.StartPage)),
+            LogotypeLinkUrl = new HtmlString(_urlResolver.GetUrl(startPageContentLink)),
             ProductPages = startPage.ProductPageLinks,
             CompanyInformationPages = startPage.CompanyInformationPageLinks,
             NewsPages = startPage.NewsPageLinks,
             CustomerZonePages = startPage.CustomerZonePageLinks,
             LoggedIn = httpContext.User.Identity.IsAuthenticated,
             LoginUrl = new HtmlString(GetLoginUrl(currentContentLink)),
-            SearchActionUrl = new HtmlString(UrlResolver.Current.GetUrl(startPage.SearchPageLink)),
+            SearchActionUrl = new HtmlString(_urlResolver.GetUrl(startPage.SearchPageLink)),
             IsInReadonlyMode = _databaseMode.DatabaseMode == DatabaseMode.ReadOnly
         };
     }
@@ -67,20 +74,21 @@ public class PageViewContextFactory
     public virtual IContent GetSection(ContentReference contentLink)
     {
         var currentContent = _contentLoader.Get<IContent>(contentLink);
+        var startPage = (_applicationResolver.GetByContent(contentLink, false) as IRoutableApplication)?.EntryPoint;
 
-        static bool isSectionRoot(ContentReference contentReference) =>
-            ContentReference.IsNullOrEmpty(contentReference) ||
-            contentReference.Equals(SiteDefinition.Current.StartPage) ||
-            contentReference.Equals(SiteDefinition.Current.RootPage);
-
-        if (isSectionRoot(currentContent.ParentLink))
+        if (IsSectionRoot(currentContent.ParentLink))
         {
             return currentContent;
         }
 
         return _contentLoader.GetAncestors(contentLink)
             .OfType<PageData>()
-            .SkipWhile(x => !isSectionRoot(x.ParentLink))
+            .SkipWhile(x => !IsSectionRoot(x.ParentLink))
             .FirstOrDefault();
+
+        bool IsSectionRoot(ContentReference contentReference) =>
+            ContentReference.IsNullOrEmpty(contentReference) ||
+            contentReference.Equals(startPage) ||
+            contentReference.Equals(_systemDefinition.RootPage);
     }
 }

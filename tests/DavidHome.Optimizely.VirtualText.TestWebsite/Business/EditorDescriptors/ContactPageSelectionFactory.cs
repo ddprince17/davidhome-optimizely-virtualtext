@@ -21,6 +21,6 @@ public class ContactPageSelectionFactory : ISelectionFactory
     {
         var contactPages = _contentLocator.GetContactPages();
 
-        return new List<SelectItem>(contactPages.Select(c => new SelectItem { Value = c.PageLink, Text = c.Name }));
+        return new List<SelectItem>(contactPages.Select(c => new SelectItem { Value = c.ContentLink, Text = c.Name }));
     }
 }

@@ -2,7 +2,8 @@ using DavidHome.Optimizely.VirtualText.Contracts;
 using DavidHome.Optimizely.VirtualText.Core;
 using DavidHome.Optimizely.VirtualText.Core.Models;
 using DavidHome.Optimizely.VirtualText.Core.Routing;
-using DavidHome.Optimizely.VirtualText.Models;
+using EPiServer.Applications;
+using EPiServer.DependencyInjection;
 
 // ReSharper disable CheckNamespace
 
@@ -15,7 +16,10 @@ internal static class VirtualTextCoreServiceCollectionExtensions
         services
             .AddHttpContextAccessor()
             .AddSingleton(typeof(VirtualTextPartialRouter<>))
-            .AddSingleton(typeof(IVirtualTextPartialRouterWrapper<>), typeof(VirtualTextPartialRouterWrapper<>));
+            .AddSingleton(typeof(IVirtualTextPartialRouterWrapper<>), typeof(VirtualTextPartialRouterWrapper<>))
+            .AddTransient<ApplicationEventsSubscriber>()
+            .AddCmsEventSubscriber<ApplicationCreatedEvent, ApplicationEventsSubscriber>()
+            .AddCmsEventSubscriber<ApplicationUpdatedEvent, ApplicationEventsSubscriber>();
 
         return new VirtualTextBuilder { Services = services };
     }
