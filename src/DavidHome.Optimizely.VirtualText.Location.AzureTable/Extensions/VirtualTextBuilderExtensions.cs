@@ -14,7 +14,7 @@ public static class VirtualTextBuilderExtensions
     {
         public IVirtualTextBuilder AddAzureTableLocation(IConfigurationSection configuration)
         {
-            serviceBuilder.Services?
+            serviceBuilder.Services
                 .AddTransient<IVirtualFileLocationService, TableFileLocationService>()
                 .AddAzureClients(builder => builder.AddTableServiceClient(configuration).WithName(VirtualTextConstants.ClientName));
 

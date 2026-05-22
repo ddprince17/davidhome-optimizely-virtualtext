@@ -19,7 +19,7 @@ public static class VirtualTextBuilderExtensions
                 .GetSection(nameof(DavidHome))
                 .GetSection(nameof(DavidHome.Optimizely.VirtualText));
             
-            serviceBuilder.Services?
+            serviceBuilder.Services
                 .Configure<RobotsTxtVirtualTextOptions>(configSection)
                 .Configure<ProtectedModuleOptions>(options =>
                 {

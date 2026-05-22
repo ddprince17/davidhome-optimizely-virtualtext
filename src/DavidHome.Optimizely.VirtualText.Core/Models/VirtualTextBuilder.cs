@@ -5,5 +5,5 @@ namespace DavidHome.Optimizely.VirtualText.Core.Models;
 
 public class VirtualTextBuilder : IVirtualTextBuilder
 {
-    public IServiceCollection? Services { get; set; }
+    public required IServiceCollection Services { get; set; }
 }

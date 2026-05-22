@@ -14,7 +14,7 @@ public static class RobotsTxtBuilderExtensions
     {
         public IVirtualTextBuilder AddAzureTableRobotsTxtStorage(IConfigurationSection configuration)
         {
-            serviceBuilder.Services?
+            serviceBuilder.Services
                 .AddTransient<IRobotsEnvironmentIndexingSettingsStore, TableRobotsEnvironmentIndexingSettingsStore>()
                 .AddAzureClients(builder => builder.AddTableServiceClient(configuration).WithName(RobotsTxtConstants.ClientName));
 

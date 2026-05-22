@@ -12,7 +12,7 @@ internal static class RobotsTxtCoreServiceCollectionExtensions
     {
         public IVirtualTextBuilder AddRobotsTxtCore()
         {
-            serviceBuilder.Services?
+            serviceBuilder.Services
                 .AddTransient<IRobotsIndexingPolicyService, RobotsIndexingPolicyService>()
                 .AddTransient<IVirtualFileContentManipulator, RobotsTxtVirtualFileContentManipulator>()
                 .AddTransient<RobotsNoIndexMiddleware>();

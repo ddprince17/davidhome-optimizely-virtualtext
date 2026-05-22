@@ -4,5 +4,5 @@ namespace DavidHome.Optimizely.VirtualText.Contracts;
 
 public interface IVirtualTextBuilder
 {
-    public IServiceCollection? Services { get; set; }
+    public IServiceCollection Services { get; set; }
 }
