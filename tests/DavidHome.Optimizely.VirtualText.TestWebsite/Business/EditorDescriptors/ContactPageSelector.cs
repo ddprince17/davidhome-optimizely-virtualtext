@@ -4,10 +4,10 @@ using EPiServer.Shell.ObjectEditing.EditorDescriptors;
 namespace DavidHome.Optimizely.VirtualText.TestWebsite.Business.EditorDescriptors;
 
 /// <summary>
-/// Registers an editor to select a ContactPage for a PageReference property using a dropdown
+/// Registers an editor to select a ContactPage for a ContentReference property using a dropdown
 /// </summary>
 [EditorDescriptorRegistration(
-    TargetType = typeof(PageReference),
+    TargetType = typeof(ContentReference),
     UIHint = Globals.SiteUIHints.Contact)]
 public class ContactPageSelector : EditorDescriptor
 {

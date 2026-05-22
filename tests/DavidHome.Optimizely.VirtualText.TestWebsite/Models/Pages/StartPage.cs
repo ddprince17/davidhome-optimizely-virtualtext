@@ -51,13 +51,13 @@ public class StartPage : SitePageData
     public virtual LinkItemCollection CustomerZonePageLinks { get; set; }
 
     [Display(GroupName = Globals.GroupNames.SiteSettings)]
-    public virtual PageReference GlobalNewsPageLink { get; set; }
+    public virtual ContentReference GlobalNewsPageLink { get; set; }
 
     [Display(GroupName = Globals.GroupNames.SiteSettings)]
-    public virtual PageReference ContactsPageLink { get; set; }
+    public virtual ContentReference ContactsPageLink { get; set; }
 
     [Display(GroupName = Globals.GroupNames.SiteSettings)]
-    public virtual PageReference SearchPageLink { get; set; }
+    public virtual ContentReference SearchPageLink { get; set; }
 
     [Display(GroupName = Globals.GroupNames.SiteSettings)]
     public virtual SiteLogotypeBlock SiteLogotype { get; set; }

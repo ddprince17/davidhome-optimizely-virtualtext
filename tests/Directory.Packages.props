@@ -4,7 +4,9 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="EPiServer.CMS" Version="12.29.0" />
+    <PackageVersion Include="EPiServer.CMS" Version="13.0.0" />
+    <PackageVersion Include="EPiServer.Cms.UI.AspNetIdentity" Version="13.0.0" />
+    <PackageVersion Include="EPiServer.CMS.UI.VisitorGroups" Version="13.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Azure" Version="1.13.1" />
     <PackageVersion Include="Wangkanai.Detection" Version="8.7.0" />
   </ItemGroup>

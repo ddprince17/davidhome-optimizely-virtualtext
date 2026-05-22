@@ -15,7 +15,6 @@
     
     <ItemGroup>
         <PackageReference Include="EPiServer.CMS.AspNetCore.Mvc" />
-        <PackageReference Include="System.Linq.AsyncEnumerable" />
         <PackageReference Include="GitVersion.MsBuild">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

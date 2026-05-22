@@ -1,6 +1,11 @@
+@using EPiServer.Applications
 @model IPageViewModel<SitePageData>
+@inject IApplicationResolver ApplicationResolver
 
 @{
+    var application = await ApplicationResolver.GetByContentAsync(Model.CurrentPage.ContentLink, false);
+    var startPage = (application as IRoutableApplication)?.EntryPoint;
+
     HelperResult ItemTemplate(HtmlHelpers.MenuItem item)
     {
         <li class="nav-item">
@@ -22,7 +27,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
-                        @Html.MenuList(SiteDefinition.Current.StartPage, ItemTemplate)
+                        @Html.MenuList(startPage, ItemTemplate)
                     </ul>
                 </div>
             </div>

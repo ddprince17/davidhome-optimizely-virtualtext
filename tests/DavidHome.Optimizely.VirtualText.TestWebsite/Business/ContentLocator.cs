@@ -1,9 +1,9 @@
 using System.Globalization;
 using DavidHome.Optimizely.VirtualText.TestWebsite.Models.Pages;
 using EPiServer.Filters;
+using EPiServer.Applications;
 using EPiServer.ServiceLocation;
 using EPiServer.Shell.Configuration;
-using EPiServer.Web;
 
 namespace DavidHome.Optimizely.VirtualText.TestWebsite.Business;
 
@@ -13,12 +13,18 @@ public class ContentLocator
     private readonly IContentLoader _contentLoader;
     private readonly IContentProviderManager _providerManager;
     private readonly IPageCriteriaQueryService _pageCriteriaQueryService;
+    private readonly IApplicationResolver _applicationResolver;
 
-    public ContentLocator(IContentLoader contentLoader, IContentProviderManager providerManager, IPageCriteriaQueryService pageCriteriaQueryService)
+    public ContentLocator(
+        IContentLoader contentLoader,
+        IContentProviderManager providerManager,
+        IPageCriteriaQueryService pageCriteriaQueryService,
+        IApplicationResolver applicationResolver)
     {
         _contentLoader = contentLoader;
         _providerManager = providerManager;
         _pageCriteriaQueryService = pageCriteriaQueryService;
+        _applicationResolver = applicationResolver;
     }
 
     public virtual IEnumerable<T> GetAll<T>(ContentReference rootLink)
@@ -46,7 +52,7 @@ public class ContentLocator
     /// <param name="recursive"></param>
     /// <param name="pageTypeId">ID of the page type to filter by</param>
     /// <returns></returns>
-    public IEnumerable<PageData> FindPagesByPageType(PageReference pageLink, bool recursive, int pageTypeId)
+    public IEnumerable<PageData> FindPagesByPageType(ContentReference pageLink, bool recursive, int pageTypeId)
     {
         if (ContentReference.IsNullOrEmpty(pageLink))
         {
@@ -61,7 +67,7 @@ public class ContentLocator
     }
 
     // Type specified through page type ID
-    private PageDataCollection FindPagesByPageTypeRecursively(PageReference pageLink, int pageTypeId)
+    private PageDataCollection FindPagesByPageTypeRecursively(ContentReference pageLink, int pageTypeId)
     {
         var criteria = new PropertyCriteriaCollection
         {
@@ -98,7 +104,8 @@ public class ContentLocator
     /// <returns></returns>
     public IEnumerable<ContactPage> GetContactPages()
     {
-        var contactsRootPageLink = _contentLoader.Get<StartPage>(SiteDefinition.Current.StartPage).ContactsPageLink;
+        var startPageLink = (_applicationResolver.GetByContext() as IRoutableApplication)?.EntryPoint;
+        var contactsRootPageLink = _contentLoader.Get<StartPage>(startPageLink).ContactsPageLink;
 
         if (ContentReference.IsNullOrEmpty(contactsRootPageLink))
         {

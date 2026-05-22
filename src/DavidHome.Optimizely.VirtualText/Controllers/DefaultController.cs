@@ -5,7 +5,7 @@ using DavidHome.Optimizely.VirtualText.Contracts;
 using DavidHome.Optimizely.VirtualText.Models;
 using DavidHome.Optimizely.VirtualText.Plugin;
 using DavidHome.Optimizely.VirtualText.Routing;
-using EPiServer.Web;
+using EPiServer.Applications;
 using EPiServer.Security;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,17 +17,17 @@ public class DefaultController : Controller
 {
     private readonly IVirtualFileLocationService _fileLocationService;
     private readonly IVirtualFileContentService _fileContentService;
-    private readonly ISiteDefinitionRepository _siteDefinitionRepository;
+    private readonly IApplicationRepository _applicationRepository;
     private readonly PermissionService _permissionService;
 
     [ViewData] public string? Title { get; set; }
 
-    public DefaultController(IVirtualFileLocationService fileLocationService, IVirtualFileContentService fileContentService, ISiteDefinitionRepository siteDefinitionRepository,
+    public DefaultController(IVirtualFileLocationService fileLocationService, IVirtualFileContentService fileContentService, IApplicationRepository applicationRepository,
         PermissionService permissionService)
     {
         _fileLocationService = fileLocationService;
         _fileContentService = fileContentService;
-        _siteDefinitionRepository = siteDefinitionRepository;
+        _applicationRepository = applicationRepository;
         _permissionService = permissionService;
     }
 
@@ -102,7 +102,7 @@ public class DefaultController : Controller
     {
         var virtualPath = entry.VirtualPath;
         var normalizedSiteId = entry.SourceSiteId;
-        if (string.IsNullOrEmpty(normalizedSiteId) || !Guid.TryParse(normalizedSiteId, out var siteGuid))
+        if (string.IsNullOrEmpty(normalizedSiteId))
         {
             return new VirtualTextImportItem
             {
@@ -116,7 +116,7 @@ public class DefaultController : Controller
             };
         }
 
-        var siteName = _siteDefinitionRepository.Get(siteGuid)?.Name;
+        var siteName = _applicationRepository.Get(normalizedSiteId)?.DisplayName;
         var isUnknown = string.IsNullOrEmpty(siteName);
         return new VirtualTextImportItem
         {
@@ -236,19 +236,19 @@ public class DefaultController : Controller
             Hosts = []
         };
 
-        foreach (var site in _siteDefinitionRepository.List().OrderBy(site => site.Name))
+        foreach (var site in _applicationRepository.List().OrderBy(site => site.Name))
         {
-            var hosts = site.Hosts
-                .Select(host => host.Name)
+            var hosts = (site as IRoutableApplication)?.Hosts
+                .Select(host => host.Authority)
                 .Where(host => !string.IsNullOrWhiteSpace(host))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray();
 
             yield return new VirtualTextSiteOption
             {
-                SiteId = site.Id.ToString("N"),
-                Name = site.Name,
-                Hosts = hosts
+                SiteId = site.Name,
+                Name = site.DisplayName,
+                Hosts = hosts ?? []
             };
         }
     }

@@ -1,6 +1,6 @@
 using DavidHome.Optimizely.VirtualText.TestWebsite.Models.Pages;
 using DavidHome.Optimizely.VirtualText.TestWebsite.Models.ViewModels;
-using EPiServer.Web;
+using EPiServer.Applications;
 using EPiServer.Web.Mvc;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,12 +8,20 @@ namespace DavidHome.Optimizely.VirtualText.TestWebsite.Controllers;
 
 public class StartPageController : PageControllerBase<StartPage>
 {
+    private readonly IApplicationResolver _applicationResolver;
+
+    public StartPageController(IApplicationResolver applicationResolver)
+    {
+        _applicationResolver = applicationResolver;
+    }
+
     public IActionResult Index(StartPage currentPage)
     {
         var model = PageViewModel.Create(currentPage);
+        var startPage = (_applicationResolver.GetByContent(currentPage.ContentLink, false) as IRoutableApplication)?.EntryPoint;
 
         // Check if it is the StartPage or just a page of the StartPage type.
-        if (SiteDefinition.Current.StartPage.CompareToIgnoreWorkID(currentPage.ContentLink))
+        if (startPage?.CompareToIgnoreWorkID(currentPage.ContentLink) ?? false)
         {
             // Connect the view models logotype property to the start page's to make it editable
             var editHints = ViewData.GetEditHints<PageViewModel<StartPage>, StartPage>();

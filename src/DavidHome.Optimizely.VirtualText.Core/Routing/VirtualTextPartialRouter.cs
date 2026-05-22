@@ -1,9 +1,9 @@
 using DavidHome.Optimizely.VirtualText.Contracts;
 using DavidHome.Optimizely.VirtualText.Models;
+using EPiServer.Applications;
 using EPiServer.Core;
 using EPiServer.Core.Routing;
 using EPiServer.Core.Routing.Pipeline;
-using EPiServer.Web;
 using Microsoft.AspNetCore.Http;
 
 namespace DavidHome.Optimizely.VirtualText.Core.Routing;
@@ -12,24 +12,24 @@ public class VirtualTextPartialRouter<TContent> : IPartialRouter<TContent, Virtu
 {
     private const string AsteriskHost = "*";
     private readonly IVirtualFileLocationService _fileLocationService;
-    private readonly ISiteDefinitionResolver _siteDefinitionResolver;
-    private readonly ISiteDefinitionRepository _siteDefinitionRepository;
+    private readonly IApplicationResolver _applicationResolver;
+    private readonly IApplicationRepository _applicationRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public VirtualTextPartialRouter(IVirtualFileLocationService fileLocationService, ISiteDefinitionResolver siteDefinitionResolver,
-        ISiteDefinitionRepository siteDefinitionRepository, IHttpContextAccessor httpContextAccessor)
+    public VirtualTextPartialRouter(IVirtualFileLocationService fileLocationService, IApplicationResolver applicationResolver,
+        IApplicationRepository applicationRepository, IHttpContextAccessor httpContextAccessor)
     {
         _fileLocationService = fileLocationService;
-        _siteDefinitionResolver = siteDefinitionResolver;
-        _siteDefinitionRepository = siteDefinitionRepository;
+        _applicationResolver = applicationResolver;
+        _applicationRepository = applicationRepository;
         _httpContextAccessor = httpContextAccessor;
     }
 
     public object? RoutePartial(TContent content, UrlResolverContext segmentContext)
     {
-        var contentSiteDefinition = _siteDefinitionResolver.GetByContent(content.ContentLink, false);
+        var contentApplication = _applicationResolver.GetByContent(content.ContentLink, false);
         var remainingSegments = segmentContext.RemainingSegments.Span.ToString(); // Using Span doesn't create a new string, it re-uses the same memory location.
-        var siteId = contentSiteDefinition.Id.ToString("N");
+        var siteId = contentApplication?.Name;
         var fileLocations = _fileLocationService
             .QueryFileLocations(new VirtualFileLocationQuery { VirtualPaths = [remainingSegments] })
             .Where(location => location.SiteId == siteId || string.IsNullOrEmpty(location.SiteId))
@@ -51,7 +51,7 @@ public class VirtualTextPartialRouter<TContent> : IPartialRouter<TContent, Virtu
         };
     }
 
-    private VirtualFileLocation? PickLocation(IReadOnlyCollection<VirtualFileLocation> locations, string siteId)
+    private VirtualFileLocation? PickLocation(IReadOnlyCollection<VirtualFileLocation> locations, string? siteId)
     {
         var siteLocations = locations.Where(location => string.Equals(location.SiteId, siteId, StringComparison.OrdinalIgnoreCase)).ToArray();
 
@@ -77,18 +77,16 @@ public class VirtualTextPartialRouter<TContent> : IPartialRouter<TContent, Virtu
 
     public PartialRouteData? GetPartialVirtualPath(VirtualTextRoutedData content, UrlGeneratorContext urlGeneratorContext)
     {
-        if (!Guid.TryParse(content.SiteId, out var siteId) || Equals(siteId, Guid.Empty) || string.IsNullOrEmpty(content.FileLocation?.VirtualPath))
+        if (string.IsNullOrWhiteSpace(content.SiteId) || string.IsNullOrEmpty(content.FileLocation?.VirtualPath))
         {
             return null;
         }
 
-        var siteDefinition = _siteDefinitionRepository.Get(siteId);
-
-        if (siteDefinition != null)
+        if (_applicationRepository.Get(content.SiteId) is IRoutableApplication routableApplication)
         {
             return new PartialRouteData
             {
-                BasePathRoot = siteDefinition.StartPage,
+                BasePathRoot = routableApplication.EntryPoint,
                 PartialVirtualPath = content.FileLocation.VirtualPath
             };
         }
