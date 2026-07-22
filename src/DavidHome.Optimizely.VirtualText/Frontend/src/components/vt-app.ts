@@ -76,7 +76,7 @@ export class VtApp extends LitElement {
   @state() accessor sites: VirtualTextSiteOption[] = [];
   @state() accessor canEdit = false;
   @state() accessor listFiles: VirtualTextFileListItem[] = [];
-  @state() accessor listHasMore = true;
+  @state() accessor listHasMore = false;
   @state() accessor listLoading = false;
   @state() accessor filterPath = '';
   @state() accessor filterSiteId: string | null = null;
@@ -550,7 +550,7 @@ export class VtApp extends LitElement {
       } else {
         this.listFiles = [...this.listFiles, ...data.files];
       }
-      this.listHasMore = data.hasMore && data.files.length > 0;
+      this.listHasMore = data.hasMore;
       if (data.files.length > 0) {
         this.listPageNumber = nextPage;
       }
