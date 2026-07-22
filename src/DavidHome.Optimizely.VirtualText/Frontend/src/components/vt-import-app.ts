@@ -42,7 +42,7 @@ export class VtImportApp extends LitElement {
   @state() accessor canEdit = false;
   @state() accessor importing = new Set<string>();
   @state() accessor importingAll = false;
-  @state() accessor listHasMore = true;
+  @state() accessor listHasMore = false;
   @state() accessor listLoading = false;
 
   createRenderRoot() {

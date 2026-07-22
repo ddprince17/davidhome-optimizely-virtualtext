@@ -27,7 +27,7 @@ public class TableFileLocationService : IVirtualFileLocationService
         _virtualTextOptions = virtualTextOptions;
     }
 
-    public async IAsyncEnumerable<VirtualFileLocation> QueryFileLocations(VirtualFileLocationQuery query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async Task<PagedResult<VirtualFileLocation>> QueryFileLocationsAsync(VirtualFileLocationQuery query, CancellationToken cancellationToken = default)
     {
         var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileLocationsPerPage;
         var parameter = Expression.Parameter(typeof(FileLocationEntity), "entity");
@@ -35,49 +35,61 @@ public class TableFileLocationService : IVirtualFileLocationService
 
         if (predicateBody == null)
         {
-            yield break;
+            return new PagedResult<VirtualFileLocation>
+            {
+                Items = [],
+                HasMore = false
+            };
         }
 
         var predicate = Expression.Lambda<Func<FileLocationEntity, bool>>(predicateBody, parameter);
-        var tableQuery = await FileLocationTableClient
+        var page = await FileLocationTableClient
             .QueryAsync(predicate, maxPerPage: maxPageSize, cancellationToken: cancellationToken)
             .AsPages(pageSizeHint: maxPageSize)
             .SelectPageNumber(query.PageNumber)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-        foreach (var entity in tableQuery?.Values ?? [])
+        var items = page?.Values.Select(entity => new VirtualFileLocation
         {
-            yield return new VirtualFileLocation
-            {
-                SiteId = entity.SiteId,
-                HostName = entity.HostName,
-                VirtualPath = entity.VirtualPath
-            };
-        }
+            SiteId = entity.SiteId,
+            HostName = entity.HostName,
+            VirtualPath = entity.VirtualPath
+        }).ToArray() ?? [];
+
+        return new PagedResult<VirtualFileLocation>
+        {
+            Items = items,
+            HasMore = !string.IsNullOrEmpty(page?.ContinuationToken)
+        };
     }
 
-    public async IAsyncEnumerable<VirtualFileLocation> QueryFileLocationsFuzzy(VirtualFileLocationQuery query,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async Task<PagedResult<VirtualFileLocation>> QueryFileLocationsFuzzyAsync(VirtualFileLocationQuery query, CancellationToken cancellationToken = default)
     {
         var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileLocationsPerPage;
+        var skipCount = (query.PageNumber - 1) * maxPageSize;
         var entities = FileLocationTableClient.QueryAsync<FileLocationEntity>(
                 entity => string.IsNullOrEmpty(query.SiteId) || entity.SiteId == query.SiteId,
                 maxPerPage: maxPageSize,
                 cancellationToken: cancellationToken)
             .Where(entity => string.IsNullOrEmpty(query.HostName) || entity.HostName == query.HostName)
             .Where(entity => query.VirtualPaths == null || query.VirtualPaths.Any(value => entity.VirtualPath?.Contains(value, StringComparison.Ordinal) ?? false))
-            .Skip(query.PageNumber * maxPageSize - maxPageSize)
-            .Take(maxPageSize);
+            .Skip(skipCount)
+            .Take(maxPageSize + 1);
 
-        await foreach (var entity in entities)
+        var rawItems = await entities.Select(entity => new VirtualFileLocation
         {
-            yield return new VirtualFileLocation
-            {
-                VirtualPath = entity.VirtualPath,
-                SiteId = entity.SiteId,
-                HostName = entity.HostName
-            };
-        }
+            SiteId = entity.SiteId,
+            HostName = entity.HostName,
+            VirtualPath = entity.VirtualPath
+        }).ToArrayAsync(cancellationToken);
+        var hasMore = rawItems.Length > maxPageSize;
+        IReadOnlyCollection<VirtualFileLocation> items = hasMore ? new ArraySegment<VirtualFileLocation>(rawItems, 0, maxPageSize) : rawItems;
+
+        return new PagedResult<VirtualFileLocation>
+        {
+            Items = items,
+            HasMore = hasMore
+        };
     }
 
     public async Task UpsertFileLocationAsync(VirtualFileLocation location, CancellationToken cancellationToken = default)
