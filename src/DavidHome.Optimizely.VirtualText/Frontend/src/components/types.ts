@@ -30,4 +30,5 @@ export type VirtualTextImportItem = {
 export type VirtualTextImportListResponse = {
   items: VirtualTextImportItem[];
   hasMore: boolean;
+  nextPageNumber: number | null;
 };

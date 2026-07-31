@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Azure;
 using Azure.Storage.Blobs;
 using DavidHome.Optimizely.VirtualText.Content.AzureBlob.Exceptions;

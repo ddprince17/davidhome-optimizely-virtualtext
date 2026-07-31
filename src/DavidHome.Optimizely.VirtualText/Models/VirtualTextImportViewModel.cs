@@ -1,4 +1,4 @@
-﻿namespace DavidHome.Optimizely.VirtualText.Models;
+namespace DavidHome.Optimizely.VirtualText.Models;
 
 public class VirtualTextImportViewModel
 {
@@ -11,4 +11,5 @@ public class VirtualTextImportListResponse
 {
     public IReadOnlyList<VirtualTextImportItem> Items { get; init; } = [];
     public bool HasMore { get; init; }
+    public int? NextPageNumber { get; init; }
 }

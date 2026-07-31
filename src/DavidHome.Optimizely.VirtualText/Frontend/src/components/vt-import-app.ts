@@ -249,7 +249,7 @@ export class VtImportApp extends LitElement {
       return;
     }
 
-    const nextPage = reset ? 1 : this.listPageNumber + 1;
+    const nextPage = reset ? 1 : this.listPageNumber;
     this.listLoading = true;
 
     try {
@@ -263,8 +263,8 @@ export class VtImportApp extends LitElement {
       const data = await response.json() as VirtualTextImportListResponse;
       this.items = reset ? data.items : [...this.items, ...data.items];
       this.listHasMore = data.hasMore;
-      if (data.items.length > 0 || data.hasMore) {
-        this.listPageNumber = nextPage;
+      if (data.nextPageNumber) {
+        this.listPageNumber = data.nextPageNumber;
       }
     } catch (error: any) {
       this.showToast(error && error.message ? error.message : 'Failed to load import list.', 'error');
