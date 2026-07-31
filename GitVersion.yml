@@ -6,6 +6,13 @@ branches:
   main:
     mode: ContinuousDeployment
     is-release-branch: true
+  release/1.x:
+    mode: ContinuousDeployment
+    regex: ^release(s)?[/-]1\.x$
+    is-release-branch: true
+    is-main-branch: true
+    source-branches:
+    - main
   release:
     mode: ContinuousDelivery
     regex: ^release(s)?[/-](?<BranchName>.+)
