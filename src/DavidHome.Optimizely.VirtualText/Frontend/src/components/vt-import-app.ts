@@ -117,7 +117,7 @@ export class VtImportApp extends LitElement {
     const hostEnabled = Boolean(item.selectedSiteId);
     return html`
       <tr>
-        <td class="px-3 py-2">${item.virtualPath}</td>
+        <td class="px-3 py-2 break-all">${item.virtualPath}</td>
         <td class="px-3 py-2">
           <select
             class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
