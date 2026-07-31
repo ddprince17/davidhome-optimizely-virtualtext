@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Azure;
 using Azure.Storage.Blobs;
 using DavidHome.Optimizely.VirtualText.Content.AzureBlob.Exceptions;
@@ -72,19 +71,22 @@ public class BlobFileContentService : IVirtualFileContentService
         await blob.DeleteIfExistsAsync(cancellationToken: cancellationToken);
     }
 
-    public async IAsyncEnumerable<ContentServiceFile> ListFilePaths(int pageNumber = 1, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async Task<PagedResult<ContentServiceFile>> ListFilePathsAsync(int pageNumber = 1, CancellationToken cancellationToken = default)
     {
         var maxPageSize = _virtualTextOptions.CurrentValue.MaxFileContentsPerPage;
-        var blobItems = await ContainerClient
+        var page = await ContainerClient
             .GetBlobsAsync(cancellationToken: cancellationToken)
             .AsPages(pageSizeHint: maxPageSize)
             .SelectPageNumber(pageNumber)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-        foreach (var blobItem in blobItems?.Values ?? [])
+        var items = page?.Values.Select(b => BuildImportPath(b.Name)).ToArray() ?? [];
+        
+        return new PagedResult<ContentServiceFile>
         {
-            yield return BuildImportPath(blobItem.Name);
-        }
+            Items = items,
+            HasMore = !string.IsNullOrEmpty(page?.ContinuationToken)
+        };
     }
 
     public async Task MoveVirtualFileAsync(string? virtualPath, string? sourceSiteId, string? sourceHostName, string? targetSiteId, string? targetHostName, CancellationToken cancellationToken = default)

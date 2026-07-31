@@ -65,8 +65,8 @@ export class VtApp extends LitElement {
   private antiForgeryToken = '';
   private listPageNumber = 1;
   private currentFile: { virtualPath: string; siteId: string | null; siteName: string; hostName: string | null } | null = null;
-  private compareTargetSiteId: string | null = null;
-  private compareTargetHostName: string | null = null;
+  private compareTargetSiteId: string | null | undefined = undefined;
+  private compareTargetHostName: string | null | undefined = undefined;
 
   private toastRef = createRef<HTMLElement>();
   private confirmModalRef = createRef<HTMLElement>();
@@ -76,7 +76,7 @@ export class VtApp extends LitElement {
   @state() accessor sites: VirtualTextSiteOption[] = [];
   @state() accessor canEdit = false;
   @state() accessor listFiles: VirtualTextFileListItem[] = [];
-  @state() accessor listHasMore = true;
+  @state() accessor listHasMore = false;
   @state() accessor listLoading = false;
   @state() accessor filterPath = '';
   @state() accessor filterSiteId: string | null = null;
@@ -299,40 +299,40 @@ export class VtApp extends LitElement {
       if (response.status === 404) {
         const confirmCopy = await this.confirm('The target site does not have this file yet. Copy it now?', 'Copy now', 'Cancel');
         if (!confirmCopy) {
-          this.compareTargetSiteId = null;
-          this.compareTargetHostName = null;
+          this.compareTargetSiteId = undefined;
+          this.compareTargetHostName = undefined;
           return;
         }
         await this.saveToSite(targetSiteId, targetHostName, currentFile.virtualPath, event.detail?.content || '');
         await this.refreshFileList(true);
         this.closeEditor();
-        this.compareTargetSiteId = null;
-        this.compareTargetHostName = null;
+        this.compareTargetSiteId = undefined;
+        this.compareTargetHostName = undefined;
         return;
       }
       if (!response.ok) {
         this.showToast('Failed to load target file.', 'error');
-        this.compareTargetSiteId = null;
-        this.compareTargetHostName = null;
+        this.compareTargetSiteId = undefined;
+        this.compareTargetHostName = undefined;
         return;
       }
       const content = await response.text();
       this.getEditorModalApi()?.enterDiffMode(content);
     } catch (error: any) {
       if (error && error.message === 'Permission denied.') {
-        this.compareTargetSiteId = null;
-        this.compareTargetHostName = null;
+        this.compareTargetSiteId = undefined;
+        this.compareTargetHostName = undefined;
         return;
       }
       this.showToast(error && error.message ? error.message : 'Failed to load target file.', 'error');
-      this.compareTargetSiteId = null;
-      this.compareTargetHostName = null;
+      this.compareTargetSiteId = undefined;
+      this.compareTargetHostName = undefined;
     }
   }
 
   private async handleCompareAccept(event: CustomEvent) {
     const currentFile = this.currentFile;
-    if (!currentFile || !this.compareTargetSiteId) {
+    if (!currentFile || this.compareTargetSiteId === undefined) {
       return;
     }
     const contentToCopy = event.detail?.content || '';
@@ -341,12 +341,12 @@ export class VtApp extends LitElement {
       await this.getEditorModalApi()?.exitDiffMode(false);
       await this.refreshFileList(true);
       this.closeEditor();
-      this.compareTargetSiteId = null;
-      this.compareTargetHostName = null;
+      this.compareTargetSiteId = undefined;
+      this.compareTargetHostName = undefined;
     } catch (error: any) {
       if (error && error.message === 'Permission denied.') {
-        this.compareTargetSiteId = null;
-        this.compareTargetHostName = null;
+        this.compareTargetSiteId = undefined;
+        this.compareTargetHostName = undefined;
         return;
       }
       this.showToast(error && error.message ? error.message : 'Failed to save.', 'error');
@@ -354,8 +354,8 @@ export class VtApp extends LitElement {
   }
 
   private handleCompareCancel() {
-    this.compareTargetSiteId = null;
-    this.compareTargetHostName = null;
+    this.compareTargetSiteId = undefined;
+    this.compareTargetHostName = undefined;
   }
 
   private handleEditorError(event: CustomEvent) {
@@ -372,7 +372,7 @@ export class VtApp extends LitElement {
       }
       const content = await response.text();
       this.currentFile = file;
-      this.compareTargetSiteId = null;
+      this.compareTargetSiteId = undefined;
       this.getEditorModalApi()?.open(file, content, readOnly);
     } catch (error: any) {
       this.showToast(error && error.message ? error.message : 'Failed to load file.', 'error');
@@ -508,8 +508,8 @@ export class VtApp extends LitElement {
   private closeEditor() {
     this.getEditorModalApi()?.close();
     this.currentFile = null;
-    this.compareTargetSiteId = null;
-    this.compareTargetHostName = null;
+    this.compareTargetSiteId = undefined;
+    this.compareTargetHostName = undefined;
   }
 
   private buildFileListUrl(pageNumber: number) {
@@ -550,7 +550,7 @@ export class VtApp extends LitElement {
       } else {
         this.listFiles = [...this.listFiles, ...data.files];
       }
-      this.listHasMore = data.hasMore && data.files.length > 0;
+      this.listHasMore = data.hasMore;
       if (data.files.length > 0) {
         this.listPageNumber = nextPage;
       }

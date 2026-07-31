@@ -42,7 +42,7 @@ export class VtImportApp extends LitElement {
   @state() accessor canEdit = false;
   @state() accessor importing = new Set<string>();
   @state() accessor importingAll = false;
-  @state() accessor listHasMore = true;
+  @state() accessor listHasMore = false;
   @state() accessor listLoading = false;
 
   createRenderRoot() {
@@ -117,7 +117,7 @@ export class VtImportApp extends LitElement {
     const hostEnabled = Boolean(item.selectedSiteId);
     return html`
       <tr>
-        <td class="px-3 py-2">${item.virtualPath}</td>
+        <td class="px-3 py-2 break-all">${item.virtualPath}</td>
         <td class="px-3 py-2">
           <select
             class="min-w-[220px] rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
@@ -249,7 +249,7 @@ export class VtImportApp extends LitElement {
       return;
     }
 
-    const nextPage = reset ? 1 : this.listPageNumber + 1;
+    const nextPage = reset ? 1 : this.listPageNumber;
     this.listLoading = true;
 
     try {
@@ -263,8 +263,8 @@ export class VtImportApp extends LitElement {
       const data = await response.json() as VirtualTextImportListResponse;
       this.items = reset ? data.items : [...this.items, ...data.items];
       this.listHasMore = data.hasMore;
-      if (data.items.length > 0 || data.hasMore) {
-        this.listPageNumber = nextPage;
+      if (data.nextPageNumber) {
+        this.listPageNumber = data.nextPageNumber;
       }
     } catch (error: any) {
       this.showToast(error && error.message ? error.message : 'Failed to load import list.', 'error');

@@ -2,6 +2,7 @@ using DavidHome.Optimizely.VirtualText.Contracts;
 using DavidHome.Optimizely.VirtualText.Core;
 using DavidHome.Optimizely.VirtualText.Core.Models;
 using DavidHome.Optimizely.VirtualText.Core.Routing;
+using DavidHome.Optimizely.VirtualText.Core.Services;
 using EPiServer.Applications;
 using EPiServer.DependencyInjection;
 
@@ -19,7 +20,8 @@ internal static class VirtualTextCoreServiceCollectionExtensions
             .AddSingleton(typeof(IVirtualTextPartialRouterWrapper<>), typeof(VirtualTextPartialRouterWrapper<>))
             .AddTransient<ApplicationEventsSubscriber>()
             .AddCmsEventSubscriber<ApplicationCreatedEvent, ApplicationEventsSubscriber>()
-            .AddCmsEventSubscriber<ApplicationUpdatedEvent, ApplicationEventsSubscriber>();
+            .AddCmsEventSubscriber<ApplicationUpdatedEvent, ApplicationEventsSubscriber>()
+            .AddTransient<IVirtualFileBridgeService, VirtualFileBridgeService>();
 
         return new VirtualTextBuilder { Services = services };
     }

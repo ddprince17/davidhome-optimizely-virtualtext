@@ -1,4 +1,3 @@
-﻿using System.Runtime.CompilerServices;
 using System.Text;
 using Azure;
 using DavidHome.Optimizely.VirtualText.Contracts;
@@ -19,16 +18,18 @@ public class DefaultController : Controller
     private readonly IVirtualFileContentService _fileContentService;
     private readonly IApplicationRepository _applicationRepository;
     private readonly PermissionService _permissionService;
+    private readonly IVirtualFileBridgeService _fileBridgeService;
 
     [ViewData] public string? Title { get; set; }
 
     public DefaultController(IVirtualFileLocationService fileLocationService, IVirtualFileContentService fileContentService, IApplicationRepository applicationRepository,
-        PermissionService permissionService)
+        PermissionService permissionService, IVirtualFileBridgeService fileBridgeService)
     {
         _fileLocationService = fileLocationService;
         _fileContentService = fileContentService;
         _applicationRepository = applicationRepository;
         _permissionService = permissionService;
+        _fileBridgeService = fileBridgeService;
     }
 
     [HttpGet]
@@ -37,13 +38,13 @@ public class DefaultController : Controller
         Title = "Text Editor";
 
         var sites = GetVirtualTextSiteOptions().ToArray();
-        var fileLocations = GetVirtualTextFileListItems(sites, cancellationToken: cancellationToken);
+        var fileLocations = await GetVirtualTextFileListItems(sites, cancellationToken: cancellationToken);
         var model = new VirtualTextIndexViewModel
         {
-            Files = await fileLocations
+            Files = fileLocations.Items
                 .OrderBy(file => file.VirtualPath, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(file => file.SiteName, StringComparer.OrdinalIgnoreCase)
-                .ToArrayAsync(cancellationToken: cancellationToken),
+                .ToArray(),
             Sites = sites,
             CanEdit = _permissionService.IsPermitted(User, PluginPermissions.EditSettings)
         };
@@ -75,26 +76,18 @@ public class DefaultController : Controller
             return BadRequest("Page number must be at least 1.");
         }
 
-        var entries = await _fileContentService
-            .ListFilePaths(pageNumber, cancellationToken)
+        var pagedResult = await _fileBridgeService.GetUnimportedFilesAsync(pageNumber, cancellationToken);
+        var entries = pagedResult.Items
             .Select(BuildImportItem)
             .OrderBy(item => item.VirtualPath, StringComparer.Ordinal)
             .ThenBy(item => item.SourceSiteName, StringComparer.Ordinal)
-            .ToArrayAsync(cancellationToken);
-
-        var existingKeys = await GetExistingLocationKeys(entries, cancellationToken);
-        var items = entries
-            .Where(item => !existingKeys.Contains(GetLocationKey(item.VirtualPath, item.SourceSiteId, item.SourceHostName)))
             .ToArray();
-
-        var hasMore = await _fileContentService
-            .ListFilePaths(pageNumber + 1, cancellationToken)
-            .AnyAsync(cancellationToken);
 
         return Json(new VirtualTextImportListResponse
         {
-            Items = items,
-            HasMore = hasMore
+            Items = entries,
+            HasMore = pagedResult.HasMore,
+            NextPageNumber = pagedResult.NextPageNumber
         });
     }
 
@@ -130,49 +123,7 @@ public class DefaultController : Controller
         };
     }
 
-    private async Task<HashSet<string>> GetExistingLocationKeys(IReadOnlyCollection<VirtualTextImportItem> items, CancellationToken cancellationToken)
-    {
-        var keys = new HashSet<string>(StringComparer.Ordinal);
-        if (items.Count == 0)
-        {
-            return keys;
-        }
 
-        foreach (var group in items.GroupBy(item => new { SiteId = item.SourceSiteId ?? string.Empty, HostName = item.SourceHostName ?? string.Empty }))
-        {
-            var paths = group
-                .Select(item => item.VirtualPath)
-                .Where(path => !string.IsNullOrEmpty(path))
-                .Distinct(StringComparer.Ordinal)
-                .ToArray();
-
-            if (paths.Length == 0)
-            {
-                continue;
-            }
-
-            var results = await _fileLocationService.QueryFileLocations(new VirtualFileLocationQuery
-                {
-                    VirtualPaths = paths,
-                    SiteId = group.Key.SiteId,
-                    HostName = string.IsNullOrEmpty(group.Key.SiteId) ? string.Empty : group.Key.HostName
-                }, cancellationToken)
-                .ToArrayAsync(cancellationToken: cancellationToken);
-
-            foreach (var item in results)
-            {
-                keys.Add(GetLocationKey(item.VirtualPath ?? string.Empty, item.SiteId, item.HostName));
-            }
-        }
-
-        return keys;
-    }
-
-    private static string GetLocationKey(string virtualPath, string? siteId, string? hostName)
-    {
-        var hostKey = string.IsNullOrWhiteSpace(siteId) ? string.Empty : (hostName ?? string.Empty);
-        return $"{siteId ?? string.Empty}::{hostKey}::{virtualPath}";
-    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -184,26 +135,13 @@ public class DefaultController : Controller
             return BadRequest("Virtual path is required.");
         }
 
-        if (!string.Equals(request.SourceSiteId ?? string.Empty, request.TargetSiteId ?? string.Empty, StringComparison.OrdinalIgnoreCase))
-        {
-            await _fileContentService.MoveVirtualFileAsync(
-                request.VirtualPath,
-                request.SourceSiteId,
-                request.SourceHostName,
-                request.TargetSiteId,
-                request.TargetHostName,
-                cancellationToken);
-            var sourceHostName = string.IsNullOrWhiteSpace(request.SourceSiteId) ? null : request.SourceHostName;
-            await _fileLocationService.DeleteFileLocationAsync(request.VirtualPath, request.SourceSiteId, sourceHostName, cancellationToken);
-        }
-
-        var targetHostName = string.IsNullOrWhiteSpace(request.TargetSiteId) ? null : request.TargetHostName;
-        await _fileLocationService.UpsertFileLocationAsync(new VirtualFileLocation
-        {
-            SiteId = request.TargetSiteId,
-            HostName = targetHostName,
-            VirtualPath = request.VirtualPath
-        }, cancellationToken);
+        await _fileBridgeService.MoveAndUpsertLocationAsync(
+            request.VirtualPath,
+            request.SourceSiteId,
+            request.SourceHostName,
+            request.TargetSiteId,
+            request.TargetHostName,
+            cancellationToken);
 
         return Ok();
     }
@@ -217,13 +155,14 @@ public class DefaultController : Controller
         }
 
         var sites = GetVirtualTextSiteOptions().ToArray();
-        var files = await GetVirtualTextFileListItems(sites, virtualPath, siteId, hostName, pageNumber, cancellationToken)
-            .ToArrayAsync(cancellationToken: cancellationToken);
+        var pagedResult = await GetVirtualTextFileListItems(sites, virtualPath, siteId, hostName, pageNumber, cancellationToken);
+        var files = pagedResult.Items.ToArray();
+        var hasMore = pagedResult.HasMore;
 
         return Json(new VirtualTextFileListResponse
         {
             Files = files,
-            HasMore = files.Length > 0
+            HasMore = hasMore
         });
     }
 
@@ -253,13 +192,13 @@ public class DefaultController : Controller
         }
     }
 
-    private async IAsyncEnumerable<VirtualTextFileListItem> GetVirtualTextFileListItems(
-        IReadOnlyCollection<VirtualTextSiteOption> sites,
+    private async Task<PagedResult<VirtualTextFileListItem>> GetVirtualTextFileListItems(
+        VirtualTextSiteOption[] sites,
         string? virtualPath = null,
         string? siteId = null,
         string? hostName = null,
         int pageNumber = 1,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(siteId))
         {
@@ -269,7 +208,7 @@ public class DefaultController : Controller
         var normalizedSiteId = siteId ?? string.Empty;
         var normalizedHostName = hostName ?? string.Empty;
 
-        var locations = _fileLocationService.QueryFileLocationsFuzzy(new VirtualFileLocationQuery
+        var pagedResult = await _fileLocationService.QueryFileLocationsFuzzyAsync(new VirtualFileLocationQuery
         {
             VirtualPaths = string.IsNullOrEmpty(virtualPath) ? null : new[] { virtualPath },
             SiteId = normalizedSiteId,
@@ -277,20 +216,22 @@ public class DefaultController : Controller
             PageNumber = pageNumber
         }, cancellationToken);
 
-        await foreach (var location in locations)
+        var items = pagedResult.Items.Select(location => new VirtualTextFileListItem
         {
-            var siteName = string.IsNullOrEmpty(location.SiteId)
+            VirtualPath = location.VirtualPath ?? string.Empty,
+            SiteId = location.SiteId,
+            HostName = location.HostName,
+            SiteName = string.IsNullOrEmpty(location.SiteId)
                 ? "Default (All Sites)"
-                : sites.FirstOrDefault(site => site.SiteId == location.SiteId)?.Name ?? "Unknown";
-            yield return new VirtualTextFileListItem
-            {
-                VirtualPath = location.VirtualPath ?? string.Empty,
-                SiteId = location.SiteId,
-                HostName = location.HostName,
-                SiteName = siteName,
-                IsDefault = string.IsNullOrEmpty(location.SiteId)
-            };
-        }
+                : sites.FirstOrDefault(site => site.SiteId == location.SiteId)?.Name ?? "Unknown",
+            IsDefault = string.IsNullOrEmpty(location.SiteId)
+        }).ToArray();
+
+        return new PagedResult<VirtualTextFileListItem>
+        {
+            Items = items,
+            HasMore = pagedResult.HasMore
+        };
     }
 
     [HttpGet]
