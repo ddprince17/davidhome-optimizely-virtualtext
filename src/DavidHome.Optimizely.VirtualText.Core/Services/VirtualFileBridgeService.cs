@@ -50,14 +50,15 @@ public class VirtualFileBridgeService : IVirtualFileBridgeService
             currentPage++;
         }
 
-        int? nextPageNumber = hasMore ? currentPage + 1 : null;
+        int? nextPageNumber = hasMore ? currentPage : null;
         var peekedPage = nextPageNumber != null && peek ? await GetUnimportedFilesInternalAsync(nextPageNumber.Value, false,  cancellationToken) : null;
-        
+        var finalHasMore = hasMore && (!peek || peekedPage?.HasMore == true || peekedPage?.Items.Count > 0);
+
         return new PagedResult<ContentServiceFile>
         {
             Items = items,
-            HasMore = hasMore && peekedPage?.HasMore == true,
-            NextPageNumber = nextPageNumber
+            HasMore = finalHasMore,
+            NextPageNumber = finalHasMore ? nextPageNumber : null
         };
     }
 
