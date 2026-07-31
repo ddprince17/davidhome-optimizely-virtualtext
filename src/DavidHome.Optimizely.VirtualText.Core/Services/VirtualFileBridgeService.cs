@@ -10,7 +10,8 @@ public class VirtualFileBridgeService : IVirtualFileBridgeService
     private readonly IVirtualFileLocationService _fileLocationService;
     private readonly IOptionsMonitor<VirtualTextOptions> _virtualTextOptions;
 
-    public VirtualFileBridgeService(IVirtualFileContentService fileContentService, IVirtualFileLocationService fileLocationService, IOptionsMonitor<VirtualTextOptions> virtualTextOptions)
+    public VirtualFileBridgeService(IVirtualFileContentService fileContentService, IVirtualFileLocationService fileLocationService,
+        IOptionsMonitor<VirtualTextOptions> virtualTextOptions)
     {
         _fileContentService = fileContentService;
         _fileLocationService = fileLocationService;
@@ -18,6 +19,11 @@ public class VirtualFileBridgeService : IVirtualFileBridgeService
     }
 
     public async Task<PagedResult<ContentServiceFile>> GetUnimportedFilesAsync(int pageNumber, CancellationToken cancellationToken = default)
+    {
+        return await GetUnimportedFilesInternalAsync(pageNumber, true, cancellationToken);
+    }
+
+    private async Task<PagedResult<ContentServiceFile>> GetUnimportedFilesInternalAsync(int pageNumber, bool peek, CancellationToken cancellationToken = default)
     {
         var items = new List<ContentServiceFile>();
         var currentPage = pageNumber;
@@ -28,7 +34,7 @@ public class VirtualFileBridgeService : IVirtualFileBridgeService
         {
             var pagedResult = await _fileContentService.ListFilePathsAsync(currentPage, cancellationToken);
             hasMore = pagedResult.HasMore;
-            
+
             var existingKeys = await GetExistingLocationKeys(pagedResult.Items, cancellationToken);
             var newItems = pagedResult.Items
                 .Where(item => !existingKeys.Contains(GetLocationKey(item.VirtualPath, item.SourceSiteId, item.SourceHostName)))
@@ -44,11 +50,14 @@ public class VirtualFileBridgeService : IVirtualFileBridgeService
             currentPage++;
         }
 
+        int? nextPageNumber = hasMore ? currentPage + 1 : null;
+        var peekedPage = nextPageNumber != null && peek ? await GetUnimportedFilesInternalAsync(nextPageNumber.Value, false,  cancellationToken) : null;
+        
         return new PagedResult<ContentServiceFile>
         {
             Items = items,
-            HasMore = hasMore,
-            NextPageNumber = hasMore ? currentPage + 1 : null
+            HasMore = hasMore && peekedPage?.HasMore == true,
+            NextPageNumber = nextPageNumber
         };
     }
 
