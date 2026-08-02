@@ -9,7 +9,6 @@ branches:
   support:
     mode: ContinuousDeployment
     regex: ^support[/-]\d+\.x$
-    label: ''
     increment: Patch
     prevent-increment:
       when-current-commit-tagged: false
